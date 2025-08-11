@@ -30,7 +30,7 @@ export default function DeveloperSection() {
             <span className="glow-text">Developer</span> Friendly
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto px-4">
-            Integrate AI Chat into your existing systems with our powerful APIs
+            Integrate Otonom AI into your existing systems with our powerful APIs
           </p>
         </motion.div>
 

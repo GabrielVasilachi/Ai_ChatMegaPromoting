@@ -34,7 +34,7 @@ export default function ROICalculator() {
             Calculate Your <span className="glow-text text-white">ROI</span>
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">
-            See how much time and money you can save with AI Chat
+            See how much time and money you can save with Otonom AI
           </p>
         </motion.div>
 

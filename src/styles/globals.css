@@ -47,3 +47,11 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+@keyframes dropdown-smooth {
+  0% { opacity: 0; transform: translateY(-16px); }
+  60% { opacity: 1; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-dropdown-smooth {
+  animation: dropdown-smooth 0.44s cubic-bezier(0.22,1,0.36,1);
+}

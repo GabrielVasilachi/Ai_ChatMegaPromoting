@@ -1,4 +1,4 @@
-// Sample data for AI Chat marketing site
+// Sample data for Otonom AI marketing site
 
 export interface Company {
   id: number;
@@ -53,18 +53,18 @@ export const companies: Company[] = [
 export const howItWorksSteps = [
   {
     id: 1,
-    title: "Connect Your Channels",
-    description: "Integrate with your existing chat platforms, phone systems, and messaging apps in minutes.",
+    title: "Conectează-te",
+    description: "Ne contactezi și stabilim împreună obiectivele și tipul de conversații pe care agentul tău AI le va gestiona.",
   },
   {
     id: 2,
-    title: "Train Your AI Agent",
-    description: "Upload your knowledge base, FAQs, and company information to customize responses.",
+    title: "Alegi platforma",
+    description: "Selectezi platforma (WhatsApp, Facebook Messenger, site web, Instagram, etc.) de pe care vrei să fie preluate mesajele.",
   },
   {
     id: 3,
-    title: "Go Live 24/7",
-    description: "Your AI receptionist starts handling inquiries instantly, escalating complex issues to your team.",
+    title: "AI răspunde",
+    description: "Agentul nostru virtual AI răspunde instant și profesionist clienților tăi, fără a fi nevoie de o persoană reală, 24/7.",
   },
 ];
 
@@ -231,7 +231,7 @@ async function handleMessage(message, userId) {
     
     return response.reply;
   } catch (error) {
-    console.error('AI Chat error:', error);
+    console.error('Otonom AI error:', error);
     return 'Sorry, I encountered an error. Please try again.';
   }
 }`,

@@ -2,15 +2,24 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { howItWorksSteps } from '@/lib/data';
 
 export default function HowItWorks() {
+  // Track which card is hovered (desktop)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // Track hover for mobile carousel
+  const [mobileHovered, setMobileHovered] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
+  // Carousel state for mobile
+  const [activeStep, setActiveStep] = useState(0);
+  const totalSteps = howItWorksSteps.length;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
-    <section ref={ref} className="min-h-screen bg-white py-12 md:py-20 flex items-center overflow-hidden">
+    <section ref={ref} className="min-h-[60vh] bg-white py-6 md:py-10 flex items-center overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -19,36 +28,346 @@ export default function HowItWorks() {
           className="text-center mb-12 md:mb-16"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4 md:mb-6">
-            How It <span className="glow-text">Works</span>
+            Cum lucrează agentul <span className="glow-text">AI</span>
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-            Get your AI receptionist up and running in three simple steps
+            Activează-ți agentul AI în doar trei pași simpli
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {howItWorksSteps.map((step, index) => (
+        {/* Desktop: grid with spacing, Mobile: carousel with arrows */}
+        <div className="relative">
+          <div className="hidden xl:grid grid-cols-3 gap-10 md:gap-14">
+            {howItWorksSteps.map((step, index) => (
+              <motion.div
+                key={step.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className={
+                  `howitworks-card text-center px-12 py-16 rounded-3xl transition-colors duration-300 mx-3 relative overflow-hidden ` +
+                  (index === 0 || index === 1 || index === 2 ? 'bg-blue-50/80 border border-blue-100 shadow-md' : '')
+                }
+                style={{
+                  ...(index === 0 ? {
+                    backgroundImage: "url('/HowItWorksSectin/1stImageHowItWorks.png')",
+                  } : index === 1 ? {
+                    backgroundImage: "url('/HowItWorksSectin/2ndImageHowItWorks.png')",
+                  } : index === 2 ? {
+                    backgroundImage: "url('/HowItWorksSectin/3rdImageHowItWorks.png')",
+                  } : {}),
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  position: 'relative',
+                  zIndex: 0,
+                  minHeight: '370px',
+                  minWidth: '380px',
+                }}
+                onMouseEnter={e => {
+                  const btn = e.currentTarget.querySelector('.howitworks-action-btn');
+                  if (btn && btn instanceof HTMLElement) {
+                    btn.style.background = '#111';
+                    btn.style.color = '#fff';
+                    btn.style.borderColor = '#111';
+                  }
+                  setHoveredIndex(index);
+                }}
+                onMouseLeave={e => {
+                  const btn = e.currentTarget.querySelector('.howitworks-action-btn');
+                  if (btn && btn instanceof HTMLElement) {
+                    btn.style.background = '#fff';
+                    btn.style.color = '#111';
+                    btn.style.borderColor = '#111';
+                  }
+                  setHoveredIndex(null);
+                }}
+              >
+                {/* Overlay for hover effect */}
+                {hoveredIndex === index && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'rgba(120,120,120,0.18)',
+                    zIndex: 2,
+                    pointerEvents: 'none',
+                  }} />
+                )}
+                {/* Step number - large background for all containers */}
+                <div
+                  aria-hidden
+                  className="absolute select-none pointer-events-none"
+                  style={{
+                    left: index === 0 ? 'calc(18% - 2.5rem)' : index === 1 ? 'calc(18% - 2.5rem)' : 'calc(18% - 2.5rem)',
+                    bottom: '-6.5rem',
+                    fontSize: '17rem',
+                    fontWeight: 900,
+                    color: 'rgba(255,255,255,0.38)',
+                    lineHeight: 1,
+                    zIndex: 1,
+                    textShadow: '0 4px 32px rgba(0,0,0,0.18)'
+                  }}
+                >
+                  {step.id}
+                </div>
+                {/* Content */}
+                <div style={{position:'relative', zIndex:3}}>
+        <h3 
+          className="text-2xl md:text-4xl font-bold text-black mb-1 md:mb-2 text-left"
+          style={{marginTop: '-1.2rem', marginLeft: '-0.7rem', lineHeight: 1.15}}
+        >
+          {step.title}
+        </h3>
+        <p 
+          className="text-black text-base md:text-lg leading-relaxed text-left"
+          style={{marginTop: '1.5rem', marginLeft: '-0.7rem'}}
+        >
+          {step.description}
+        </p>
+                </div>
+                {/* Button at bottom right of the container */}
+                <button
+                  className="howitworks-action-btn"
+                  style={{
+                    position: 'absolute',
+                    right: 18,
+                    bottom: 18,
+                    padding: '0.5rem 1.1rem',
+                    borderRadius: '1.5rem',
+                    border: '2px solid #111',
+                    background: '#fff',
+                    color: '#111',
+                    fontWeight: 600,
+                    fontSize: '0.98rem',
+                    transition: 'all 0.18s',
+                    zIndex: 10,
+                    boxShadow: '0 2px 12px 0 rgba(0,0,0,0.04)'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#111';
+                    e.currentTarget.style.color = '#fff';
+                    e.currentTarget.style.borderColor = '#111';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#fff';
+                    e.currentTarget.style.color = '#111';
+                    e.currentTarget.style.borderColor = '#111';
+                  }}
+                >
+                  Learn More
+                </button>
+              </motion.div>
+            ))}
+          </div>
+          {/* Mobile carousel */}
+          <div className="xl:hidden flex flex-col items-center justify-center px-0 relative" style={{overflow: 'visible'}}>
             <motion.div
-              key={step.id}
+              key={howItWorksSteps[activeStep].id}
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="text-center px-4"
+              transition={{ duration: 0.7 }}
+              className={
+                `howitworks-card text-center px-12 py-16 rounded-3xl transition-colors duration-300 mx-3 relative overflow-hidden ` +
+                'bg-blue-50/80 border border-blue-100 shadow-md'
+              }
+              style={{
+                width: '100%',
+                minWidth: 0,
+                maxWidth: 520,
+                minHeight: 370,
+                maxHeight: 600,
+                boxSizing: 'border-box',
+                paddingLeft: 5,
+                paddingRight: 5,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                backgroundImage:
+                  activeStep === 0
+                    ? "url('/HowItWorksSectin/1stImageHowItWorks.png')"
+                    : activeStep === 1
+                    ? "url('/HowItWorksSectin/2ndImageHowItWorks.png')"
+                    : activeStep === 2
+                    ? "url('/HowItWorksSectin/3rdImageHowItWorks.png')"
+                    : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                position: 'relative',
+                zIndex: 0,
+                overflow: 'hidden',
+              }}
+              onMouseEnter={e => {
+                const btn = e.currentTarget.querySelector('.howitworks-action-btn');
+                if (btn && btn instanceof HTMLElement) {
+                  btn.style.background = '#111';
+                  btn.style.color = '#fff';
+                  btn.style.borderColor = '#111';
+                }
+                setMobileHovered(true);
+              }}
+              onMouseLeave={e => {
+                const btn = e.currentTarget.querySelector('.howitworks-action-btn');
+                if (btn && btn instanceof HTMLElement) {
+                  btn.style.background = '#fff';
+                  btn.style.color = '#111';
+                  btn.style.borderColor = '#111';
+                }
+                setMobileHovered(false);
+              }}
             >
-              {/* Step number */}
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-black rounded-full flex items-center justify-center text-white text-lg md:text-2xl font-bold mb-4 md:mb-6 mx-auto">
-                {step.id}
+              {/* Overlay for hover effect (mobile) */}
+              {mobileHovered && (
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(120,120,120,0.18)',
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                }} />
+              )}
+              {/* Large step number in background for mobile, same as desktop */}
+              <div
+                aria-hidden
+                className="absolute select-none pointer-events-none"
+                style={{
+                  left: 'calc(18% - 2.5rem)',
+                  bottom: '-6.5rem',
+                  fontSize: '17rem',
+                  fontWeight: 900,
+                  color: 'rgba(255,255,255,0.38)',
+                  lineHeight: 1,
+                  zIndex: 1,
+                  textShadow: '0 4px 32px rgba(0,0,0,0.18)'
+                }}
+              >
+                {howItWorksSteps[activeStep].id}
               </div>
-              
-              {/* Content */}
-              <h3 className="text-xl md:text-2xl font-bold text-black mb-3 md:mb-4">
-                {step.title}
-              </h3>
-              <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-                {step.description}
-              </p>
+              <div style={{position:'relative', zIndex:3}}>
+                <div style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  padding: '0 10px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                }}>
+                  <h3 
+                    className="text-[2rem] sm:text-[2.5rem] font-extrabold text-black mb-1 md:mb-2 text-left"
+                    style={{
+                      marginTop: 0,
+                      marginLeft: 0,
+                      lineHeight: 1.12,
+                      overflowWrap: 'break-word',
+                      wordBreak: 'break-word',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'normal',
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      letterSpacing: '-0.01em',
+                    }}
+                  >
+                    {howItWorksSteps[activeStep].title}
+                  </h3>
+                  <p 
+                    className="text-black text-base md:text-lg leading-relaxed text-left"
+                    style={{
+                      marginTop: '0.6rem',
+                      marginLeft: 0,
+                      overflowWrap: 'break-word',
+                      wordBreak: 'break-word',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'normal',
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                    }}>
+                    {howItWorksSteps[activeStep].description}
+                  </p>
+                </div>
+              </div>
+              {/* Button at bottom right of the mobile card - outside text but inside container */}
+              <button
+                className="howitworks-action-btn"
+                style={{
+                  position: 'absolute',
+                  right: 18,
+                  bottom: 18,
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: '1.5rem',
+                  border: '2px solid #111',
+                  background: '#fff',
+                  color: '#111',
+                  fontWeight: 600,
+                  fontSize: '0.98rem',
+                  transition: 'all 0.18s',
+                  zIndex: 10,
+                  boxShadow: '0 2px 12px 0 rgba(0,0,0,0.04)'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#111';
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.borderColor = '#111';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#fff';
+                  e.currentTarget.style.color = '#111';
+                  e.currentTarget.style.borderColor = '#111';
+                }}
+              >
+                Learn More
+              </button>
             </motion.div>
-          ))}
+            <div className="flex items-center justify-center w-full mt-4 gap-4">
+              <button
+                aria-label="Previous step"
+                onClick={() => setActiveStep((prev) => (prev - 1 + totalSteps) % totalSteps)}
+                style={{
+                  width: 44,
+                  height: 44,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  background: '#fff',
+                  border: '2px solid #111',
+                  color: '#111',
+                  fontSize: 24,
+                  lineHeight: 1,
+                  minWidth: 44,
+                  minHeight: 44,
+                  boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
+                  transition: 'background 0.18s, color 0.18s, border 0.18s',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>&#8592;</span>
+              </button>
+              <button
+                aria-label="Next step"
+                onClick={() => setActiveStep((prev) => (prev + 1) % totalSteps)}
+                style={{
+                  width: 44,
+                  height: 44,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  background: '#fff',
+                  border: '2px solid #111',
+                  color: '#111',
+                  fontSize: 24,
+                  lineHeight: 1,
+                  minWidth: 44,
+                  minHeight: 44,
+                  boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)',
+                  transition: 'background 0.18s, color 0.18s, border 0.18s',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>&#8594;</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
