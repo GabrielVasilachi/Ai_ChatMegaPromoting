@@ -300,14 +300,14 @@ export default function IndustryModules() {
                 }
               }
             `}</style>
-            <span
-              className="text-white text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold select-none"
-              style={{textShadow:'none', fontSize: 'clamp(1.3rem, 8vw, 3.5rem)'}}>
-              Incearca acum
-            </span>
-            <div style={{position:'absolute', top:0, right:0, margin:'1.5rem'}}>
+            <div className="flex flex-row items-center w-full justify-between">
+              <span
+                className="text-white text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold select-none"
+                style={{textShadow:'none', fontSize: 'clamp(1.3rem, 8vw, 3.5rem)'}}>
+                Incearca acum
+              </span>
               <button
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-full border-2 border-black bg-white text-black font-semibold text-sm md:text-base transition-colors duration-200 hover:bg-black hover:text-white"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-full border-2 border-black bg-white text-black font-semibold text-sm md:text-base transition-colors duration-200 hover:bg-black hover:text-white mr-8"
                 style={{minWidth:'90px', boxShadow:'none'}}>
                 Get started
               </button>
