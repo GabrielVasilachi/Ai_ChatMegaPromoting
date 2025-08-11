@@ -19,8 +19,7 @@ export default function ROICalculator() {
   // UI states
   const [isAdvanced, setIsAdvanced] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [showTour, setShowTour] = useState(false);
-  const [tourStep, setTourStep] = useState(1);
+  // Tutorial state removed
 
   // Calculations (memoized for performance)
   const calculations = useMemo(() => {
@@ -76,37 +75,34 @@ export default function ROICalculator() {
   const hasError = automationRate === 0 || hourlyRate === 0;
 
   // Tour management
-  useEffect(() => {
-    const hasSeenTour = localStorage.getItem('roi-calculator-tour-seen');
-    if (!hasSeenTour && isInView) {
-      setShowTour(true);
-    }
-  }, [isInView]);
-
-  const completeTour = () => {
-    setShowTour(false);
-    localStorage.setItem('roi-calculator-tour-seen', 'true');
-  };
+  // Tutorial effect and completeTour removed
 
   return (
     <section ref={ref} className="px-6 sm:px-8 lg:px-12 py-20 sm:py-24 bg-black relative">
-      {/* Vertical dashed line on the left (full height, centered, semi-transparent) */}
-      <div className="hidden md:block absolute z-20 w-full h-full pointer-events-none" style={{top:0, left:0, height:'100%'}}>
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative h-full" style={{height:'100%'}}>
-          <div className="flex justify-center items-start w-full h-full" style={{position:'relative', height:'100%'}}>
-            <div style={{
-              position: 'absolute',
-              left: '-30px',
-              top: 0,
-              height: '100%',
-              borderLeft: '3px dashed #b3b3b3',
-              opacity: 0.6,
-              zIndex: 20,
-              minHeight: '100%',
-            }} />
-          </div>
-        </div>
-      </div>
+      {/* Vertical dashed line on the right, matching the section above, straight down as SVG */}
+      <svg
+        className="hidden md:block absolute z-20 pointer-events-none"
+        style={{
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}
+        width="100%"
+        height="100%"
+        viewBox="0 0 1000 1200"
+        fill="none"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M120 0 V1200"
+          transform="translate(820,0)"
+          stroke="#b3b3b3"
+          strokeWidth="3"
+          // strokeDasharray="10,8"
+          opacity="0.6"
+        />
+      </svg>
       {/* Dotted pattern background */}
       <div className="pointer-events-none absolute inset-0 [background:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] [background-size:24px_24px]"></div>
       
@@ -169,57 +165,7 @@ export default function ROICalculator() {
             </button>
           </div>
 
-          {/* Tour Overlay */}
-          {showTour && (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-              <div className="bg-slate-800 rounded-xl p-6 max-w-sm">
-                <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-2">Mini Tutorial</h3>
-                  {tourStep === 1 && (
-                    <>
-                      <p className="text-slate-300 mb-4">Pas 1/3: Setează numărul de mesaje pe lună</p>
-                      <div className="text-2xl mb-4">💬</div>
-                    </>
-                  )}
-                  {tourStep === 2 && (
-                    <>
-                      <p className="text-slate-300 mb-4">Pas 2/3: Alege procentul de automatizare</p>
-                      <div className="text-2xl mb-4">🤖</div>
-                    </>
-                  )}
-                  {tourStep === 3 && (
-                    <>
-                      <p className="text-slate-300 mb-4">Pas 3/3: Vezi economiile calculate automat!</p>
-                      <div className="text-2xl mb-4">💰</div>
-                    </>
-                  )}
-                  <div className="flex gap-2 justify-center">
-                    {tourStep < 3 ? (
-                      <button
-                        onClick={() => setTourStep(tourStep + 1)}
-                        className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition"
-                      >
-                        Următorul
-                      </button>
-                    ) : (
-                      <button
-                        onClick={completeTour}
-                        className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition"
-                      >
-                        Am înțeles!
-                      </button>
-                    )}
-                    <button
-                      onClick={completeTour}
-                      className="px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition"
-                    >
-                      Sări
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Tutorial overlay removed */}
 
           {/* Error State */}
           {hasError && (

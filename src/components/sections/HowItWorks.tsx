@@ -63,23 +63,29 @@ export default function HowItWorks() {
 
   return (
     <section ref={setSectionRefs} className="min-h-[60vh] bg-white py-6 md:py-10 flex items-center overflow-hidden relative">
-      {/* Vertical dashed line from left margin of the image down the section */}
-      <div className="hidden md:block absolute z-20 w-full h-full pointer-events-none" style={{top:0, left:0, height:'100%'}}>
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative h-full" style={{height:'100%'}}>
-          <div className="flex justify-center items-start w-full h-full" style={{position:'relative', height:'100%'}}>
-            <div style={{
-              position: 'absolute',
-              left: '-30px',
-              top: 0,
-              height: '100%', // ensures it covers the section
-              borderLeft: '3px dashed #b3b3b3',
-              opacity: 0.6,
-              zIndex: 20,
-              minHeight: '100%',
-            }} />
-          </div>
-        </div>
-      </div>
+      {/* SVG vertical dashed line, matching IndustryModules, straight down, same width and position */}
+      <svg
+        className="hidden md:block absolute z-20 pointer-events-none"
+        style={{
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}
+        width="100%"
+        height="100%"
+        viewBox="0 0 1000 1200"
+        fill="none"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M120 0 V1200"
+          stroke="#b3b3b3"
+          strokeWidth="3"
+          // strokeDasharray="10,8"
+          opacity="0.6"
+        />
+      </svg>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
         {/* Top image container */}
         <div className="flex justify-center items-center mb-[200px] relative" style={{minHeight:'300px'}}>

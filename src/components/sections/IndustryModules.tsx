@@ -87,23 +87,35 @@ export default function IndustryModules() {
 
   return (
     <section id="industry-modules-section" className="min-h-[120vh] pt-1 pb-[320px] md:pt-2 md:pb-[360px] flex items-center overflow-hidden relative">
-      {/* Vertical dashed line on the left (full height, centered, semi-transparent) */}
-      <div className="hidden md:block absolute z-20 w-full h-full pointer-events-none" style={{top:0, left:0, height:'100%'}}>
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative h-full" style={{height:'100%'}}>
-          <div className="flex justify-center items-start w-full h-full" style={{position:'relative', height:'100%'}}>
-            <div style={{
-              position: 'absolute',
-              left: '-30px',
-              top: 0,
-              height: '100%',
-              borderLeft: '3px dashed #b3b3b3',
-              opacity: 0.6,
-              zIndex: 20,
-              minHeight: '100%',
-            }} />
-          </div>
-        </div>
-      </div>
+      {/* Custom SVG line: starts at left, goes 20px down, curves left, then right, then down */}
+      <svg
+        className="hidden md:block absolute z-20 pointer-events-none"
+        style={{
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}
+        width="100%"
+        height="100%"
+        viewBox="0 0 1000 1200"
+        fill="none"
+        preserveAspectRatio="none"
+      >
+        {/* The path starts at x=30, goes straight down 20px, then curves 90° to the right, then continues horizontally and then down as before */}
+        <path
+          d="M120 0
+            V20
+            C120 35 135 50 150 50
+            H910
+            Q940 50 940 80
+            V1200"
+          stroke="#b3b3b3"
+          strokeWidth="3"
+          // strokeDasharray="10,8"
+          opacity="0.6"
+        />
+      </svg>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Animated title */}
         <div className="text-center md:text-left mb-16 md:mb-24 mt-8 md:mt-36">
