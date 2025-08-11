@@ -2,7 +2,9 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { howItWorksSteps } from '@/lib/data';
 
 export default function HowItWorks() {
@@ -10,7 +12,13 @@ export default function HowItWorks() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   // Track hover for mobile carousel
   const [mobileHovered, setMobileHovered] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  // Combined ref callback for section
+  const setSectionRefs = useCallback((el: HTMLElement | null) => {
+    ref.current = el;
+    sectionRef.current = el;
+  }, []);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   // Carousel state for mobile
@@ -18,26 +26,91 @@ export default function HowItWorks() {
   const totalSteps = howItWorksSteps.length;
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+  // Animate background color to creme as user scrolls through the section
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    // Find the section below by id or class (add id to IndustryModules section)
+    const industrySection = document.getElementById('industry-modules-section');
+    if (sectionRef.current) {
+      const dummy = { progress: 0 };
+      gsap.to(dummy, {
+        progress: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 90%',
+          end: 'bottom+=320% bottom', // even slower transition, fully creme far after HowItWorks ends
+          scrub: true,
+          onUpdate: self => {
+            // Interpolate color between white and creme
+            const creme = [255, 247, 230];
+            const white = [255, 255, 255];
+            const p = dummy.progress;
+            const r = Math.round(white[0] + (creme[0] - white[0]) * p);
+            const g = Math.round(white[1] + (creme[1] - white[1]) * p);
+            const b = Math.round(white[2] + (creme[2] - white[2]) * p);
+            const color = `rgb(${r},${g},${b})`;
+            if (sectionRef.current) sectionRef.current.style.backgroundColor = color;
+            if (industrySection) industrySection.style.backgroundColor = color;
+          }
+        },
+      });
+    }
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
   return (
-    <section ref={ref} className="min-h-[60vh] bg-white py-6 md:py-10 flex items-center overflow-hidden">
+    <section ref={setSectionRefs} className="min-h-[60vh] bg-white py-6 md:py-10 flex items-center overflow-hidden relative">
+      {/* Vertical dashed line from left margin of the image down the section */}
+      <div className="hidden md:block absolute z-20 w-full h-full pointer-events-none" style={{top:0, left:0, height:'100%'}}>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative h-full" style={{height:'100%'}}>
+          <div className="flex justify-center items-start w-full h-full" style={{position:'relative', height:'100%'}}>
+            <div style={{
+              position: 'absolute',
+              left: '-30px',
+              top: 0,
+              height: '100%', // ensures it covers the section
+              borderLeft: '3px dashed #b3b3b3',
+              opacity: 0.6,
+              zIndex: 20,
+              minHeight: '100%',
+            }} />
+          </div>
+        </div>
+      </div>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4 md:mb-6">
-            Cum lucrează agentul <span className="glow-text">AI</span>
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-            Activează-ți agentul AI în doar trei pași simpli
-          </p>
-        </motion.div>
+        {/* Top image container */}
+        <div className="flex justify-center items-center mb-[200px] relative" style={{minHeight:'300px'}}>
+          <div className="w-full flex justify-center relative">
+            <img 
+              src="/AnimeStyleImages/ImageTopTrees.png" 
+              alt="Decorative Anime Trees" 
+              className="w-full h-auto object-contain mx-auto"
+              style={{maxWidth: '1200px', maxHeight: '300px', objectFit: 'cover', objectPosition: 'top center'}}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.8 }}
+              className="absolute left-0 top-0 pl-8 pt-16 w-full"
+              style={{zIndex: 2, maxWidth: '100%', pointerEvents: 'auto'}}
+            >
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white mb-2 md:mb-4 text-left drop-shadow-lg">
+                Cum lucrează agentul <span style={{ color: '#fff' }}>AI</span>
+              </h2>
+              <p className="text-white text-base sm:text-lg md:text-2xl font-semibold drop-shadow-lg mt-20 text-left" style={{maxWidth:'90%'}}>
+                Activează-ți agentul AI în doar trei pași simpli
+              </p>
+            </motion.div>
+          </div>
+        </div>
+        {/* Subtitle moved into image container above */}
 
         {/* Desktop: grid with spacing, Mobile: carousel with arrows */}
         <div className="relative">
-          <div className="hidden xl:grid grid-cols-3 gap-10 md:gap-14">
+          <div className="hidden xl:flex justify-between w-full">
             {howItWorksSteps.map((step, index) => (
               <motion.div
                 key={step.id}
@@ -46,7 +119,8 @@ export default function HowItWorks() {
                 transition={{ duration: 0.8, delay: index * 0.2 }}
                 className={
                   `howitworks-card text-center px-12 py-16 rounded-3xl transition-colors duration-300 mx-3 relative overflow-hidden ` +
-                  (index === 0 || index === 1 || index === 2 ? 'bg-blue-50/80 border border-blue-100 shadow-md' : '')
+                  (index === 0 || index === 1 || index === 2 ? 'bg-blue-50/80 border border-blue-100 shadow-md' : '') +
+                  ' group'
                 }
                 style={{
                   ...(index === 0 ? {
@@ -63,6 +137,7 @@ export default function HowItWorks() {
                   zIndex: 0,
                   minHeight: '370px',
                   minWidth: '380px',
+                  cursor: hoveredIndex === index ? 'pointer' : 'default',
                 }}
                 onMouseEnter={e => {
                   const btn = e.currentTarget.querySelector('.howitworks-action-btn');

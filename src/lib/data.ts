@@ -68,45 +68,6 @@ export const howItWorksSteps = [
   },
 ];
 
-// Industry-specific modules
-export const industryCards: IndustryCard[] = [
-  {
-    id: 1,
-    title: "Restaurant",
-    description: "Handle reservations, menu questions, and delivery inquiries automatically.",
-    benefits: ["Reservation management", "Menu assistance", "Order tracking", "Special requests"],
-  },
-  {
-    id: 2,
-    title: "Healthcare",
-    description: "Manage appointment scheduling and answer common patient questions securely.",
-    benefits: ["Appointment booking", "Insurance verification", "Prescription inquiries", "HIPAA compliant"],
-  },
-  {
-    id: 3,
-    title: "Auto",
-    description: "Qualify leads, schedule test drives, and provide service information.",
-    benefits: ["Lead qualification", "Service scheduling", "Inventory questions", "Financing info"],
-  },
-  {
-    id: 4,
-    title: "SaaS",
-    description: "Support trial users, handle billing questions, and route technical issues.",
-    benefits: ["Trial support", "Billing assistance", "Feature explanations", "Technical routing"],
-  },
-  {
-    id: 5,
-    title: "Retail",
-    description: "Answer product questions, check inventory, and assist with returns.",
-    benefits: ["Product information", "Inventory checking", "Return processing", "Store locations"],
-  },
-  {
-    id: 6,
-    title: "Logistics",
-    description: "Track shipments, handle delivery questions, and manage scheduling.",
-    benefits: ["Shipment tracking", "Delivery scheduling", "Route optimization", "Status updates"],
-  },
-];
 
 // Customer testimonials
 export const testimonials: Testimonial[] = [

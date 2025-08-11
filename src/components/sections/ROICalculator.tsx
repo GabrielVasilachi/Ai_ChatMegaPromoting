@@ -9,99 +9,182 @@ export default function ROICalculator() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [monthlyChats, setMonthlyChats] = useState(500);
   const [hoursSaved, setHoursSaved] = useState(0);
-  const [moneySaved, setMoneySaved] = useState(0);
+  const [costSavings, setCostSavings] = useState(0);
+
+  // State and formulas
+  const avgMinutesPerChat = 3;
+  const automationRate = 0.8;
+  const hourlyRateMDL = 150;
 
   // Calculate savings based on input
   useEffect(() => {
-    const averageTimePerChat = 3; // minutes
-    const hoursPerMonth = (monthlyChats * averageTimePerChat) / 60;
-    const hourlyRate = 25; // average hourly rate for customer service
+    const totalHours = (monthlyChats * avgMinutesPerChat * automationRate) / 60;
+    const savings = totalHours * hourlyRateMDL;
     
-    setHoursSaved(Math.round(hoursPerMonth));
-    setMoneySaved(Math.round(hoursPerMonth * hourlyRate));
+    setHoursSaved(Math.round(totalHours));
+    setCostSavings(Math.round(savings));
   }, [monthlyChats]);
 
   return (
-    <section ref={ref} className="min-h-screen bg-black py-12 md:py-20 flex items-center overflow-hidden">
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
+    <section ref={ref} className="px-6 sm:px-8 lg:px-12 py-20 sm:py-24 bg-black relative">
+      {/* Vertical dashed line on the left (full height, centered, semi-transparent) */}
+      <div className="hidden md:block absolute z-20 w-full h-full pointer-events-none" style={{top:0, left:0, height:'100%'}}>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative h-full" style={{height:'100%'}}>
+          <div className="flex justify-center items-start w-full h-full" style={{position:'relative', height:'100%'}}>
+            <div style={{
+              position: 'absolute',
+              left: '-30px',
+              top: 0,
+              height: '100%',
+              borderLeft: '3px dashed #b3b3b3',
+              opacity: 0.6,
+              zIndex: 20,
+              minHeight: '100%',
+            }} />
+          </div>
+        </div>
+      </div>
+      {/* Dotted pattern background */}
+      <div className="pointer-events-none absolute inset-0 [background:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] [background-size:24px_24px]"></div>
+      
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left Column - Text Content */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          initial={{ opacity: 0, x: -30 }}
+          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12 md:mb-16"
+          className="space-y-8"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 md:mb-6">
-            Calculate Your <span className="glow-text text-white">ROI</span>
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">
-            See how much time and money you can save with Otonom AI
+          <div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+              Află cât timp și bani poți economisi cu AI
+            </h2>
+            <div className="w-16 h-0.5 rounded bg-gradient-to-r from-indigo-400 to-sky-400 mt-3"></div>
+          </div>
+
+          <p className="text-lg text-slate-300 max-w-md">
+            Calculează instant beneficiile integrării agentului nostru virtual. Vezi economiile în timp real.
           </p>
+
+          <ul className="space-y-3">
+            <li className="flex items-start gap-3 text-slate-200">
+              <span className="text-sky-400 mt-1">•</span>
+              Economii imediate de costuri operaționale
+            </li>
+            <li className="flex items-start gap-3 text-slate-200">
+              <span className="text-sky-400 mt-1">•</span>
+              Răspunsuri instant, 24/7
+            </li>
+            <li className="flex items-start gap-3 text-slate-200">
+              <span className="text-sky-400 mt-1">•</span>
+              Mai mult timp pentru task-urile importante
+            </li>
+          </ul>
+
+          <div className="space-y-4">
+            <button className="inline-flex items-center gap-2 rounded-full border border-black bg-white text-black px-5 py-3 font-semibold transition hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-500/30">
+              Începe să economisești acum
+            </button>
+            <div>
+              <a href="#" className="text-slate-300 hover:text-white hover:underline transition text-sm">
+                Află cum funcționează
+              </a>
+            </div>
+          </div>
         </motion.div>
 
+        {/* Right Column - Calculator Card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, x: 30 }}
+          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-white/10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/20"
+          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl p-6 sm:p-8 space-y-6"
         >
-          {/* Input */}
-          <div className="mb-6 md:mb-8">
-            <label className="block text-white text-base md:text-lg font-semibold mb-3 md:mb-4">
-              Monthly chat volume
+          {/* Range Input */}
+          <div className="space-y-4">
+            <label htmlFor="chatVolume" className="block text-sm font-medium text-slate-200">
+              Volum mesaje lunar
             </label>
-            <input
-              type="range"
-              min="100"
-              max="10000"
-              step="100"
-              value={monthlyChats}
-              onChange={(e) => setMonthlyChats(Number(e.target.value))}
-              className="w-full h-2 md:h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-            />
-            <div className="flex justify-between text-gray-400 text-xs md:text-sm mt-2">
-              <span>100</span>
-              <span className="text-white font-bold text-sm md:text-base">{monthlyChats.toLocaleString()} chats/month</span>
-              <span>10,000</span>
+            <div className="space-y-2">
+              <input
+                id="chatVolume"
+                type="range"
+                min="100"
+                max="10000"
+                step="50"
+                value={monthlyChats}
+                onChange={(e) => setMonthlyChats(Number(e.target.value))}
+                className="w-full h-2 rounded bg-slate-800/80 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-sky-500/30 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-sky-400 [&::-webkit-slider-thumb]:ring-2 [&::-webkit-slider-thumb]:ring-sky-400/30 [&::-webkit-slider-thumb]:hover:scale-105 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-sky-400 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:outline-none [&::-moz-range-thumb]:ring-2 [&::-moz-range-thumb]:ring-sky-400/30 [&::-moz-range-track]:h-2 [&::-moz-range-track]:rounded [&::-moz-range-track]:bg-slate-800/80"
+                aria-valuetext={`${monthlyChats} mesaje pe lună`}
+              />
+              <div className="text-center">
+                <span className="text-slate-400 text-sm tabular-nums">
+                  {monthlyChats.toLocaleString()} mesaje/lună
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Results */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {/* KPI Tiles Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <motion.div
               key={hoursSaved}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="text-center p-4 md:p-6 bg-white/5 rounded-xl md:rounded-2xl"
+              className="rounded-xl border border-white/10 bg-white/5 p-5 text-center"
             >
-              <div className="text-2xl md:text-4xl font-bold text-white mb-2">
-                {hoursSaved.toLocaleString()}
+              <div className="text-3xl font-semibold text-white tabular-nums mb-1">
+                {hoursSaved}
               </div>
-              <div className="text-gray-300 text-sm md:text-lg">
-                Hours Saved Monthly
+              <div className="text-xs text-slate-400">
+                Ore salvate lunar
               </div>
             </motion.div>
 
             <motion.div
-              key={moneySaved}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-center p-4 md:p-6 bg-white/5 rounded-xl md:rounded-2xl"
+              className="rounded-xl border border-white/10 bg-white/5 p-5 text-center"
             >
-              <div className="text-2xl md:text-4xl font-bold text-white mb-2">
-                ${moneySaved.toLocaleString()}
+              <div className="text-3xl font-semibold text-white tabular-nums mb-1">
+                {Math.round(automationRate * 100)}%
               </div>
-              <div className="text-gray-300 text-sm md:text-lg">
-                Cost Savings Monthly
+              <div className="text-xs text-slate-400">
+                Răspunsuri automatizate
+              </div>
+            </motion.div>
+
+            <motion.div
+              key={costSavings}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="rounded-xl border border-white/10 bg-white/5 p-5 text-center"
+            >
+              <div className="text-3xl font-semibold text-white tabular-nums mb-1">
+                {new Intl.NumberFormat('ro-MD', { 
+                  style: 'currency', 
+                  currency: 'MDL',
+                  maximumFractionDigits: 0 
+                }).format(costSavings)}
+              </div>
+              <div className="text-xs text-slate-400">
+                Economii lunare
               </div>
             </motion.div>
           </div>
 
-          {/* CTA */}
-          <div className="text-center mt-6 md:mt-8">
-            <button className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-white text-black font-semibold rounded-lg hover:scale-105 transition-transform duration-200 text-sm md:text-base">
-              Start Saving Today
+          {/* Helper Caption */}
+          <p className="text-xs text-slate-400 text-center">
+            Pe baza t = 3 min/mesaj, automatizare 80%, cost orar 150 MDL.
+          </p>
+
+          {/* Secondary CTA */}
+          <div className="text-center">
+            <button className="inline-flex items-center gap-2 rounded-full border border-black bg-white text-black px-5 py-3 font-semibold transition hover:bg-gray-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-500/30">
+              Calculează o ofertă
             </button>
           </div>
         </motion.div>
