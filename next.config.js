@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
+  // nimic special aici; App Router e implicit în Next 13+
 };
-
 module.exports = nextConfig;
