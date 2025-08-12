@@ -217,52 +217,56 @@ export default function IndustryModules() {
           </h2>
         </div>
         {/* Two-column layout */}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-start justify-center mt-8">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center justify-center -mt-16">
           {/* Left menu as containers */}
-          <div className="w-full md:w-1/2 lg:w-2/5 flex flex-col gap-4">
+          <div className="w-full md:w-1/2 lg:w-2/5 flex flex-col gap-0 md:ml-8">
             {menuItems.map((item: any, idx: number) => (
-              <div key={item.id}>
-                <div className="relative">
-                  <button
-                    onClick={() => setSelectedIndex(idx)}
-                    className={`w-full text-left px-6 py-5 rounded-xl transition-all duration-200 font-semibold text-lg md:text-xl shadow-sm ${selectedIndex === idx ? 'text-red-800' : 'text-black hover:text-blue-800'}`}
-                    style={{ outline: 'none', cursor: 'pointer', border: 'none', boxShadow: 'none' }}
-                  >
-                    {item.title}
-                  </button>
-                  {/* Progress bar replaces the yellow divider bar, appears under title or subtitle as before */}
-                  {selectedIndex === idx ? (
-                    <>
-                      <div className="px-6 text-gray-700 text-base" style={{paddingTop: 0, paddingBottom: 0, marginTop: '-1rem'}}>
-                        {item.subtitle}
-                      </div>
-                      <div className="w-full h-[2px] bg-yellow-300 mb-2 mt-6 relative overflow-hidden">
-                        <div
-                          className="h-full bg-red-300 transition-all duration-100"
-                          style={{
-                            width: `${progress}%`,
-                            transition: 'width 0.1s linear',
-                          }}
-                        ></div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-[2px] bg-yellow-300 mt-3 relative overflow-hidden">
+              <div
+                key={item.id}
+                className="bg-transparent rounded-xl cursor-pointer select-none"
+                onClick={() => setSelectedIndex(idx)}
+                tabIndex={0}
+                role="button"
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setSelectedIndex(idx); }}
+                style={{ position: 'relative' }}
+              >
+                <div className={`relative w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-base md:text-lg shadow-sm ${selectedIndex === idx ? 'text-red-800' : 'text-black hover:text-blue-800'}`}
+                  style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+                >
+                  {item.title}
+                </div>
+                {selectedIndex === idx ? (
+                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '72px' }}>
+                    <div className="px-6 text-gray-700 text-base" style={{paddingTop: '0.25rem', paddingBottom: 0, marginTop: '0.25rem', lineHeight: '1.2'}}>
+                      {item.subtitle}
+                    </div>
+                    <div style={{ flex: 1 }} />
+                    <div className="w-full h-[2px] bg-yellow-300 relative overflow-hidden" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, margin: 0 }}>
                       <div
-                        className="h-full bg-yellow-300 transition-all duration-100"
+                        className="h-full bg-red-300 transition-all duration-100"
                         style={{
-                          width: selectedIndex > idx ? '100%' : '0%',
-                          transition: 'none',
+                          width: `${progress}%`,
+                          transition: 'width 0.1s linear',
                         }}
                       ></div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-[2px] bg-yellow-300 mt-3 relative overflow-hidden">
+                    <div
+                      className="h-full bg-yellow-300 transition-all duration-100"
+                      style={{
+                        width: selectedIndex > idx ? '100%' : '0%',
+                        transition: 'none',
+                      }}
+                    ></div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
           {/* Right card (fixed, no animation) */}
-          <div className="w-full md:w-1/2 lg:w-3/5 flex justify-center my-auto py-8">
+          <div className="w-full md:w-1/2 lg:w-3/5 flex justify-center my-auto pt-0 pb-0 -mt-2 md:pl-52">
             {selectedIndex === 0 ? (
               <div className="p-0 bg-transparent rounded-2xl max-w-xl w-full flex items-center justify-center min-h-[320px] aspect-auto md:aspect-square">
                 <img 
@@ -368,16 +372,18 @@ export default function IndustryModules() {
               }
             `}</style>
             <div className="flex flex-row items-center w-full justify-between">
-              <span
-                className="text-white text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold select-none"
-                style={{textShadow:'none', fontSize: 'clamp(1.3rem, 8vw, 3.5rem)'}}>
-                Incearca acum
-              </span>
-              <button
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-full border-2 border-black bg-white text-black font-semibold text-sm md:text-base transition-colors duration-200 hover:bg-black hover:text-white mr-8"
-                style={{minWidth:'90px', boxShadow:'none'}}>
-                Get started
-              </button>
+              <div className="flex flex-col md:flex-row items-center w-full justify-between">
+                <span
+                  className="text-white text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold select-none whitespace-nowrap"
+                  style={{textShadow:'none', fontSize: 'clamp(1.3rem, 8vw, 3.5rem)'}}>
+                  Incearca acum
+                </span>
+                <button
+                  className="mt-6 md:mt-0 ml-0 md:ml-3 px-3 py-1.5 md:px-5 md:py-2.5 rounded-full border-2 border-black bg-white text-black font-semibold text-xs md:text-base transition-colors duration-200 hover:bg-black hover:text-white mr-2 md:mr-8 whitespace-nowrap"
+                  style={{minWidth:'64px', maxWidth:'120px', boxShadow:'none', fontSize:'0.95rem', lineHeight:'1.1'}}>
+                  Get started
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -386,7 +386,10 @@ export default function HeroSectionLeftClean() {
                 style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
                 ref={rightBoxRefs[0]}
               >
-                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span
+                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
+                  style={{ display: 'inline-block' }}
+                ></span>
                 <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Alice</span>
               </div>
               <div
@@ -395,7 +398,10 @@ export default function HeroSectionLeftClean() {
                 style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
                 ref={rightBoxRefs[1]}
               >
-                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span
+                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
+                  style={{ display: 'inline-block' }}
+                ></span>
                 <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Bob</span>
               </div>
               <div
@@ -404,7 +410,10 @@ export default function HeroSectionLeftClean() {
                 style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
                 ref={rightBoxRefs[2]}
               >
-                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span
+                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
+                  style={{ display: 'inline-block' }}
+                ></span>
                 <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Carol</span>
               </div>
               <div
@@ -413,7 +422,10 @@ export default function HeroSectionLeftClean() {
                 style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
                 ref={rightBoxRefs[3]}
               >
-                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span
+                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
+                  style={{ display: 'inline-block' }}
+                ></span>
                 <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Dave</span>
               </div>
             </div>
@@ -436,26 +448,26 @@ export default function HeroSectionLeftClean() {
               style={{
                 flex: 1,
                 overflowY: 'auto',
-                paddingTop: '50px', // Space for fixed name
+                paddingTop: '50px',
                 paddingLeft: '1rem',
                 paddingRight: '1rem',
-                paddingBottom: '80px', // Space for input area
+                paddingBottom: '80px',
               }}
               className="flex flex-col gap-3"
             >
               {/* Static content */}
               <div>
                 <div className="text-[13px] md:text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text1}</div>
-                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit">{rightBoxData[selectedBox].response1}</div>
+                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit break-words max-w-full">{rightBoxData[selectedBox].response1}</div>
               </div>
               <div>
                 <div className="text-[13px] md:text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text2}</div>
-                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit">{rightBoxData[selectedBox].response2}</div>
+                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit break-words max-w-full">{rightBoxData[selectedBox].response2}</div>
               </div>
               
               {/* Chat messages */}
               {sentMessages[selectedBox] && sentMessages[selectedBox].map((msg, idx) => (
-                <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-[12px] md:text-sm shadow-sm">{msg}</div>
+                <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-[12px] md:text-sm shadow-sm break-words max-w-full">{msg}</div>
               ))}
             </div>
             {/* Input container mic jos */}
@@ -465,79 +477,82 @@ export default function HeroSectionLeftClean() {
                 left: 0, 
                 bottom: 0, 
                 width: '100%', 
-                padding: '0.75rem', 
                 background: 'rgba(255,255,255,0.95)', 
                 borderTop: '1px solid #e5e7eb', 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '0.5rem'
+                gap: '0.5rem',
+                justifyContent: variant === 'mobile' ? 'center' : 'flex-start',
+                padding: variant === 'mobile' ? '0.6rem 0' : '0.75rem',
               }}
               className={isInsideBigContainer ? 'cursor-none' : ''}
             >
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Scrie un mesaj..."
-                value={inputValues[selectedBox]}
-                onChange={e => {
-                  const val = e.target.value;
-                  setInputValues(vals => {
-                    const newVals = [...vals];
-                    newVals[selectedBox] = val;
-                    return newVals;
-                  });
-                }}
-                style={{
-                  flex: 1, 
-                  border: '1px solid #d1d5db', 
-                  borderRadius: 8, 
-                  padding: '0.5rem 0.75rem', 
-                  fontSize: 14, 
-                  outline: 'none'
-                }} 
-                className={isInsideBigContainer ? 'cursor-none' : ''}
-                onMouseEnter={() => setIsOverInput(true)}
-                onMouseLeave={() => setIsOverInput(false)}
-              />
-              <button
-                ref={sendBtnRef}
-                style={{
-                  background: '#2563eb', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: 8, 
-                  padding: '0.5rem 0.9rem', 
-                  fontWeight: 500, 
-                  fontSize: 14
-                }}
-                className={isInsideBigContainer ? 'cursor-none' : ''}
-                onClick={() => {
-                  const val = inputValues[selectedBox];
-                  if (val.trim()) {
-                    setSentMessages(msgs => {
-                      const newMsgs = msgs.map(arr => [...arr]);
-                      newMsgs[selectedBox].push(val);
-                      return newMsgs;
-                    });
+              <div className={variant === 'mobile' ? 'w-full max-w-[460px] px-3 flex items-center gap-2' : 'w-full flex items-center gap-2'}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  placeholder="Scrie un mesaj..."
+                  value={inputValues[selectedBox]}
+                  onChange={e => {
+                    const val = e.target.value;
                     setInputValues(vals => {
                       const newVals = [...vals];
-                      newVals[selectedBox] = '';
+                      newVals[selectedBox] = val;
                       return newVals;
                     });
-                    // Auto-scroll to bottom after message is added
-                    setTimeout(() => {
-                      const chatArea = chatAreaRefs[selectedBox].current;
-                      if (chatArea) {
-                        chatArea.scrollTop = chatArea.scrollHeight;
-                      }
-                    }, 50);
-                  }
-                }}
-                onMouseEnter={() => setIsOverSend(true)}
-                onMouseLeave={() => setIsOverSend(false)}
-              >
-                Trimite
-              </button>
+                  }}
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    border: '1px solid #d1d5db', 
+                    borderRadius: 8, 
+                    padding: '0.5rem 0.75rem', 
+                    fontSize: 14, 
+                    outline: 'none'
+                  }} 
+                  className={isInsideBigContainer ? 'cursor-none' : ''}
+                  onMouseEnter={() => setIsOverInput(true)}
+                  onMouseLeave={() => setIsOverInput(false)}
+                />
+                <button
+                  ref={sendBtnRef}
+                  style={{
+                    background: '#2563eb', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: 8, 
+                    padding: '0.5rem 0.8rem', 
+                    fontWeight: 500, 
+                    fontSize: 14
+                  }}
+                  className={isInsideBigContainer ? 'cursor-none' : ''}
+                  onClick={() => {
+                    const val = inputValues[selectedBox];
+                    if (val.trim()) {
+                      setSentMessages(msgs => {
+                        const newMsgs = msgs.map(arr => [...arr]);
+                        newMsgs[selectedBox].push(val);
+                        return newMsgs;
+                      });
+                      setInputValues(vals => {
+                        const newVals = [...vals];
+                        newVals[selectedBox] = '';
+                        return newVals;
+                      });
+                      setTimeout(() => {
+                        const chatArea = chatAreaRefs[selectedBox].current;
+                        if (chatArea) {
+                          chatArea.scrollTop = chatArea.scrollHeight;
+                        }
+                      }, 50);
+                    }
+                  }}
+                  onMouseEnter={() => setIsOverSend(true)}
+                  onMouseLeave={() => setIsOverSend(false)}
+                >
+                  Trimite
+                </button>
+              </div>
             </div>
           </div>
         </div>

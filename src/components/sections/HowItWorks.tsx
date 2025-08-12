@@ -170,7 +170,10 @@ export default function HowItWorks() {
       </svg>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
         {/* Top image container */}
-        <div className="flex justify-center items-center mb-[200px] relative" style={{minHeight:'300px'}}>
+          <div
+            className="flex justify-center items-center mb-[60px] md:mb-[200px] relative"
+            style={{ minHeight: '300px' }}
+          >
           <div className="w-full flex justify-center relative">
             <img 
               src="/AnimeStyleImages/ImageTopTrees.png" 
@@ -182,13 +185,41 @@ export default function HowItWorks() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8 }}
-              className="absolute left-0 top-0 pl-8 pt-16 w-full"
-              style={{zIndex: 2, maxWidth: '100%', pointerEvents: 'auto'}}
+              className="absolute left-0 top-0 w-full flex flex-col items-start"
+              style={{ zIndex: 2, maxWidth: '100%', pointerEvents: 'auto', height: '100%' }}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white mb-2 md:mb-4 text-left drop-shadow-lg">
+              <h2
+                className="font-extrabold text-white mb-1 md:mb-4 drop-shadow-lg text-2xl sm:text-3xl md:text-6xl lg:text-7xl text-left sm:text-left mobile-center-title"
+                style={{
+                  paddingLeft: '2.2rem',
+                  paddingTop: '1.5rem',
+                  lineHeight: 1.08,
+                  maxWidth: '90%',
+                  fontSize: 'clamp(1.2rem, 5vw, 2.2rem)',
+                  position: 'relative',
+                  // On desktop, force slightly smaller font
+                  ...(typeof window !== 'undefined' && window.innerWidth >= 768 ? { fontSize: '3.7rem', textAlign: 'left', paddingLeft: '2.2rem' } : {}),
+                  // On mobile, center and make a bit larger
+                  ...(typeof window !== 'undefined' && window.innerWidth < 768 ? { textAlign: 'center', paddingLeft: 0, width: '100%', fontSize: '2.3rem' } : {}),
+                }}
+              >
                 Cum lucrează agentul <span style={{ color: '#fff' }}>AI</span>
               </h2>
-              <p className="text-white text-base sm:text-lg md:text-2xl font-semibold drop-shadow-lg mt-20 text-left" style={{maxWidth:'90%'}}>
+              <p
+                className="text-white font-semibold drop-shadow-lg text-base sm:text-lg md:text-2xl lg:text-3xl text-left sm:text-left mobile-center-title"
+                style={{
+                  marginTop: '0.7rem',
+                  paddingLeft: '2.2rem',
+                  maxWidth: '90%',
+                  fontSize: 'clamp(0.95rem, 3.5vw, 1.1rem)',
+                  position: 'relative',
+                  marginBottom: 0,
+                  // On desktop, force slightly smaller font
+                  ...(typeof window !== 'undefined' && window.innerWidth >= 768 ? { fontSize: '1.3rem', textAlign: 'left', paddingLeft: '2.2rem' } : {}),
+                  // On mobile, center and make a bit larger
+                  ...(typeof window !== 'undefined' && window.innerWidth < 768 ? { textAlign: 'center', paddingLeft: 0, width: '100%', fontSize: '1.4rem' } : {}),
+                }}
+              >
                 Activează-ți agentul AI în doar trei pași simpli
               </p>
             </motion.div>
@@ -494,7 +525,9 @@ export default function HowItWorks() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>&#8592;</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'block'}}>
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
               </button>
               <button
                 aria-label="Next step"
@@ -518,7 +551,9 @@ export default function HowItWorks() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>&#8594;</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'block'}}>
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
               </button>
             </div>
           </div>

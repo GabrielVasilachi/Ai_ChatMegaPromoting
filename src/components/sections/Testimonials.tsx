@@ -65,8 +65,8 @@ export default function Testimonials() {
 
       const st = ScrollTrigger.create({
         trigger: sectionEl,
-        start: 'center 24%',
-        end: 'bottom 5%',
+        start: 'center 14%',
+        end: 'bottom 15%',
         scrub: 2,
         onUpdate: (self) => {
           const progress = self.progress;
@@ -302,30 +302,35 @@ export default function Testimonials() {
         {/* Testimonials Grid - 3 columns, 2 rows (desktop), carousel (mobile) */}
         {isMobile ? (
           <div className="w-full flex flex-col items-center">
-            <div className="w-full">
+            <div className="w-full flex justify-center">
               {/* Only show the active card */}
-              <div className="bg-white rounded-xl p-8 shadow-lg transition-shadow duration-300">
+              <div
+                className="bg-white rounded-xl p-8 shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+                style={{ minHeight: '420px', maxWidth: '420px', width: '100%' }}
+              >
                 <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
                   {testimonials[activeIndex].quote}
                 </blockquote>
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold text-lg">{testimonials[activeIndex].name[0]}</span>
+                <div className="mt-auto">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold text-lg">{testimonials[activeIndex].name[0]}</span>
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900 text-base">{testimonials[activeIndex].name}</div>
+                      <div className="text-gray-600 text-sm">{testimonials[activeIndex].title}</div>
+                      <div className="text-gray-500 text-sm">{testimonials[activeIndex].company}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-bold text-gray-900 text-base">{testimonials[activeIndex].name}</div>
-                    <div className="text-gray-600 text-sm">{testimonials[activeIndex].title}</div>
-                    <div className="text-gray-500 text-sm">{testimonials[activeIndex].company}</div>
-                  </div>
-                </div>
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                    {activeIndex === 0 && 'Response Time: -85%'}
-                    {activeIndex === 1 && 'Cost Savings: 60%'}
-                    {activeIndex === 2 && 'CSAT Score: +40%'}
-                    {activeIndex === 3 && 'Lead Conversion: +300%'}
-                    {activeIndex === 4 && 'Resolution Rate: 92%'}
-                    {activeIndex === 5 && 'ROI: +250%'}
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
+                      {activeIndex === 0 && 'Response Time: -85%'}
+                      {activeIndex === 1 && 'Cost Savings: 60%'}
+                      {activeIndex === 2 && 'CSAT Score: +40%'}
+                      {activeIndex === 3 && 'Lead Conversion: +300%'}
+                      {activeIndex === 4 && 'Resolution Rate: 92%'}
+                      {activeIndex === 5 && 'ROI: +250%'}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,7 +358,9 @@ export default function Testimonials() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>&#8592;</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'block'}}>
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
               </button>
               <button
                 aria-label="Next testimonial"
@@ -377,7 +384,9 @@ export default function Testimonials() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>&#8594;</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'block'}}>
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
               </button>
             </div>
           </div>

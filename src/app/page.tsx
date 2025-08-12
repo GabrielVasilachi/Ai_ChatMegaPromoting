@@ -8,7 +8,7 @@ import Testimonials from '@/components/sections/Testimonials';
 import DeveloperSection from '@/components/sections/DeveloperSection';
 import Pricing from '@/components/sections/Pricing';
 import Footer from '@/components/sections/Footer';
-import MobileFooterCTA from '@/components/ui/MobileFooterCTA';
+
 
 export default function HomePage() {
   return (
@@ -27,7 +27,6 @@ export default function HomePage() {
         <DeveloperSection />
         <Pricing />
         <Footer />
-        <MobileFooterCTA />
       </main>
     </>
   );
