@@ -2,6 +2,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+// import { SVGAnimationWrapper } from '@/hooks/useExistingSVGAnimation';
+// import { SimpleSVGAnimationWrapper } from '@/hooks/useSimpleSVGAnimation';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 
 export default function IndustryModules() {
@@ -85,8 +89,59 @@ export default function IndustryModules() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndex, menuItems.length]);
 
+  // Ref pentru SVG path
+  const svgLineRef = useRef<SVGPathElement | null>(null);
+
+  useEffect(() => {
+    if (!svgLineRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const path = svgLineRef.current;
+    const pathLength = path.getTotalLength();
+    gsap.set(path, {
+      strokeDasharray: pathLength,
+      strokeDashoffset: pathLength,
+    });
+    const triggerTarget = document.getElementById('industry-modules-section');
+    if (!triggerTarget) return;
+    const st = ScrollTrigger.create({
+      trigger: triggerTarget,
+      start: 'top 80%', // linia incepe cand sectiunea a intrat 20% in viewport
+      end: 'bottom 75%', // ramane la fel, se termina la 45% din viewport
+      scrub: true,
+      onUpdate: self => {
+        const progress = self.progress; // 0..1
+        gsap.set(path, {
+          strokeDashoffset: pathLength * (1 - progress)
+        });
+      },
+      invalidateOnRefresh: true,
+    });
+    return () => {
+      st.kill();
+    };
+  }, []);
+
+  const [hideSvgLine, setHideSvgLine] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    // Listen for HowItWorks line visibility via console.log
+    const origLog = window.console.log;
+    function customLog(...args: any[]) {
+      if (args[0] === 'howitworks-svg-line-hidden') {
+        setHideSvgLine(true);
+      } else if (args[0] === 'howitworks-svg-line-visible') {
+        setHideSvgLine(false);
+      }
+      origLog.apply(window.console, args);
+    }
+    window.console.log = customLog;
+    return () => {
+      window.console.log = origLog;
+    };
+  }, []);
+
   return (
-    <section id="industry-modules-section" className="min-h-[120vh] pt-1 pb-[320px] md:pt-2 md:pb-[360px] flex items-center overflow-hidden relative">
+    <section id="industry-modules-section" ref={sectionRef} className="min-h-[120vh] pt-1 pb-[320px] md:pt-2 md:pb-[360px] flex items-center overflow-hidden relative">
       {/* Custom SVG line: starts at left, goes 20px down, curves left, then right, then down */}
       <svg
         className="hidden md:block absolute z-20 pointer-events-none"
@@ -95,6 +150,7 @@ export default function IndustryModules() {
           left: 0,
           width: '100%',
           height: '100%',
+          display: hideSvgLine ? 'none' : undefined,
         }}
         width="100%"
         height="100%"
@@ -102,8 +158,8 @@ export default function IndustryModules() {
         fill="none"
         preserveAspectRatio="none"
       >
-        {/* The path starts at x=30, goes straight down 20px, then curves 90° to the right, then continues horizontally and then down as before */}
         <path
+          ref={svgLineRef}
           d="M120 0
             V20
             C120 35 135 50 150 50
@@ -112,7 +168,6 @@ export default function IndustryModules() {
             V1200"
           stroke="#b3b3b3"
           strokeWidth="3"
-          // strokeDasharray="10,8"
           opacity="0.6"
         />
       </svg>

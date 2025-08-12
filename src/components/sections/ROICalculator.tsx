@@ -3,6 +3,10 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef, useState, useEffect, useMemo } from 'react';
+// import { SVGAnimationWrapper } from '@/hooks/useExistingSVGAnimation';
+// import { SimpleSVGAnimationWrapper } from '@/hooks/useSimpleSVGAnimation';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function ROICalculator() {
   const ref = useRef(null);
@@ -77,6 +81,56 @@ export default function ROICalculator() {
   // Tour management
   // Tutorial effect and completeTour removed
 
+  // Ref pentru SVG path
+  const svgLineRef = useRef<SVGPathElement | null>(null);
+  const [svgLineDisplay, setSvgLineDisplay] = useState<'block' | 'none'>('block');
+
+  // Listen for console.log messages from the section above to hide/show the SVG line
+  useEffect(() => {
+    const originalConsoleLog = window.console.log;
+    function customConsoleLog(...args: any[]) {
+      if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-hidden')) {
+        setSvgLineDisplay('none');
+      } else if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-visible')) {
+        setSvgLineDisplay('block');
+      }
+      originalConsoleLog.apply(window.console, args);
+    }
+    window.console.log = customConsoleLog;
+    return () => {
+      window.console.log = originalConsoleLog;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!svgLineRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const path = svgLineRef.current;
+    const pathLength = path.getTotalLength();
+    gsap.set(path, {
+      strokeDasharray: pathLength,
+      strokeDashoffset: pathLength,
+    });
+    const triggerTarget = ref.current;
+    if (!triggerTarget) return;
+    const st = ScrollTrigger.create({
+      trigger: triggerTarget,
+      start: 'top 75%', // linia incepe cand sectiunea a intrat 20% in viewport
+      end: 'bottom 55%', // linia se completeaza la 45% din viewport
+      scrub: true,
+      onUpdate: self => {
+        const progress = self.progress; // 0..1
+        gsap.set(path, {
+          strokeDashoffset: pathLength * (1 - progress)
+        });
+      },
+      invalidateOnRefresh: true,
+    });
+    return () => {
+      st.kill();
+    };
+  }, []);
+
   return (
     <section ref={ref} className="px-6 sm:px-8 lg:px-12 py-20 sm:py-24 bg-black relative">
       {/* Vertical dashed line on the right, matching the section above, straight down as SVG */}
@@ -87,6 +141,7 @@ export default function ROICalculator() {
           left: 0,
           width: '100%',
           height: '100%',
+          display: svgLineDisplay,
         }}
         width="100%"
         height="100%"
@@ -95,11 +150,11 @@ export default function ROICalculator() {
         preserveAspectRatio="none"
       >
         <path
+          ref={svgLineRef}
           d="M120 0 V1200"
           transform="translate(820,0)"
           stroke="#b3b3b3"
           strokeWidth="3"
-          // strokeDasharray="10,8"
           opacity="0.6"
         />
       </svg>

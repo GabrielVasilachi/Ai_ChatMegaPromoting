@@ -1,5 +1,3 @@
-
-
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
@@ -452,7 +450,7 @@ export default function HeroSectionLeftClean() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-5 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1.5 backdrop-blur-md shadow-sm"
+              className="mb-5 inline-flex items-center gap-2 border border-black/10 bg-white/70 px-3 py-1.5 backdrop-blur-md shadow-sm rounded-md"
             >
               <span className="text-[11px] font-medium tracking-wide text-gray-700">Noutate</span>
               <span className="h-1 w-1 rounded-full bg-gray-400" />

@@ -30,11 +30,14 @@ export interface PricingPlan {
   id: number;
   name: string;
   price: string;
+  originalPrice?: string;
   period: string;
   description: string;
   features: string[];
   isPopular?: boolean;
   ctaText: string;
+  badge?: string;
+  subText?: string;
 }
 
 // Company logos for social proof
@@ -110,56 +113,191 @@ export const testimonials: Testimonial[] = [
 ];
 
 // Pricing plans
-export const pricingPlans: PricingPlan[] = [
+export const pricingPlansMonthly: PricingPlan[] = [
   {
     id: 1,
-    name: "Free",
-    price: "$0",
-    period: "month",
-    description: "Perfect for small businesses getting started",
+    name: "Starter",
+    price: "$49",
+    period: "Lunar",
+    description:
+      "Ideal pentru testarea platformei și automatizarea interacțiunilor de bază.",
     features: [
-      "Up to 100 conversations/month",
-      "Basic AI responses",
-      "Email support",
-      "1 integration",
+      "2.000 credite pentru mesaje/lunar",
+      "15.000 simboluri instrucțiuni",
+      "Integrare rapidă cu orice platformă disponibilă",
+      "Automatizare inteligentă: mesaje de follow-up, scorarea lead-urilor și generare de imagini personalizate",
+      "Răspunsuri automate 24/7 pentru întrebări frecvente, reducând timpul de așteptare al clienților",
+      "Suport tehnic lunar pentru a vă ajuta să configurați și să optimizați chatbot-ul",
+      "Actualizări regulate pentru a menține performanța și securitatea chatbot-ului la nivel maxim",
+      "Rapoarte de bază privind interacțiunile clienților, pentru a înțelege mai bine nevoile lor",
+      "Acces nelimitat la personalizare, cu opțiuni de ajustare a scenariilor de bază și nu doar"
     ],
-    ctaText: "Get Started Free",
+    ctaText: "Începeți"
   },
   {
     id: 2,
-    name: "Growth",
-    price: "$49",
-    period: "month",
-    description: "For growing businesses with higher volume",
+    name: "Profesional",
+    price: "$105",
+    originalPrice: "$150",
+    period: "Lunar",
+    description:
+      "Pentru afaceri în creștere care au nevoie de funcționalitate avansată.",
     features: [
-      "Up to 2,500 conversations/month",
-      "Advanced AI with learning",
-      "Priority support",
-      "5 integrations",
-      "Custom branding",
-      "Analytics dashboard",
+      "10.000 credite pentru mesaje/lunar",
+      "30.000 simboluri instrucțiuni",
+      "Toate funcțiile din pachetul Standard, plus gestionare avansată a fluxului mediu de clienți",
+      "Personalizare completă a chatbot-ului: ajustați tonul, limbajul și scenariile pentru brandul dvs",
+      "Răspunsuri AI îmbunătățite, cu precizie ridicată pentru întrebări complexe, disponibil 24/7",
+      "Integrări API pentru conectarea cu alte platforme, cum ar fi CRM-uri sau sisteme de ecommerce",
+      "Analize detaliate ale interacțiunilor, inclusiv tendințe și rapoarte personalizate lunare",
+      "Suport prioritar pentru configurare și soluționarea problemelor, cu răspuns în 24 de ore",
+      "Opțiuni de clonare a vocii pentru mesaje vocale personalizate, pentru o experiență unică a clienților"
     ],
     isPopular: true,
-    ctaText: "Start Growth Plan",
+    ctaText: "Începeți",
+    badge: "Prima lună - 30%"
   },
   {
     id: 3,
-    name: "Enterprise",
-    price: "Custom",
-    period: "pricing",
-    description: "For large organizations with custom needs",
+    name: "Business",
+    price: "$299",
+    period: "Lunar",
+    description:
+      "Pentru companii mari cu nevoi complexe și management dedicat.",
     features: [
-      "Unlimited conversations",
-      "Custom AI training",
-      "Dedicated support manager",
-      "Unlimited integrations",
-      "White-label solution",
-      "Advanced analytics",
-      "SLA guarantee",
+      "30.000 credite pentru mesaje/lunar",
+      "40.000 simboluri instrucțiuni",
+      "Toate funcțiile din pachetul Pro, plus acces nelimitat la configurarea avansată a chatbotului",
+      "Gestionare eficientă a traficului ridicat, fără întreruperi, pentru mii de interacțiuni zilnice",
+      "Experiență complet personalizată: ton, limbaj, scenarii și integrări API",
+      "Automatizare avansată, inclusiv generare de conținut dinamic și răspunsuri bazate pe date în timp real",
+      "Dashboard de analiză premium, cu insight-uri detaliate pentru optimizarea strategiilor de chat",
+      "Suport dedicat 24/7, cu manager de cont personal pentru asistență continuă",
+      "Utilizare comercială nelimitată, inclusiv pentru campanii globale și multi-canal"
     ],
-    ctaText: "Contact Sales",
+    ctaText: "Începeți"
   },
+  {
+    id: 4,
+    name: "Enterprise",
+    price: "$499",
+    period: "Lunar",
+    description:
+      "Soluție personalizată pentru dezvoltatori, cu suport și servicii premium.",
+    features: [
+      "50.000 credite pentru mesaje/lunar",
+      "50.000 simboluri instrucțiuni",
+      "Toate funcțiile din pachetul Ultra, plus capacitate maximă pentru gestionarea traficului global",
+      "Integrări personalizate cu sistemele dvs",
+      "Răspunsuri AI ultra-precise, adaptate pentru limbaje multiple și dialecte regionale",
+      "Analize avansate în timp real, cu predicții bazate pe IA pentru tendințele clienților",
+      "Suport premium, inclusiv training pentru echipa dvs. de administrare",
+      "Opțiuni de scalare nelimitată, pentru a suporta creșterea rapidă a interacțiunilor",
+      "Garanție de performanță, cu uptime de 99,9% și backup automat pentru date"
+    ],
+    ctaText: "Începeți"
+  }
 ];
+
+export const pricingPlansYearly: PricingPlan[] = [
+  {
+    id: 1,
+    name: "Starter",
+    price: "$40",
+    originalPrice: "$49",
+    period: "Lunar",
+    subText: "Se achită anual",
+    description:
+      "Ideal pentru testarea platformei și automatizarea interacțiunilor de bază.",
+    features: [
+      "2.000 credite pentru mesaje/lunar",
+      "15.000 simboluri instrucțiuni",
+      "Integrare rapidă cu orice platformă disponibilă",
+      "Automatizare inteligentă: mesaje de follow-up, scorarea lead-urilor și generare de imagini personalizate",
+      "Răspunsuri automate 24/7 pentru întrebări frecvente, reducând timpul de așteptare al clienților",
+      "Suport tehnic lunar pentru a vă ajuta să configurați și să optimizați chatbot-ul",
+      "Actualizări regulate pentru a menține performanța și securitatea chatbot-ului la nivel maxim",
+      "Rapoarte de bază privind interacțiunile clienților, pentru a înțelege mai bine nevoile lor",
+      "Acces nelimitat la personalizare, cu opțiuni de ajustare a scenariilor de bază și nu doar"
+    ],
+    ctaText: "Începeți",
+    badge: "2 luni gratis"
+  },
+  {
+    id: 2,
+    name: "Profesional",
+    price: "$120",
+    originalPrice: "$150",
+    period: "Lunar",
+    subText: "Se achită anual",
+    description:
+      "Pentru afaceri în creștere care au nevoie de funcționalitate avansată.",
+    features: [
+      "10.000 credite pentru mesaje/lunar",
+      "30.000 simboluri instrucțiuni",
+      "Toate funcțiile din pachetul Standard, plus gestionare avansată a fluxului mediu de clienți",
+      "Personalizare completă a chatbot-ului: ajustați tonul, limbajul și scenariile pentru brandul dvs",
+      "Răspunsuri AI îmbunătățite, cu precizie ridicată pentru întrebări complexe, disponibil 24/7",
+      "Integrări API pentru conectarea cu alte platforme, cum ar fi CRM-uri sau sisteme de ecommerce",
+      "Analize detaliate ale interacțiunilor, inclusiv tendințe și rapoarte personalizate lunare",
+      "Suport prioritar pentru configurare și soluționarea problemelor, cu răspuns în 24 de ore",
+      "Opțiuni de clonare a vocii pentru mesaje vocale personalizate, pentru o experiență unică a clienților"
+    ],
+    isPopular: true,
+    ctaText: "Începeți",
+    badge: "2 luni gratis"
+  },
+  {
+    id: 3,
+    name: "Business",
+    price: "$240",
+    originalPrice: "$299",
+    period: "Lunar",
+    subText: "Se achită anual",
+    description:
+      "Pentru companii mari cu nevoi complexe și management dedicat.",
+    features: [
+      "30.000 credite pentru mesaje/lunar",
+      "40.000 simboluri instrucțiuni",
+      "Toate funcțiile din pachetul Pro, plus acces nelimitat la configurarea avansată a chatbotului",
+      "Gestionare eficientă a traficului ridicat, fără întreruperi, pentru mii de interacțiuni zilnice",
+      "Experiență complet personalizată: ton, limbaj, scenarii și integrări API",
+      "Automatizare avansată, inclusiv generare de conținut dinamic și răspunsuri bazate pe date în timp real",
+      "Dashboard de analiză premium, cu insight-uri detaliate pentru optimizarea strategiilor de chat",
+      "Suport dedicat 24/7, cu manager de cont personal pentru asistență continuă",
+      "Utilizare comercială nelimitată, inclusiv pentru campanii globale și multi-canal"
+    ],
+    ctaText: "Începeți",
+    badge: "2 luni gratis"
+  },
+  {
+    id: 4,
+    name: "Enterprise",
+    price: "$400",
+    originalPrice: "$499",
+    period: "Lunar",
+    subText: "Se achită anual",
+    description:
+      "Soluție personalizată pentru dezvoltatori, cu suport și servicii premium.",
+    features: [
+      "50.000 credite pentru mesaje/lunar",
+      "50.000 simboluri instrucțiuni",
+      "Toate funcțiile din pachetul Ultra, plus capacitate maximă pentru gestionarea traficului global",
+      "Integrări personalizate cu sistemele dvs",
+      "Răspunsuri AI ultra-precise, adaptate pentru limbaje multiple și dialecte regionale",
+      "Analize avansate în timp real, cu predicții bazate pe IA pentru tendințele clienților",
+      "Suport premium, inclusiv training pentru echipa dvs. de administrare",
+      "Opțiuni de scalare nelimitată, pentru a suporta creșterea rapidă a interacțiunilor",
+      "Garanție de performanță, cu uptime de 99,9% și backup automat pentru date"
+    ],
+    ctaText: "Începeți",
+    badge: "2 luni gratis"
+  }
+];
+
+
+// Keep backward compatibility
+export const pricingPlans = pricingPlansMonthly;
 
 // Code examples for developer section
 export const codeExamples = {

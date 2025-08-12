@@ -17,6 +17,7 @@ module.exports = {
       },
       screens: {
         'xs': '475px', // Extra small breakpoint for better mobile support
+        '3xl': '1920px', // Custom breakpoint for very large screens
       },
       animation: {
         'scroll': 'scroll 40s linear infinite',

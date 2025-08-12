@@ -6,6 +6,9 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { howItWorksSteps } from '@/lib/data';
+// import { SVGAnimationWrapper } from '@/hooks/useExistingSVGAnimation';
+// import { SimpleSVGAnimationWrapper } from '@/hooks/useSimpleSVGAnimation';
+// (importurile gsap si ScrollTrigger sunt deja sus)
 
 export default function HowItWorks() {
   // Track which card is hovered (desktop)
@@ -20,6 +23,52 @@ export default function HowItWorks() {
     sectionRef.current = el;
   }, []);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+
+  // Hide vertical SVG line when it overlaps any element in the section
+  const [hideSvgLine, setHideSvgLine] = useState(false);
+  useEffect(() => {
+    const checkOverlap = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const secRect = section.getBoundingClientRect();
+      // SVG path X corresponds to 120 in a 1000-wide viewBox => 12% of width
+      const x = secRect.left + secRect.width * 0.12;
+      // Consider a 4px strip around the line for visibility
+      const stripLeft = x - 2;
+      const stripRight = x + 2;
+      let overlap = false;
+      const all = Array.from(section.querySelectorAll('*')) as HTMLElement[];
+      for (const el of all) {
+        const tag = el.tagName.toLowerCase();
+        if (tag === 'svg' || tag === 'path') continue; // ignore the line itself
+        const rect = el.getBoundingClientRect();
+        if (stripLeft < rect.right && stripRight > rect.left && secRect.top < rect.bottom && secRect.bottom > rect.top) {
+          overlap = true;
+          break;
+        }
+      }
+      setHideSvgLine(prev => {
+        if (prev !== overlap) {
+          if (overlap) {
+            console.log('howitworks-svg-line-hidden');
+          } else {
+            console.log('howitworks-svg-line-visible');
+          }
+        }
+        return overlap;
+      });
+    };
+    const onScroll = () => requestAnimationFrame(checkOverlap);
+    const onResize = () => requestAnimationFrame(checkOverlap);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    // initial
+    setTimeout(checkOverlap, 0);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   // Carousel state for mobile
   const [activeStep, setActiveStep] = useState(0);
@@ -61,6 +110,38 @@ export default function HowItWorks() {
     };
   }, []);
 
+  // Ref pentru SVG path
+  const svgLineRef = useRef<SVGPathElement | null>(null);
+
+  useEffect(() => {
+    if (!svgLineRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const path = svgLineRef.current;
+    const pathLength = path.getTotalLength();
+    gsap.set(path, {
+      strokeDasharray: pathLength,
+      strokeDashoffset: pathLength,
+    });
+    const triggerTarget = sectionRef.current;
+    if (!triggerTarget) return;
+    const st = ScrollTrigger.create({
+      trigger: triggerTarget,
+      start: 'top 70%',
+      end: 'bottom 80%', // linia se completeaza cand sectiunea ajunge la 85% din viewport
+      scrub: true,
+      onUpdate: self => {
+        const progress = self.progress; // 0..1
+        gsap.set(path, {
+          strokeDashoffset: pathLength * (1 - progress)
+        });
+      },
+      invalidateOnRefresh: true,
+    });
+    return () => {
+      st.kill();
+    };
+  }, []);
+
   return (
     <section ref={setSectionRefs} className="min-h-[60vh] bg-white py-6 md:py-10 flex items-center overflow-hidden relative">
       {/* SVG vertical dashed line, matching IndustryModules, straight down, same width and position */}
@@ -71,6 +152,7 @@ export default function HowItWorks() {
           left: 0,
           width: '100%',
           height: '100%',
+          display: hideSvgLine ? 'none' : undefined,
         }}
         width="100%"
         height="100%"
@@ -79,10 +161,10 @@ export default function HowItWorks() {
         preserveAspectRatio="none"
       >
         <path
+          ref={svgLineRef}
           d="M120 0 V1200"
           stroke="#b3b3b3"
           strokeWidth="3"
-          // strokeDasharray="10,8"
           opacity="0.6"
         />
       </svg>
@@ -126,6 +208,7 @@ export default function HowItWorks() {
                 className={
                   `howitworks-card text-center px-12 py-16 rounded-3xl transition-colors duration-300 mx-3 relative overflow-hidden ` +
                   (index === 0 || index === 1 || index === 2 ? 'bg-blue-50/80 border border-blue-100 shadow-md' : '') +
+                  (hoveredIndex === index ? ' shadow-2xl' : '') +
                   ' group'
                 }
                 style={{
@@ -164,16 +247,6 @@ export default function HowItWorks() {
                   setHoveredIndex(null);
                 }}
               >
-                {/* Overlay for hover effect */}
-                {hoveredIndex === index && (
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'rgba(120,120,120,0.18)',
-                    zIndex: 2,
-                    pointerEvents: 'none',
-                  }} />
-                )}
                 {/* Step number - large background for all containers */}
                 <div
                   aria-hidden
