@@ -61,6 +61,20 @@ export default function HeroSectionLeftClean() {
       clearTimeout(timeout);
     };
   }, []);
+
+  // --- viewport detection to conditionally render desktop vs mobile chat ---
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsMobile('matches' in e ? e.matches : (e as MediaQueryList).matches);
+    setIsMobile(mq.matches);
+    if (mq.addEventListener) mq.addEventListener('change', handler as (ev: MediaQueryListEvent) => any); else mq.addListener(handler as any);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', handler as (ev: MediaQueryListEvent) => any); else mq.removeListener(handler as any);
+    };
+  }, []);
+
   const [showRealMouseImage, setShowRealMouseImage] = useState(false)
   const [realMousePos, setRealMousePos] = useState({ x: 0, y: 0 })
   const [mousePos, setMousePos] = useState({ x: 400, y: 180 })
@@ -243,18 +257,6 @@ export default function HeroSectionLeftClean() {
     typeChar();
   }
 
-  // Helper: detectează dacă mouse-ul fake este peste input
-  // function isMouseOverInput() {
-  //   const input = inputRef.current;
-  //   if (!input) return false;
-  //   const rect = input.getBoundingClientRect();
-  //   return (
-  //     mousePos.x >= rect.left && mousePos.x <= rect.right &&
-  //     mousePos.y >= rect.top && mousePos.y <= rect.bottom
-  //   );
-  // }
-
-
   // Random movement for fake mouse, always active when showFakeMouse is true
   useEffect(() => {
     if (!showFakeMouse) return;
@@ -332,30 +334,6 @@ export default function HeroSectionLeftClean() {
     };
   }, [showFakeMouse]);
 
-  // Dezactivat: Monitorizarea hover peste input - acum totul se face prin secvență
-  // useEffect(() => {
-  //   if (!showFakeMouse) return;
-  //   if (typeof window === 'undefined') return;
-  //   // Helper: detectează dacă mouse-ul fake este peste input
-  //   function isMouseOverInput() {
-  //     const input = inputRef.current;
-  //     if (!input) return false;
-  //     const rect = input.getBoundingClientRect();
-  //     return (
-  //       mousePos.x >= rect.left && mousePos.x <= rect.right &&
-  //       mousePos.y >= rect.top && mousePos.y <= rect.bottom
-  //     );
-  //   }
-  //   if (isMouseOverInput() && inputValues[selectedBox] === '') {
-  //     const timer = setTimeout(() => {
-  //       fakeMouseTypeAndSend(selectedBox);
-  //     }, 300);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [showFakeMouse, mousePos.x, mousePos.y, selectedBox, inputValues]);
-
-  // Remove per-element mouse enter/leave logic, only use the big container logic
-
   // Show only the image mouse and hide everything else when hovering big container (including all nested elements)
   const [isInsideBigContainer, setIsInsideBigContainer] = useState(false);
   const handleBigContainerEnter = () => {
@@ -372,7 +350,200 @@ export default function HeroSectionLeftClean() {
     setRealMousePos({ x: e.clientX, y: e.clientY });
   };
 
-
+  // Helper to render the responsive chat container for desktop or mobile
+  const renderChat = (variant: 'desktop' | 'mobile') => {
+    const wrapperSizing = variant === 'desktop'
+      ? 'w-[min(90vw,700px)] h-[clamp(320px,40vw,420px)]'
+      : 'w-full h-[min(72vw,380px)]';
+    return (
+      <div
+        className={`${wrapperSizing} bg-white rounded-2xl border border-gray-400 shadow-lg flex items-center justify-center ml-auto relative ${isInsideBigContainer ? 'cursor-none' : ''}`}
+        onMouseEnter={handleBigContainerEnter}
+        onMouseLeave={handleBigContainerLeave}
+        onMouseMove={handleBigContainerMove}
+      >
+        {/* MacBook-style window controls */}
+        <div className="absolute top-4 left-4 flex gap-2">
+          <span className="w-3 h-3 rounded-full bg-red-500 border border-red-300 shadow-sm"></span>
+          <span className="w-3 h-3 rounded-full bg-yellow-400 border border-yellow-300 shadow-sm"></span>
+          <span className="w-3 h-3 rounded-full bg-green-500 border border-green-300 shadow-sm"></span>
+        </div>
+        {/* Nested container */}
+        <div className="w-[calc(100%-2px)] h-[calc(100%-37px)] bg-white rounded-2xl border border-gray-300 absolute left-0 top-[35px] flex flex-row items-stretch justify-between overflow-hidden">
+          {/* Left small container */}
+          <div
+            className={`w-[28%] h-full bg-white rounded-l-2xl rounded-tr-none rounded-br-none border border-gray-200 flex flex-col items-stretch justify-start ml-0 relative ${isInsideBigContainer ? 'cursor-none' : ''}`}
+            onMouseEnter={e => { handleBigContainerEnter(); setIsOverLeftContainer(true); }}
+            onMouseLeave={e => { handleBigContainerLeave(); setIsOverLeftContainer(false); }}
+            onMouseMove={handleBigContainerMove}
+          >
+            <div className="absolute top-3 left-3 flex gap-1"></div>
+            {/* Four stacked containers, responsive heights */}
+            <div className="flex flex-col w-full h-full">
+              <div
+                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 0 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
+                onClick={() => setSelectedBox(0)}
+                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
+                ref={rightBoxRefs[0]}
+              >
+                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Alice</span>
+              </div>
+              <div
+                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 1 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
+                onClick={() => setSelectedBox(1)}
+                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
+                ref={rightBoxRefs[1]}
+              >
+                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Bob</span>
+              </div>
+              <div
+                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 2 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
+                onClick={() => setSelectedBox(2)}
+                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
+                ref={rightBoxRefs[2]}
+              >
+                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Carol</span>
+              </div>
+              <div
+                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 3 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
+                onClick={() => setSelectedBox(3)}
+                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
+                ref={rightBoxRefs[3]}
+              >
+                <span style={{width:28, height:28, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:12}}></span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Dave</span>
+              </div>
+            </div>
+          </div>
+          {/* Right main container */}
+          <div
+            className={`flex-1 h-full bg-white rounded-r-2xl rounded-tl-none rounded-bl-none border border-gray-200 flex flex-col mr-0 relative overflow-hidden ${isInsideBigContainer ? 'cursor-none' : ''}`}
+            onMouseEnter={handleBigContainerEnter}
+            onMouseLeave={handleBigContainerLeave}
+            onMouseMove={handleBigContainerMove}
+          >
+            {/* Name at top left - FIXED */}
+            <div className="absolute top-3 left-3 text-[15px] md:text-lg font-bold text-gray-700 select-none z-10 bg-white px-2">
+              {rightBoxData[selectedBox].name}
+            </div>
+            
+            {/* Scrollable content area */}
+            <div 
+              ref={chatAreaRefs[selectedBox]}
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                paddingTop: '50px', // Space for fixed name
+                paddingLeft: '1rem',
+                paddingRight: '1rem',
+                paddingBottom: '80px', // Space for input area
+              }}
+              className="flex flex-col gap-3"
+            >
+              {/* Static content */}
+              <div>
+                <div className="text-[13px] md:text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text1}</div>
+                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit">{rightBoxData[selectedBox].response1}</div>
+              </div>
+              <div>
+                <div className="text-[13px] md:text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text2}</div>
+                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit">{rightBoxData[selectedBox].response2}</div>
+              </div>
+              
+              {/* Chat messages */}
+              {sentMessages[selectedBox] && sentMessages[selectedBox].map((msg, idx) => (
+                <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-[12px] md:text-sm shadow-sm">{msg}</div>
+              ))}
+            </div>
+            {/* Input container mic jos */}
+            <div 
+              style={{
+                position: 'absolute', 
+                left: 0, 
+                bottom: 0, 
+                width: '100%', 
+                padding: '0.75rem', 
+                background: 'rgba(255,255,255,0.95)', 
+                borderTop: '1px solid #e5e7eb', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem'
+              }}
+              className={isInsideBigContainer ? 'cursor-none' : ''}
+            >
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Scrie un mesaj..."
+                value={inputValues[selectedBox]}
+                onChange={e => {
+                  const val = e.target.value;
+                  setInputValues(vals => {
+                    const newVals = [...vals];
+                    newVals[selectedBox] = val;
+                    return newVals;
+                  });
+                }}
+                style={{
+                  flex: 1, 
+                  border: '1px solid #d1d5db', 
+                  borderRadius: 8, 
+                  padding: '0.5rem 0.75rem', 
+                  fontSize: 14, 
+                  outline: 'none'
+                }} 
+                className={isInsideBigContainer ? 'cursor-none' : ''}
+                onMouseEnter={() => setIsOverInput(true)}
+                onMouseLeave={() => setIsOverInput(false)}
+              />
+              <button
+                ref={sendBtnRef}
+                style={{
+                  background: '#2563eb', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: 8, 
+                  padding: '0.5rem 0.9rem', 
+                  fontWeight: 500, 
+                  fontSize: 14
+                }}
+                className={isInsideBigContainer ? 'cursor-none' : ''}
+                onClick={() => {
+                  const val = inputValues[selectedBox];
+                  if (val.trim()) {
+                    setSentMessages(msgs => {
+                      const newMsgs = msgs.map(arr => [...arr]);
+                      newMsgs[selectedBox].push(val);
+                      return newMsgs;
+                    });
+                    setInputValues(vals => {
+                      const newVals = [...vals];
+                      newVals[selectedBox] = '';
+                      return newVals;
+                    });
+                    // Auto-scroll to bottom after message is added
+                    setTimeout(() => {
+                      const chatArea = chatAreaRefs[selectedBox].current;
+                      if (chatArea) {
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                      }
+                    }, 50);
+                  }
+                }}
+                onMouseEnter={() => setIsOverSend(true)}
+                onMouseLeave={() => setIsOverSend(false)}
+              >
+                Trimite
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section
@@ -477,6 +648,13 @@ export default function HeroSectionLeftClean() {
               Un agent virtual care răspunde instant pe web, WhatsApp, Facebook și email. Reduce costurile de suport și crește conversiile — păstrând vocea brandului tău.
             </motion.p>
 
+            {/* Mobile-only: chat container under subtitle */}
+            {isMobile && (
+              <div className="mt-6 md:hidden">
+                {renderChat('mobile')}
+              </div>
+            )}
+
             {/* Tiny extras to fill a bit of space (left only) */}
             <div className="mt-8 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">Fără cod</span>
@@ -500,195 +678,12 @@ export default function HeroSectionLeftClean() {
             </div>
           </div>
 
-          {/* Right side container */}
-          <div className="hidden md:flex md:col-span-6 lg:col-span-7 items-center justify-end">
-            <div
-              className={`w-[700px] h-[400px] bg-white rounded-2xl border border-gray-400 shadow-lg flex items-center justify-center ml-auto translate-x-[100px] relative ${isInsideBigContainer ? 'cursor-none' : ''}`}
-              onMouseEnter={handleBigContainerEnter}
-              onMouseLeave={handleBigContainerLeave}
-              onMouseMove={handleBigContainerMove}
-            >
-              {/* MacBook-style window controls */}
-              <div className="absolute top-4 left-4 flex gap-2">
-                <span className="w-3 h-3 rounded-full bg-red-500 border border-red-300 shadow-sm"></span>
-                <span className="w-3 h-3 rounded-full bg-yellow-400 border border-yellow-300 shadow-sm"></span>
-                <span className="w-3 h-3 rounded-full bg-green-500 border border-green-300 shadow-sm"></span>
-              </div>
-              {/* Nested container */}
-              <div className="w-[698px] h-[363px] bg-white rounded-2xl border border-gray-300 absolute left-0 top-[35px] flex flex-row items-center justify-between overflow-hidden">
-                {/* Left small container */}
-                <div
-                  className={`w-[200px] h-[363px] bg-white rounded-l-2xl rounded-tr-none rounded-br-none border border-gray-200 flex flex-col items-stretch justify-center ml-0 relative ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                  onMouseEnter={e => { handleBigContainerEnter(); setIsOverLeftContainer(true); }}
-                  onMouseLeave={e => { handleBigContainerLeave(); setIsOverLeftContainer(false); }}
-                  onMouseMove={handleBigContainerMove}
-                >
-                  <div className="absolute top-3 left-3 flex gap-1"></div>
-                  {/* Four stacked containers */}
-                  <div className="flex flex-col w-full h-[300px] absolute left-0 top-0">
-                    <div
-                      className={`w-full h-[70px] border border-gray-200 flex items-center ${selectedBox === 0 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                      onClick={() => setSelectedBox(0)}
-                      style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                      ref={rightBoxRefs[0]}
-                    >
-                      <span style={{width:32, height:32, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:16}}></span>
-                      <span style={{fontSize:15, color:'#374151', fontWeight:500}}>Bot Alice</span>
-                    </div>
-                    <div
-                      className={`w-full h-[70px] border border-gray-200 flex items-center ${selectedBox === 1 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                      onClick={() => setSelectedBox(1)}
-                      style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                      ref={rightBoxRefs[1]}
-                    >
-                      <span style={{width:32, height:32, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:16}}></span>
-                      <span style={{fontSize:15, color:'#374151', fontWeight:500}}>Bot Bob</span>
-                    </div>
-                    <div
-                      className={`w-full h-[70px] border border-gray-200 flex items-center ${selectedBox === 2 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                      onClick={() => setSelectedBox(2)}
-                      style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                      ref={rightBoxRefs[2]}
-                    >
-                      <span style={{width:32, height:32, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:16}}></span>
-                      <span style={{fontSize:15, color:'#374151', fontWeight:500}}>Bot Carol</span>
-                    </div>
-                    <div
-                      className={`w-full h-[70px] border border-gray-200 flex items-center ${selectedBox === 3 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                      onClick={() => setSelectedBox(3)}
-                      style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                      ref={rightBoxRefs[3]}
-                    >
-                      <span style={{width:32, height:32, borderRadius:'50%', background:'#e5e7eb', display:'inline-block', marginLeft:12, marginRight:16}}></span>
-                      <span style={{fontSize:15, color:'#374151', fontWeight:500}}>Bot Dave</span>
-                    </div>
-                  </div>
-                </div>
-                {/* Right main container */}
-                <div
-                  className={`w-[500px] h-[363px] bg-white rounded-r-2xl rounded-tl-none rounded-bl-none border border-gray-200 flex flex-col mr-0 relative overflow-hidden ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                  onMouseEnter={handleBigContainerEnter}
-                  onMouseLeave={handleBigContainerLeave}
-                  onMouseMove={handleBigContainerMove}
-                >
-                  {/* Name at top left - FIXED */}
-                  <div className="absolute top-3 left-3 text-lg font-bold text-gray-700 select-none z-10 bg-white px-2">
-                    {rightBoxData[selectedBox].name}
-                  </div>
-                  
-                  {/* Scrollable content area */}
-                  <div 
-                    ref={chatAreaRefs[selectedBox]}
-                    style={{
-                      flex: 1,
-                      overflowY: 'auto',
-                      paddingTop: '50px', // Space for fixed name
-                      paddingLeft: '2rem',
-                      paddingRight: '2rem',
-                      paddingBottom: '80px', // Space for input area
-                    }}
-                    className="flex flex-col gap-4"
-                  >
-                    {/* Static content */}
-                    <div>
-                      <div className="text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text1}</div>
-                      <div className="text-gray-600 text-sm bg-gray-100 rounded px-3 py-2 w-fit">{rightBoxData[selectedBox].response1}</div>
-                    </div>
-                    <div>
-                      <div className="text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text2}</div>
-                      <div className="text-gray-600 text-sm bg-gray-100 rounded px-3 py-2 w-fit">{rightBoxData[selectedBox].response2}</div>
-                    </div>
-                    
-                    {/* Chat messages */}
-                    {sentMessages[selectedBox] && sentMessages[selectedBox].map((msg, idx) => (
-                      <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-sm shadow-sm">{msg}</div>
-                    ))}
-                  </div>
-                  {/* Input container mic jos */}
-                  <div 
-                    style={{
-                      position: 'absolute', 
-                      left: 0, 
-                      bottom: 0, 
-                      width: '100%', 
-                      padding: '1rem', 
-                      background: 'rgba(255,255,255,0.95)', 
-                      borderTop: '1px solid #e5e7eb', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem'
-                    }}
-                    className={isInsideBigContainer ? 'cursor-none' : ''}
-                  >
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      placeholder="Scrie un mesaj..."
-                      value={inputValues[selectedBox]}
-                      onChange={e => {
-                        const val = e.target.value;
-                        setInputValues(vals => {
-                          const newVals = [...vals];
-                          newVals[selectedBox] = val;
-                          return newVals;
-                        });
-                      }}
-                      style={{
-                        flex: 1, 
-                        border: '1px solid #d1d5db', 
-                        borderRadius: 8, 
-                        padding: '0.5rem 0.75rem', 
-                        fontSize: 15, 
-                        outline: 'none'
-                      }} 
-                      className={isInsideBigContainer ? 'cursor-none' : ''}
-                      onMouseEnter={() => setIsOverInput(true)}
-                      onMouseLeave={() => setIsOverInput(false)}
-                    />
-                    <button
-                      ref={sendBtnRef}
-                      style={{
-                        background: '#2563eb', 
-                        color: 'white', 
-                        border: 'none', 
-                        borderRadius: 8, 
-                        padding: '0.5rem 1rem', 
-                        fontWeight: 500, 
-                        fontSize: 15
-                      }}
-                      className={isInsideBigContainer ? 'cursor-none' : ''}
-                      onClick={() => {
-                        const val = inputValues[selectedBox];
-                        if (val.trim()) {
-                          setSentMessages(msgs => {
-                            const newMsgs = msgs.map(arr => [...arr]);
-                            newMsgs[selectedBox].push(val);
-                            return newMsgs;
-                          });
-                          setInputValues(vals => {
-                            const newVals = [...vals];
-                            newVals[selectedBox] = '';
-                            return newVals;
-                          });
-                          // Auto-scroll to bottom after message is added
-                          setTimeout(() => {
-                            const chatArea = chatAreaRefs[selectedBox].current;
-                            if (chatArea) {
-                              chatArea.scrollTop = chatArea.scrollHeight;
-                            }
-                          }, 50);
-                        }
-                      }}
-                      onMouseEnter={() => setIsOverSend(true)}
-                      onMouseLeave={() => setIsOverSend(false)}
-                    >
-                      Trimite
-                    </button>
-                  </div>
-                </div>
-              </div>
+          {/* Right side container (desktop/tablet). Not rendered on mobile to avoid duplicate refs. */}
+          {!isMobile && (
+            <div className="hidden md:flex md:col-span-6 lg:col-span-7 items-center justify-end">
+              {renderChat('desktop')}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>
