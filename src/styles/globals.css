@@ -19,7 +19,7 @@
 }
 
 /* Base styles */
-body {
+html, body {
   background-color: white;
   color: black;
   overflow-x: hidden; /* Prevent horizontal scroll on mobile */

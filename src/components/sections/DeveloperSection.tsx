@@ -57,15 +57,15 @@ export default function DeveloperSection() {
       </div>
       {/* Absolutely positioned iPhone image at the bottom center */}
       <div
-        className="absolute z-0"
+        className="absolute z-0 hidden md:block"
         style={{
-          right: '18%',
+          right: 'clamp(5%, 18%, 18%)',
           left: 'auto',
           bottom: '0',
-          transform: 'scale(1.45)',
+          transform: 'scale(clamp(1.0, 1.45, 1.45))',
           maxHeight: '600px',
           width: 'auto',
-          maxWidth: '500px',
+          maxWidth: 'min(500px, 40vw)',
           borderRadius: '1.5rem',
           boxShadow: '0 8px 32px 0 rgba(0,0,0,0.18)',
           overflow: 'hidden',

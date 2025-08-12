@@ -9,6 +9,12 @@ export const metadata: Metadata = {
   description: 'Never miss a customer inquiry again. Our AI agent handles inbound messages, qualifies leads, and routes complex issues to your team.',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+  maximumScale: 5.0,
+};
+
 export default function RootLayout({
   children,
 }: {
