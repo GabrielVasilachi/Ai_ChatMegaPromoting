@@ -2,19 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 
 // Configuration constants from environment variables
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-const AGENT_ID = process.env.AGENT_ID;
-const AGENT_PHONE_NUMBER_ID = process.env.AGENT_PHONE_NUMBER_ID;
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || 'fake_api_key';
+const AGENT_ID = process.env.AGENT_ID || 'fake_agent_id';
+const AGENT_PHONE_NUMBER_ID = process.env.AGENT_PHONE_NUMBER_ID || 'fake_phone_number_id';
 
-// Validate required environment variables
-if (!ELEVENLABS_API_KEY || !AGENT_ID || !AGENT_PHONE_NUMBER_ID) {
-  throw new Error('Missing required environment variables: ELEVENLABS_API_KEY, AGENT_ID, or AGENT_PHONE_NUMBER_ID');
-}
-
-// Initialize the ElevenLabs client
-const client = new ElevenLabsClient({ 
-  apiKey: ELEVENLABS_API_KEY 
-});
+// Initialize the ElevenLabs client only if we have real API key
+const client = ELEVENLABS_API_KEY !== 'fake_api_key' 
+  ? new ElevenLabsClient({ apiKey: ELEVENLABS_API_KEY }) 
+  : null;
 
 /**
  * Validates if a phone number is in a valid format
@@ -34,6 +29,14 @@ function validatePhoneNumber(phoneNumber: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we have real API configuration
+    if (!client || ELEVENLABS_API_KEY === 'fake_api_key') {
+      return NextResponse.json(
+        { error: 'API not configured - missing environment variables' },
+        { status: 500 }
+      );
+    }
+
     const { phoneNumber } = await request.json();
 
     // Validate phone number
