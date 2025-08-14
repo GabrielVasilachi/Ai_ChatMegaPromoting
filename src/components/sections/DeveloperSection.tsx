@@ -15,6 +15,8 @@ export default function DeveloperSection() {
   const [shake, setShake] = useState(false);
   // Computed absolute top for the mobile iPhone container
   const [mobilePhoneTop, setMobilePhoneTop] = useState<number | null>(null);
+  // Controlled phone input for desktop keypad
+  const [phoneValue, setPhoneValue] = useState<string>('');
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(codeExamples[activeTab]);
@@ -227,7 +229,7 @@ export default function DeveloperSection() {
         style={{
           right: 'clamp(5%, 18%, 18%)',
           left: 'auto',
-          bottom: '0',
+          bottom: '240px', // raised 40px higher
           transform: 'scale(clamp(1.0, 1.45, 1.45))',
           maxHeight: '600px',
           width: 'auto',
@@ -316,26 +318,101 @@ export default function DeveloperSection() {
                 placeholder="+373 XXX XXX XX"
                 className="flex-1 bg-transparent outline-none text-[15px] placeholder-gray-500"
                 style={{ color: '#1C1C1E' }}
+                value={phoneValue}
+                onChange={e => setPhoneValue(e.target.value)}
               />
             </label>
 
-            {/* Company field */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F2F2F7', borderRadius: '12px', padding: '10px 12px', boxShadow: '0 1px 0 rgba(0,0,0,0.04)' }}>
-              {/* Building icon */}
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flex: '0 0 auto' }}>
-                <path d="M4 21h16v-2H4v2zm2-4h12V5a1 1 0 00-1-1H7a1 1 0 00-1 1v12zm2-8h2V7H8v2zm0 4h2v-2H8v2zm4-4h2V7h-2v2zm0 4h2v-2h-2v2z" fill="#8E8E93"/>
-              </svg>
-              <input
-                type="text"
-                placeholder="Numele companiei"
-                className="flex-1 bg-transparent outline-none text-[15px] placeholder-gray-500"
-                style={{ color: '#1C1C1E' }}
-              />
-            </label>
+            {/* Desktop keypad: replaces company field area */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 55px)', gap: '20px', marginTop: '10px', width: '100%', justifyContent: 'center' }}>
+              {["1","2","3","4","5","6","7","8","9","*","0","#"].map((key) => {
+                if (key !== "0") {
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '50%',
+                        background: '#d1d5db',
+                        color: '#1C1C1E',
+                        fontWeight: 600,
+                        fontSize: '18px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseDown={e => (e.currentTarget.style.background = '#e5e7eb')}
+                      onMouseUp={e => (e.currentTarget.style.background = '#d1d5db')}
+                      onMouseLeave={e => (e.currentTarget.style.background = '#d1d5db')}
+                      onClick={() => setPhoneValue(v => v + key)}
+                    >
+                      {key}
+                    </button>
+                  );
+                } else {
+                  // 0 button with + below, long press for +
+                  let timer: ReturnType<typeof setTimeout> | undefined;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '50%',
+                        background: '#d1d5db',
+                        color: '#1C1C1E',
+                        fontWeight: 600,
+                        fontSize: '18px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s',
+                        position: 'relative',
+                        lineHeight: 1.1,
+                        padding: 0,
+                      }}
+                      onMouseDown={e => {
+                        e.currentTarget.style.background = '#e5e7eb';
+                        timer = setTimeout(() => {
+                          setPhoneValue(v => v + '+');
+                          timer = undefined;
+                        }, 500);
+                      }}
+                      onMouseUp={e => {
+                        e.currentTarget.style.background = '#d1d5db';
+                        if (timer) {
+                          clearTimeout(timer);
+                          setPhoneValue(v => v + '0');
+                        }
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = '#d1d5db';
+                        if (timer) clearTimeout(timer);
+                      }}
+                    >
+                      <span style={{fontSize: '18px', lineHeight: 1}}>0</span>
+                      <span style={{fontSize: '13px', opacity: 0.7, marginTop: '-2px'}}>+</span>
+                    </button>
+                  );
+                }
+              })}
+            </div>
+
+
+
           </div>
 
-          {/* Cerc verde sub containerul Numele Companiei */}
-          <div style={{ display: 'flex', justifyContent: 'center', margin: '56px 0 18px 0' }}>
+          {/* Cerc verde sub containerul Numele Companiei + delete button */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '24px 0 18px 0', position: 'relative', minHeight: 56 }}>
             <div
               style={{ width: 56, height: 56, borderRadius: '50%', background: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#15803d')}
@@ -345,23 +422,45 @@ export default function DeveloperSection() {
                 <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.85 21 3 13.15 3 3c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#fff"/>
               </svg>
             </div>
+            {/* Delete button, absolutely positioned, only if phoneValue is not empty */}
+            <div style={{ position: 'absolute', right: 'calc(17%)', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+              {phoneValue.length > 0 && (
+                <button
+                  type="button"
+                  aria-label="Șterge caracter"
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    background: '#e5e7eb',
+                    color: '#1C1C1E',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    boxShadow: '0 1px 4px 0 rgba(0,0,0,0.04)',
+                    pointerEvents: 'auto',
+                  }}
+                  onMouseDown={e => (e.currentTarget.style.background = '#d1d5db')}
+                  onMouseUp={e => (e.currentTarget.style.background = '#e5e7eb')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#e5e7eb')}
+                  onClick={() => setPhoneValue(v => v.slice(0, -1))}
+                >
+                  {/* Backspace icon */}
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.828 10l2.536-2.536a1 1 0 10-1.414-1.414L5 10l3.95 3.95a1 1 0 001.414-1.414L7.828 10z" fill="#1C1C1E"/>
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Spacer to push button down a bit */}
           <div style={{ flex: 1 }} />
 
-          {/* iOS-style button */}
-          <button
-            type="button"
-            className="w-full text-white font-semibold rounded-xl transition-colors duration-150 active:brightness-95"
-            style={{
-              background: '#007AFF',
-              height: '44px',
-              boxShadow: '0 1px 0 rgba(0,0,0,0.05)'
-            }}
-          >
-            Începe Demo-ul
-          </button>
+          {/* Începe Demo-ul button removed as requested */}
         </div>
       </div>
 
