@@ -5,7 +5,7 @@ import HowItWorks from '@/components/sections/HowItWorks';
 import IndustryModules from '@/components/sections/IndustryModules';
 import ROICalculator from '@/components/sections/ROICalculator';
 import Testimonials from '@/components/sections/Testimonials';
-import DeveloperSection from '@/components/sections/DeveloperSection';
+import { ResponsiveDemoSection } from '@/components/sections/ResponsiveDemoSection';
 import Pricing from '@/components/sections/Pricing';
 import Footer from '@/components/sections/Footer';
 
@@ -24,7 +24,7 @@ export default function HomePage() {
         <IndustryModules />
         <ROICalculator />
         <Testimonials />
-        <DeveloperSection />
+        <ResponsiveDemoSection />
         <Pricing />
         <Footer />
       </main>
