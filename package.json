@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.9.0",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -22,6 +24,7 @@
     "react-dom": "^18",
     "react-simple-typewriter": "^5.0.1",
     "tailwind-merge": "^2.4.0",
+    "three": "^0.167.1",
     "typescript": "^5"
   },
   "devDependencies": {

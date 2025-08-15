@@ -10,7 +10,7 @@ export function ResponsiveDemoSection() {
 
   useEffect(() => {
     const checkDevice = () => {
-      const isMobileDevice = window.innerWidth < 1024 // lg breakpoint
+      const isMobileDevice = window.innerWidth < 1130 // lg breakpoint
       setIsMobile(isMobileDevice)
       setIsLoaded(true)
     }
