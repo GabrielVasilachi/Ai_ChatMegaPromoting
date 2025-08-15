@@ -164,9 +164,8 @@ export default function ROICalculator() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">Otonom  calculator</h1>
-          <p className="mt-3 max-w-3xl text-[17px] leading-7 text-[#ffffff]">
-            Otonom AI Agent works round the clock to instantly resolve your customers issues, so your agents can focus their humanity on
-            specialized, strategic, creative, and interesting work.
+          <p className="mt-3 max-w-3xl text-[17px] leading-7 text-gray-300">
+            Otonom AI Agent funcționează non-stop pentru a rezolva imediat problemele clienților tăi, astfel încât agenții tăi să își poată concentra umanitatea pe activități specializate, strategice, creative și interesante.
           </p>
         </motion.div>
 
@@ -174,36 +173,36 @@ export default function ROICalculator() {
         <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.05, duration: 0.5 }}
           className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
           {/* LEFT PANEL */}
-          <div className="rounded-2xl bg-white/90 backdrop-blur-sm shadow-sm border border-black/10 p-4 sm:p-5 lg:p-6">
-            <Field label="Conversations per month">
+          <div className="rounded-2xl bg-white/95 text-black backdrop-blur-sm shadow-lg border border-white/20 p-4 sm:p-5 lg:p-6">
+            <Field label="Conversații pe lună">
               <InputWithSuffix value={conversations} onChange={(v)=>setConversations(clamp(v, 100, 200000))} suffix="/mo" thousand />
             </Field>
 
-            <Field label="No. of customer support employees">
+            <Field label="Nr. angajați suport clienți">
               <Input value={employees} onChange={(v)=>setEmployees(clamp(v, 1, 5000))} />
             </Field>
 
-            <Field label="Annual cost per employee">
+            <Field label="Cost anual/angajat">
               <InputWithPrefix value={annualCostPerEmp} onChange={(v)=>setAnnualCostPerEmp(clamp(v, 10000, 300000))} prefix={currency==='USD'?'$':currency==='EUR'?'€':'L'} suffix="/yr" thousand />
             </Field>
 
             <div className="mt-5">
               <div className="flex items-center justify-between">
-                <label className="text-[13px] font-medium">Resolution rate</label>
-                <span className="text-xs text-[#6b7280]">Avg.</span>
+                <label className="text-[13px] font-medium text-gray-700">Rată de rezolvare automată (AI)</label>
+                <span className="text-xs text-gray-500">Avg.</span>
               </div>
               <div className="mt-2">
                 <input type="range" min={0.01} max={1} step={0.01} value={resolutionRate}
                        onChange={(e)=>setResolutionRate(parseFloat(e.target.value))}
-                       className="w-full h-2 rounded-full bg-[#e5e7eb] appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-black"/>
-                <div className="mt-2 text-sm text-[#374151]">{Math.round(resolutionRate*100)}%</div>
+                       className="w-full h-2 rounded-full bg-gray-200 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/20 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-black"/>
+                <div className="mt-2 text-sm text-gray-700">{Math.round(resolutionRate*100)}%</div>
               </div>
             </div>
 
             <div className="mt-6">
-              <label className="text-[13px] font-medium">Currency</label>
+              <label className="text-[13px] font-medium text-gray-700">Monedă</label>
               <select value={currency} onChange={(e)=>setCurrency(e.target.value as any)}
-                      className="mt-2 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10">
+                      className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black">
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="MDL">MDL</option>
@@ -212,7 +211,7 @@ export default function ROICalculator() {
           </div>
 
           {/* TOP-CENTER: Savings over 3 years */}
-          <div className="lg:col-span-2 rounded-2xl bg-white/90 backdrop-blur-sm shadow-sm border border-black/10 p-4 sm:p-5 lg:p-6">
+          <div className="lg:col-span-2 rounded-2xl bg-white/95 backdrop-blur-sm shadow-lg border border-white/20 p-4 sm:p-5 lg:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="rounded-xl border border-black/10 p-5">
                 <div className="text-sm font-medium text-[#3f3f46]">Otonom AI Agent will save</div>
@@ -227,21 +226,21 @@ export default function ROICalculator() {
 
             {/* Table */}
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full text-[15px] text-[#1f2937]">
+              <table className="w-full text-[15px] text-gray-800">
                 <thead>
                   <tr className="text-left">
-                    <th className="py-3 px-3 font-medium text-[#6b7280]"></th>
-                    <th className="py-3 px-3 font-medium text-[#6b7280]">Before otonom</th>
-                    <th className="py-3 px-3 font-medium text-[#6b7280]">Year 1</th>
-                    <th className="py-3 px-3 font-medium text-[#6b7280]">Year 2</th>
-                    <th className="py-3 px-3 font-medium text-[#6b7280]">Year 3</th>
-                    <th className="py-3 px-3 font-semibold text-[#111827]">Total</th>
+                    <th className="py-3 px-3 font-medium text-gray-600"></th>
+                    <th className="py-3 px-3 font-medium text-gray-600">Before otonom</th>
+                    <th className="py-3 px-3 font-medium text-gray-600">Anul 1</th>
+                    <th className="py-3 px-3 font-medium text-gray-600">Anul 2</th>
+                    <th className="py-3 px-3 font-medium text-gray-600">Anul 3</th>
+                    <th className="py-3 px-3 font-semibold text-gray-900">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/10">
+                <tbody className="divide-y divide-gray-200">
                   {/* Employee cost */}
                   <tr>
-                    <td className="py-3 px-3 text-[#374151]">Employee cost</td>
+                    <td className="py-3 px-3 text-gray-700">Employee cost</td>
                     <td className="py-3 px-3">{fmtMoney(calc.beforeEmpCost, currency)}</td>
                     <td className="py-3 px-3">{fmtMoney(calc.year[0].afterEmpCost, currency)}</td>
                     <td className="py-3 px-3">{fmtMoney(calc.year[1].afterEmpCost, currency)}</td>
@@ -251,7 +250,7 @@ export default function ROICalculator() {
 
                   {/* otonom cost */}
                   <tr>
-                    <td className="py-3 px-3 text-[#374151]">otonom cost</td>
+                    <td className="py-3 px-3 text-gray-700">otonom cost</td>
                     <td className="py-3 px-3">-</td>
                     <td className="py-3 px-3">{fmtMoney(calc.year[0].otonomCost, currency)}</td>
                     <td className="py-3 px-3">{fmtMoney(calc.year[1].otonomCost, currency)}</td>
@@ -261,7 +260,7 @@ export default function ROICalculator() {
 
                   {/* Agents freed */}
                   <tr>
-                    <td className="py-3 px-3 text-[#374151]">Agents freed</td>
+                    <td className="py-3 px-3 text-gray-700">Agents freed</td>
                     <td className="py-3 px-3">-</td>
                     <td className="py-3 px-3">{fmtInt(calc.year[0].freed)}</td>
                     <td className="py-3 px-3">{fmtInt(calc.year[1].freed)}</td>
@@ -273,10 +272,10 @@ export default function ROICalculator() {
                   <tr>
                     <td className="py-3 px-3 text-[#374151]">Your savings</td>
                     <td className="py-3 px-3">-</td>
-                    <td className="py-3 px-3 text-[#15803d] font-semibold">{fmtMoney(calc.year[0].net, currency)}</td>
-                    <td className="py-3 px-3 text-[#15803d] font-semibold">{fmtMoney(calc.year[1].net, currency)}</td>
-                    <td className="py-3 px-3 text-[#15803d] font-semibold">{fmtMoney(calc.year[2].net, currency)}</td>
-                    <td className="py-3 px-3 font-semibold text-[#15803d]">{fmtMoney(calc.totals.netSavings, currency)}</td>
+                    <td className="py-3 px-3 text-green-700 font-semibold">{fmtMoney(calc.year[0].net, currency)}</td>
+                    <td className="py-3 px-3 text-green-700 font-semibold">{fmtMoney(calc.year[1].net, currency)}</td>
+                    <td className="py-3 px-3 text-green-700 font-semibold">{fmtMoney(calc.year[2].net, currency)}</td>
+                    <td className="py-3 px-3 font-bold text-green-800">{fmtMoney(calc.totals.netSavings, currency)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -292,7 +291,7 @@ export default function ROICalculator() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <label className="block text-[13px] font-medium text-[#3f3f46] mb-2">{label}</label>
+      <label className="block text-[13px] font-medium text-gray-700 mb-2">{label}</label>
       {children}
     </div>
   );
@@ -301,7 +300,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function Input({ value, onChange }: { value: number; onChange: (n:number)=>void }) {
   return (
     <input value={value} onChange={(e)=>onChange(clamp(parseInt(e.target.value||'0',10) || 0, 0, 1_000_000))}
-      type="number" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10"/>
+      type="number" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] text-black focus:outline-none focus:ring-2 focus:ring-black/10"/>
   );
 }
 
@@ -316,7 +315,7 @@ function InputWithPrefix({ value, onChange, prefix, suffix, thousand }: { value:
         if (Number.isNaN(n)) n = 0;
         onChange(n);
       }}
-        className={`flex-1 px-3 py-2 border border-black/10 bg-white text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10 ${prefix? 'rounded-r-xl' : 'rounded-xl'}`}/>
+        className={`flex-1 px-3 py-2 border border-black/10 bg-white text-[15px] text-black focus:outline-none focus:ring-2 focus:ring-black/10 ${prefix? 'rounded-r-xl' : 'rounded-xl'}`}/>
       {suffix && <span className="inline-flex items-center px-3 rounded-r-xl border border-black/10 bg-[#f5f5f4] text-[15px]">{suffix}</span>}
     </div>
   );
@@ -332,7 +331,7 @@ function InputWithSuffix({ value, onChange, suffix, thousand }: { value: number;
         if (Number.isNaN(n)) n = 0;
         onChange(n);
       }}
-        className="flex-1 px-3 py-2 rounded-l-xl border border-black/10 bg-white text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10"/>
+        className="flex-1 px-3 py-2 rounded-l-xl border border-black/10 bg-white text-[15px] text-black focus:outline-none focus:ring-2 focus:ring-black/10"/>
       {suffix && <span className="inline-flex items-center px-3 rounded-r-xl border border-black/10 bg-[#f5f5f4] text-[15px]">{suffix}</span>}
     </div>
   );

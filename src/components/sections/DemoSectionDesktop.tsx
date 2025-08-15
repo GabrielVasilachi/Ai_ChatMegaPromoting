@@ -13,6 +13,12 @@ export default function DemoSectionDesktop() {
 
   // Pentru long-press backspace interval
   const backspaceIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Ref pentru secțiunea principală
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  // State pentru a urmări dacă secțiunea este vizibilă
+  const [isInView, setIsInView] = useState(false);
 
   // Cleanup interval on unmount
   useEffect(() => {
@@ -24,8 +30,33 @@ export default function DemoSectionDesktop() {
     };
   }, []);
 
-  // Listen for keyboard input globally (digits, plus, backspace)
+  // Intersection Observer pentru a detecta când secțiunea este vizibilă
   useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setIsInView(entry.isIntersecting);
+      },
+      {
+        threshold: 0.3, // Se activează când 30% din secțiune este vizibilă
+        rootMargin: '0px'
+      }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Listen for keyboard input globally (digits, plus, backspace) - DOAR când secțiunea este vizibilă
+  useEffect(() => {
+    if (!isInView) return; // Nu adăuga event listener dacă secțiunea nu este vizibilă
+
     const handleKeyDown = (e: KeyboardEvent) => {
       // Handle digits and plus
       if (/^[0-9]$/.test(e.key) || e.key === '+') {
@@ -54,7 +85,7 @@ export default function DemoSectionDesktop() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [isInView]); // Dependența pe isInView
 
   // Backspace handler - delete at caret position
   const handleBackspace = () => {
@@ -132,7 +163,7 @@ export default function DemoSectionDesktop() {
   };
 
   return (
-    <section className="relative min-h-[100vh] bg-black flex items-center overflow-hidden">
+    <section ref={sectionRef} className="relative min-h-[100vh] bg-black flex items-center overflow-hidden">
       {/* Beams Background */}
       <div className="absolute inset-0 z-0" style={{ width: '100%', height: '100%' }}>
         <SimpleBeamsBackground />
