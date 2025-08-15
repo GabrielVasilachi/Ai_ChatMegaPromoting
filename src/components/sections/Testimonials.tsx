@@ -3,17 +3,17 @@
 import { testimonials } from '@/lib/data';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export default function Testimonials() {
   // No state needed for heart/branch visibility
   // Ref pentru SVG path
   const svgLineRef = useRef<SVGPathElement | null>(null);
   const [svgLineDisplay, setSvgLineDisplay] = useState<'block' | 'none'>('block');
-  
+
   // State separat pentru vizibilitatea SVG-urilor pe ecrane mici
   const [showHeartAndBranches, setShowHeartAndBranches] = useState<boolean>(true);
-  
+
   // Listen for console.log messages from the section above to hide/show the SVG line
   useEffect(() => {
     const originalConsoleLog = window.console.log;
@@ -23,13 +23,14 @@ export default function Testimonials() {
       } else if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-visible')) {
         setSvgLineDisplay('block');
       }
-      originalConsoleLog.apply(window.console, args);
+      originalConsoleLog.apply(window.console, args as unknown as [any]);
     }
     window.console.log = customConsoleLog;
     return () => {
       window.console.log = originalConsoleLog;
     };
   }, []);
+
   // Ref-uri pentru inima si cele 3 linii ramificate
   const heartRef = useRef<SVGPathElement | null>(null);
   const branchLeftRef = useRef<SVGLineElement | null>(null);
@@ -41,7 +42,7 @@ export default function Testimonials() {
   // Add state for mobile carousel
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Functie separata pentru a controla vizibilitatea SVG-urilor pe ecrane mai mici de 990px
   useEffect(() => {
     function handleSvgVisibility() {
@@ -52,7 +53,7 @@ export default function Testimonials() {
     window.addEventListener('resize', handleSvgVisibility);
     return () => window.removeEventListener('resize', handleSvgVisibility);
   }, []);
-  
+
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth < 990);
@@ -74,13 +75,13 @@ export default function Testimonials() {
     if (svgLineRef.current && sectionEl) {
       const path = svgLineRef.current;
       const pathLength = path.getTotalLength();
-      
+
       // Ensure the path is visible initially
       gsap.set(path, {
         strokeDasharray: pathLength,
         strokeDashoffset: pathLength,
         opacity: 0.6,
-        visibility: 'visible'
+        visibility: 'visible',
       });
 
       const st = ScrollTrigger.create({
@@ -124,9 +125,7 @@ export default function Testimonials() {
           el = item.ref.current;
         } else if ('selector' in item) {
           // Find the SVG element by selector (escape / for querySelector)
-          const svg = document.querySelector(
-            'svg.absolute.left-1\\/2'
-          ) as SVGSVGElement | null;
+          const svg = document.querySelector('svg.absolute.left-1\\/2') as SVGSVGElement | null;
           if (svg) {
             el = svg.querySelector(item.selector) as SVGLineElement | null;
           }
@@ -160,7 +159,7 @@ export default function Testimonials() {
           onUpdate: (self) => {
             const p = self.progress;
             const easedStart = Math.max(0, (p - stagger) / (1 - stagger));
-            gsap.set(el, { strokeDashoffset: elementLength * (1 - easedStart) });
+            gsap.set(el!, { strokeDashoffset: elementLength * (1 - easedStart) });
           },
           invalidateOnRefresh: true,
         });
@@ -174,21 +173,135 @@ export default function Testimonials() {
     };
   }, []);
 
+  // =========================
+  // Mobile carousel (Apple-style) — infinite with neighbors peeking
+  // =========================
+  const n = testimonials.length;
+  const looped = useMemo(() => {
+    if (!n) return [] as Array<typeof testimonials[number] & { __realIndex: number; __key: string }>;
+    const leftClone = { ...testimonials[n - 1], __realIndex: n - 1, __key: 'clone-left' };
+    const rightClone = { ...testimonials[0], __realIndex: 0, __key: 'clone-right' };
+    return [
+      leftClone,
+      ...testimonials.map((t, i) => ({ ...(t as any), __realIndex: i, __key: `real-${i}` })),
+      rightClone,
+    ];
+  }, [n]);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [currentLoopIndex, setCurrentLoopIndex] = useState(1); // 1 == primul real
+
+  // Helper: center scroll to a given loop index with improved smooth scrolling
+  const scrollToLoopIndex = (idx: number, behavior: ScrollBehavior = 'smooth') => {
+    const container = containerRef.current;
+    const el = itemRefs.current[idx];
+    if (!container || !el) return;
+    
+    const containerCenter = container.clientWidth / 2;
+    const targetLeft = el.offsetLeft - (containerCenter - el.clientWidth / 2);
+    
+    // For auto behavior (jump), disable scroll-snap temporarily for smoother transition
+    if (behavior === 'auto') {
+      container.style.scrollSnapType = 'none';
+      container.scrollTo({ left: targetLeft, behavior: 'auto' });
+      // Re-enable scroll-snap after a short delay
+      setTimeout(() => {
+        container.style.scrollSnapType = 'x mandatory';
+      }, 50);
+    } else {
+      container.scrollTo({ left: targetLeft, behavior });
+    }
+  };
+
+  // On mount / when becomes mobile: position to first real item
+  useEffect(() => {
+    if (!isMobile) return;
+    const i = 1; // first real item
+    // small timeout so layout settles
+    const id = setTimeout(() => scrollToLoopIndex(i, 'auto'), 0);
+    setCurrentLoopIndex(i);
+    setActiveIndex(0);
+    return () => clearTimeout(id);
+  }, [isMobile]);
+
+  // Track centered item using IntersectionObserver for snap-center with improved precision
+  useEffect(() => {
+    if (!isMobile) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.7) {
+            const idx = Number((entry.target as HTMLElement).dataset.index || '0');
+            setCurrentLoopIndex(idx);
+          }
+        });
+      },
+      { 
+        root: container, 
+        threshold: [0.5, 0.6, 0.7, 0.8, 0.9], // Multiple thresholds for better precision
+        rootMargin: '-20% 0px' // Tighter margins for better center detection
+      }
+    );
+
+    itemRefs.current.forEach((el, i) => {
+      if (el) {
+        (el as any).dataset.index = String(i);
+        obs.observe(el);
+      }
+    });
+
+    return () => obs.disconnect();
+  }, [isMobile, looped.length]);
+
+  // Handle edges for infinite illusion + compute active real index
+  useEffect(() => {
+    if (!isMobile) return;
+    const total = n;
+    if (!total) return;
+
+    // Edge jump without animation (after snap completes) with improved timing
+    if (currentLoopIndex === 0) {
+      // left clone => jump to last real (index n) with slight delay for smoother experience
+      const timer = setTimeout(() => scrollToLoopIndex(total, 'auto'), 50);
+      return () => clearTimeout(timer);
+    } else if (currentLoopIndex === total + 1) {
+      // right clone => jump to first real (index 1) with slight delay for smoother experience  
+      const timer = setTimeout(() => scrollToLoopIndex(1, 'auto'), 50);
+      return () => clearTimeout(timer);
+    }
+
+    // Active real index (wrap)
+    const real = ((currentLoopIndex - 1 + total) % total + total) % total;
+    setActiveIndex(real);
+  }, [currentLoopIndex, isMobile, n]);
+
+  const goNext = () => scrollToLoopIndex(currentLoopIndex + 1, 'smooth');
+  const goPrev = () => scrollToLoopIndex(currentLoopIndex - 1, 'smooth');
+  const gotoReal = (realIndex: number) => scrollToLoopIndex(realIndex + 1, 'smooth');
+
+  const pillFor = (realIndex: number) => {
+    switch (realIndex) {
+      case 0: return 'Response Time: -85%';
+      case 1: return 'Cost Savings: 60%';
+      case 2: return 'CSAT Score: +40%';
+      case 3: return 'Lead Conversion: +300%';
+      case 4: return 'Resolution Rate: 92%';
+      case 5: return 'ROI: +250%';
+      default: return '';
+    }
+  };
+
   return (
     <section className="py-20 bg-black relative">
-      {/* Buton pentru animatie inima + ramificatii */}
-      {/* Heart and branch lines now appear/animate on scroll, no button */}
-      {/* Vertical dashed line on the right, matching the section above, straight down as SVG */}
+      {/* Heart + branches and the right vertical line are preserved exactly */}
       {showHeartAndBranches && (
         <svg
           className="hidden md:block absolute z-20 pointer-events-none"
-          style={{
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: svgLineDisplay,
-          }}
+          style={{ top: 0, left: 0, width: '100%', height: '100%', display: svgLineDisplay }}
           width="100%"
           height="100%"
           viewBox="0 0 1000 1200"
@@ -206,7 +319,6 @@ export default function Testimonials() {
         </svg>
       )}
 
-      {/* A doua linie animată (centrală, cu ramificații) - animată cu GSAP */}
       {showHeartAndBranches && (
         <svg
           className="hidden md:block absolute left-1/2 z-0 pointer-events-none"
@@ -223,146 +335,75 @@ export default function Testimonials() {
             strokeWidth="4"
             fill="none"
           />
-          <line
-            ref={branchCenterRef}
-            x1="400"
-            y1="105"
-            x2="400"
-            y2="155"
-            stroke="#b3b3b3"
-            strokeWidth="4"
-          />
-          {/* Punct central de distribuție */}
-          <circle
-            cx="400"
-            cy="155"
-            r="6"
-            fill="#b3b3b3"
-            opacity="0.9"
-          />
-          {/* Stânga: linie directă spre centrul primului container */}
-          <line
-            ref={branchLeftRef}
-            x1="400"
-            y1="155"
-            x2="150"
-            y2="155"
-            stroke="#b3b3b3"
-            strokeWidth="4"
-          />
-          <line
-            x1="150"
-            y1="155"
-            x2="150"
-            y2="320"
-            stroke="#b3b3b3"
-            strokeWidth="4"
-            opacity="0.9"
-          />
-          <circle
-            cx="150"
-            cy="320"
-            r="4"
-            fill="#b3b3b3"
-            opacity="0.9"
-          />
-          {/* Centru: linie directă în jos spre centrul celui de-al doilea container */}
-          <line
-            x1="400"
-            y1="155"
-            x2="400"
-            y2="320"
-            stroke="#b3b3b3"
-            strokeWidth="4"
-            opacity="0.9"
-          />
-          <circle
-            cx="400"
-            cy="320"
-            r="4"
-            fill="#b3b3b3"
-            opacity="0.9"
-          />
-          {/* Dreapta: linie directă spre centrul celui de-al treilea container */}
-          <line
-            ref={branchRightRef}
-            x1="400"
-            y1="155"
-            x2="650"
-            y2="155"
-            stroke="#b3b3b3"
-            strokeWidth="4"
-          />
-          <line
-            x1="650"
-            y1="155"
-            x2="650"
-            y2="320"
-            stroke="#b3b3b3"
-            strokeWidth="4"
-            opacity="0.9"
-          />
-          <circle
-            cx="650"
-            cy="320"
-            r="4"
-            fill="#b3b3b3"
-            opacity="0.9"
-          />
+          <line ref={branchCenterRef} x1="400" y1="105" x2="400" y2="155" stroke="#b3b3b3" strokeWidth="4" />
+          <circle cx="400" cy="155" r="6" fill="#b3b3b3" opacity="0.9" />
+          <line ref={branchLeftRef} x1="400" y1="155" x2="150" y2="155" stroke="#b3b3b3" strokeWidth="4" />
+          <line x1="150" y1="155" x2="150" y2="320" stroke="#b3b3b3" strokeWidth="4" opacity="0.9" />
+          <circle cx="150" cy="320" r="4" fill="#b3b3b3" opacity="0.9" />
+          <line x1="400" y1="155" x2="400" y2="320" stroke="#b3b3b3" strokeWidth="4" opacity="0.9" />
+          <circle cx="400" cy="320" r="4" fill="#b3b3b3" opacity="0.9" />
+          <line ref={branchRightRef} x1="400" y1="155" x2="650" y2="155" stroke="#b3b3b3" strokeWidth="4" />
+          <line x1="650" y1="155" x2="650" y2="320" stroke="#b3b3b3" strokeWidth="4" opacity="0.9" />
+          <circle cx="650" cy="320" r="4" fill="#b3b3b3" opacity="0.9" />
         </svg>
       )}
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-8">
-            What Our Clients Say
-          </h2>
+          <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-8">What Our Clients Say</h2>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
             Real stories from businesses that transformed their customer service with our AI solutions
           </p>
         </div>
 
-        {/* Testimonials Grid - 3 columns, 2 rows (desktop), carousel (mobile) */}
+        {/* MOBILE: Apple-style infinite carousel with neighbors peeking */}
         {isMobile ? (
-          <div className="w-full flex flex-col items-center">
-            <div className="w-full flex justify-center">
-              {/* Only show the active card */}
-              <div
-                className="bg-white rounded-xl p-8 shadow-lg transition-shadow duration-300 flex flex-col justify-between"
-                style={{ minHeight: '420px', maxWidth: '420px', width: '100%' }}
-              >
-                <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                  {testimonials[activeIndex].quote}
-                </blockquote>
-                <div className="mt-auto">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white font-bold text-lg">{testimonials[activeIndex].name[0]}</span>
-                    </div>
-                    <div>
-                      <div className="font-bold text-gray-900 text-base">{testimonials[activeIndex].name}</div>
-                      <div className="text-gray-600 text-sm">{testimonials[activeIndex].title}</div>
-                      <div className="text-gray-500 text-sm">{testimonials[activeIndex].company}</div>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-gray-200">
-                    <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                      {activeIndex === 0 && 'Response Time: -85%'}
-                      {activeIndex === 1 && 'Cost Savings: 60%'}
-                      {activeIndex === 2 && 'CSAT Score: +40%'}
-                      {activeIndex === 3 && 'Lead Conversion: +300%'}
-                      {activeIndex === 4 && 'Resolution Rate: 92%'}
-                      {activeIndex === 5 && 'ROI: +250%'}
+          <div className="relative w-full">
+            {/* Edge fades */}
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-10 z-20 bg-gradient-to-r from-black to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 z-20 bg-gradient-to-l from-black to-transparent" />
+
+            <div
+              ref={containerRef}
+              className="flex overflow-x-auto snap-x snap-mandatory gap-4 px-6 no-scrollbar"
+              style={{ scrollPadding: '0 24px' }}
+            >
+              {looped.map((t, i) => (
+                <div
+                  key={`${t.__key}-${i}`}
+                  ref={(el) => { itemRefs.current[i] = el; }}
+                  className="snap-center shrink-0 w-[85%] max-w-[420px]"
+                >
+                  <div className="bg-white rounded-xl p-8 shadow-lg transition-shadow duration-300 flex flex-col justify-between min-h-[420px]">
+                    <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">{t.quote}</blockquote>
+                    <div className="mt-auto">
+                      <div className="flex items-center space-x-4 mb-4">
+                        <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-bold text-lg">{t.name?.[0] ?? '•'}</span>
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-900 text-base">{t.name}</div>
+                          <div className="text-gray-600 text-sm">{t.title}</div>
+                          <div className="text-gray-500 text-sm">{t.company}</div>
+                        </div>
+                      </div>
+                      <div className="pt-4 border-t border-gray-200">
+                        <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
+                          {pillFor((t as any).__realIndex)}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
+
+            {/* Controls */}
             <div className="flex items-center justify-center w-full mt-4 gap-4">
               <button
                 aria-label="Previous testimonial"
-                onClick={() => setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+                onClick={goPrev}
                 style={{
                   width: 44,
                   height: 44,
@@ -382,13 +423,13 @@ export default function Testimonials() {
                   cursor: 'pointer',
                 }}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'block'}}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
               <button
                 aria-label="Next testimonial"
-                onClick={() => setActiveIndex((prev) => (prev + 1) % testimonials.length)}
+                onClick={goNext}
                 style={{
                   width: 44,
                   height: 44,
@@ -408,17 +449,27 @@ export default function Testimonials() {
                   cursor: 'pointer',
                 }}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{display:'block'}}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
                   <polyline points="9 6 15 12 9 18" />
                 </svg>
               </button>
             </div>
+
+            {/* Dots */}
+            <div className="mt-3 flex items-center justify-center gap-2">
+              {Array.from({ length: n }).map((_, i) => (
+                <button
+                  key={`dot-${i}`}
+                  aria-label={`Go to slide ${i + 1}`}
+                  onClick={() => gotoReal(i)}
+                  className={`h-2 w-2 rounded-full transition-all ${activeIndex === i ? 'bg-white w-5' : 'bg-white/40'}`}
+                />
+              ))}
+            </div>
           </div>
         ) : (
-          <div
-            ref={gridRef}
-            className="grid grid-cols-3 gap-8 mt-[490px] md:mt-[450px]"
-          >
+          // DESKTOP: păstrat neschimbat (grid 3x2)
+          <div ref={gridRef} className="grid grid-cols-3 gap-8 mt-[490px] md:mt-[450px]">
             {/* Row 1 */}
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
@@ -435,9 +486,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                  Response Time: -85%
-                </div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Response Time: -85%</div>
               </div>
             </div>
 
@@ -456,9 +505,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                  Cost Savings: 60%
-                </div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Cost Savings: 60%</div>
               </div>
             </div>
 
@@ -477,9 +524,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                  CSAT Score: +40%
-                </div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">CSAT Score: +40%</div>
               </div>
             </div>
 
@@ -499,9 +544,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                  Lead Conversion: +300%
-                </div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Lead Conversion: +300%</div>
               </div>
             </div>
 
@@ -520,9 +563,7 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                  Resolution Rate: 92%
-                </div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Resolution Rate: 92%</div>
               </div>
             </div>
 
@@ -541,14 +582,18 @@ export default function Testimonials() {
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
-                  ROI: +250%
-                </div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">ROI: +250%</div>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Optional: hide native scrollbars on supported browsers without affecting layout */}
+      <style jsx global>{`
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
     </section>
   );
 }
