@@ -21,60 +21,82 @@ type NavigationHeaderPillStaticProps = {
 }
 
 const navItems = [
-  { label: 'Resurse', href: '/resurse', dropdown: [
-    {
-      title: 'Obține o demonstrație',
-      desc: 'Explorați funcționalitatea acum.',
-      href: '/demo',
-    },
-    {
-      title: 'Carieră',
-      desc: 'Alăturați-vă echipei noastre.',
-      href: '/cariera',
-    },
+  { label: 'Resurse', dropdown: [
     {
       title: 'Blog',
-      desc: 'Citiți cele mai recente articole și aflați despre noile tendințe.',
       href: '/blog',
     },
-  ] },
-  { label: 'Prețuri', href: '/pricing' },
-  { label: 'Integrări', href: '/integrari', dropdown: [
     {
-      title: 'Instagram',
-      desc: 'DM-uri care convertesc, cu AI.',
-      href: '/integrari/instagram',
+      title: 'Studii de caz',
+      href: '/case-studies',
+    },
+    {
+      title: 'Ghiduri',
+      href: '/gids',
+    },
+    {
+      title: 'Documentație',
+      href: '/documentation',
+    },
+    {
+      title: 'FAQ',
+      href: '/faq',
+    },
+    {
+      title: 'Calculator ROI',
+      href: '/roi-calculator',
+    },
+  ] },
+  { label: 'Integrări', dropdown: [
+    {
+      title: 'ChatWidget',
+      href: '/integrari/chatwidget',
     },
     {
       title: 'Facebook',
-      desc: 'Mesaje instant, ghidate de AI.',
       href: '/integrari/facebook',
     },
     {
       title: 'Telegram',
-      desc: 'Discuții 24/7, totul AI.',
       href: '/integrari/telegram',
     },
     {
       title: 'AmoCrm',
-      desc: 'Sincronizarea datelor și lead-urilor.',
       href: '/integrari/amocrm',
     },
     {
       title: 'ChatWidget',
-      desc: 'Site-ul tău, asistat de AI.',
       href: '/integrari/chatwidget',
     },
     {
       title: '999.md',
-      desc: 'Anunțuri și vânzări cu AI.',
       href: '/integrari/999md',
     },
   ] },
-  { label: 'Despre noi', href: '/about' },
-  { label: 'Contacte', href: '/contact' },
-]
-
+  { label: 'Companie', dropdown: [
+    {
+      title: 'Despre Noi',
+      href: '/about'
+    },
+    {
+      title: 'Cariera',
+      href: '/cariera'
+    },
+    {
+      title: 'Parteneri',
+      href: '/parteneri'
+    },
+    {
+      title: 'TrustCenter',
+      href: '/trustcenter'
+    },
+    {
+      title: 'Contact',
+      href: '/contact'
+    } ] },
+    { label: 'Prețuri', href: '/pricing' },
+  ]
+  
 
 export default function NavigationHeaderPillStatic({
   logoSrc,
@@ -231,39 +253,37 @@ export default function NavigationHeaderPillStatic({
                                 mass: 0.8,
                                 duration: 0.4
                               }}
-                              className="absolute left-0 top-full min-w-[360px] bg-[#fff] text-black py-5 px-6 flex flex-col gap-2 pointer-events-auto rounded-b-xl rounded-tr-xl rounded-tl-none border border-black border-t-0"
-                              style={{ 
-                                zIndex: 50
-                              }}
+                              className="fixed left-[calc(50%-430px)] top-[48px] w-[860px] min-h-[340px] bg-[#fff] text-black py-6 px-8 flex flex-col gap-3 pointer-events-auto rounded-xl border border-black border-t-0 overflow-y-auto"
+                                style={{ zIndex: 999 }}
                             >
-                              <motion.div 
-                                className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3"
+                              <motion.div
+                                className="flex flex-col w-full items-start gap-3"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.1, duration: 0.3 }}
+                                style={{ minHeight: '340px', display: 'flex', justifyContent: 'space-between' }}
                               >
                                 {item.dropdown.map((drop, index) => (
                                   <motion.div
                                     key={drop.title}
                                     initial={{ opacity: 0, y: 8 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 + index * 0.05, duration: 0.3 }}
+                                    transition={{ delay: 0.1 + index * 0.04, duration: 0.28 }}
+                                    className="w-full"
                                   >
                                     <Link
                                       href={drop.href}
-                                      className={
-                                        'block py-2 px-2 rounded-lg transition-all duration-200 hover:scale-[1.02] group ' +
-                                        'hover:bg-[#fff] focus:bg-[#fff] ' +
-                                        'hover:text-black focus:text-black'
-                                      }
+                                      className="block py-3 px-3 rounded-lg transition-all duration-200 hover:scale-[1.02] group hover:bg-[#f7f7f7] focus:bg-[#f7f7f7] hover:text-black focus:text-black text-left w-full"
                                       tabIndex={0}
                                     >
-                                      <div className="font-semibold text-black text-[15px] leading-tight mb-1 group-hover:text-black group-focus:text-black transition-colors">
+                                      <div className="font-semibold text-black text-[16px] leading-tight mb-1 transition-colors text-left">
                                         {drop.title}
                                       </div>
-                                      <div className="text-gray-600 text-[14px] leading-snug group-hover:text-gray-800 group-focus:text-gray-800 transition-colors">
-                                        {drop.desc}
-                                      </div>
+                                      {'desc' in drop && (
+                                        <div className="text-gray-600 text-[14px] leading-snug transition-colors text-left">
+                                          {(drop as any).desc}
+                                        </div>
+                                      )}
                                     </Link>
                                   </motion.div>
                                 ))}
@@ -466,7 +486,6 @@ export default function NavigationHeaderPillStatic({
                                         className="block px-3 py-2 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                                       >
                                         <div className="font-medium">{drop.title}</div>
-                                        <div className="text-xs text-white/60 mt-0.5">{drop.desc}</div>
                                       </Link>
                                     </motion.div>
                                   ))}

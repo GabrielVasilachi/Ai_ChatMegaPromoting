@@ -100,10 +100,10 @@ export default function HeroSectionLeftClean() {
   // --- MouseResponses logic (now after all state/refs are declared) ---
   // Bubble texts for different areas
   const mouseResponsesLeft = [
-    'Raspund la Mesaje...',
-    'Citesc Conversatii...',
-    'Analizez Raspunsurile...',
-    'Verific Starea Clientului...'
+    'Raspund la Mesaje\nPentru mesajele Necitite...',
+    'Citesc Conversatii\nPentru mesajele Necitite...',
+    'Analizez Raspunsurile\nPentru mesajele Necitite...',
+    'Verific Starea Clientului\nPentru mesajele Necitite...'
   ];
   const mouseResponseInput = 'Scriu Mesaj Clientului';
   const mouseResponseSend = 'Trimit mesajul';
@@ -191,7 +191,12 @@ export default function HeroSectionLeftClean() {
         }}
         className="bg-white rounded-xl rounded-l-md shadow px-3 py-2 text-sm text-gray-800 border border-gray-200"
       >
-        {text}
+        {text.split('\n').map((line, idx) => (
+          <React.Fragment key={idx}>
+          {line}
+          {idx !== text.split('\n').length - 1 && <br />}
+          </React.Fragment>
+        ))}
       </div>
     );
   };
