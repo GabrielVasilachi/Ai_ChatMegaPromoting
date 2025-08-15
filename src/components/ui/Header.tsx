@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link'
@@ -18,6 +19,79 @@ type NavigationHeaderPillStaticProps = {
   logoAlt?: string
   leftImageSrc?: string
   rightImageSrc?: string
+}
+
+// Constanta pentru titlurile si subtitlurile de hover
+type HoverContentType = { title: string; subtitle: string; image?: string };
+const hoverContent: { [key: string]: HoverContentType } = {
+  // Resurse
+  'Blog': {
+    title: 'Afla noile Noutati',
+    subtitle: 'Descoperă ultimele articole, sfaturi și tendințe din domeniul AI și automatizărilor pentru afacerea ta.',
+    image: 'public/HeaderSection/BlogImage.png'
+  },
+  'Studii de caz': {
+    title: 'Povesti de Succes',
+    subtitle: 'Descoperă cum companiile și-au transformat procesele folosind soluțiile noastre AI pentru rezultate extraordinare.'
+  },
+  'Ghiduri': {
+    title: 'Invata pas cu pas',
+    subtitle: 'Accesează ghiduri detaliate și tutoriale pentru a implementa cu succes automatizările în afacerea ta.'
+  },
+  'Documentație': {
+    title: 'Tot ce trebuie sa stii',
+    subtitle: 'Găsește răspunsuri complete la toate întrebările tehnice și implementează soluțiile cu ușurință.'
+  },
+  'FAQ': {
+    title: 'Raspunsuri rapide',
+    subtitle: 'Găsește rapid răspunsuri la întrebările frecvente despre produsele și serviciile noastre.'
+  },
+  'Calculator ROI': {
+    title: 'Calculeaza beneficiile',
+    subtitle: 'Descoperă exact cât timp și bani poți economisi implementând soluțiile noastre de automatizare.'
+  },
+  // Integrări
+  'ChatWidget': {
+    title: 'Conversatii pe site',
+    subtitle: 'Integrează un chatbot inteligent direct pe website-ul tău pentru a asista vizitatorii 24/7.'
+  },
+  'Facebook': {
+    title: 'Automatizare sociala',
+    subtitle: 'Conectează-te cu clienții pe Facebook și automatizează răspunsurile pentru o experiență perfectă.'
+  },
+  'Telegram': {
+    title: 'Mesagerie inteligenta',
+    subtitle: 'Creează un bot Telegram personalizat pentru a gestiona conversațiile cu clienții tăi.'
+  },
+  'AmoCrm': {
+    title: 'CRM conectat',
+    subtitle: 'Sincronizează datele clienților și automatizează fluxurile de lucru în sistemul tău CRM.'
+  },
+  '999.md': {
+    title: 'Marketplace conectat',
+    subtitle: 'Automatizează răspunsurile la întrebări și gestionează mai eficient anunțurile tale.'
+  },
+  // Companie
+  'Despre Noi': {
+    title: 'Povestea noastra',
+    subtitle: 'Află mai multe despre misiunea, valorile și echipa din spatele soluțiilor AI inovatoare.'
+  },
+  'Cariera': {
+    title: 'Alatura-te echipei',
+    subtitle: 'Descoperă oportunitățile de carieră și construiește viitorul AI împreună cu noi.'
+  },
+  'Parteneri': {
+    title: 'Colaborari de succes',
+    subtitle: 'Conectează-te cu rețeaua noastră de parteneri și dezvoltă oportunități de business.'
+  },
+  'TrustCenter': {
+    title: 'Securitate si incredere',
+    subtitle: 'Află cum protejăm datele tale și respectăm standardele de securitate cele mai înalte.'
+  },
+  'Contact': {
+    title: 'Hai sa vorbim',
+    subtitle: 'Contactează echipa noastră pentru consultanță personalizată și suport dedicat.'
+  }
 }
 
 const navItems = [
@@ -109,6 +183,7 @@ export default function NavigationHeaderPillStatic({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const [expandedMobileSection, setExpandedMobileSection] = React.useState<string | null>(null)
   const closeTimeout = React.useRef<NodeJS.Timeout | null>(null)
+  const [hoveredDropdownIndex, setHoveredDropdownIndex] = React.useState<number | null>(null)
   React.useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12)
     window.addEventListener('scroll', onScroll)
@@ -257,36 +332,87 @@ export default function NavigationHeaderPillStatic({
                                 style={{ zIndex: 999 }}
                             >
                               <motion.div
-                                className="flex flex-col w-full items-start gap-3"
+                                className="flex flex-row w-full items-start gap-6"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.1, duration: 0.3 }}
                                 style={{ minHeight: '340px', display: 'flex', justifyContent: 'space-between' }}
                               >
-                                {item.dropdown.map((drop, index) => (
-                                  <motion.div
-                                    key={drop.title}
-                                    initial={{ opacity: 0, y: 8 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 + index * 0.04, duration: 0.28 }}
-                                    className="w-full"
-                                  >
-                                    <Link
-                                      href={drop.href}
-                                      className="block py-3 px-3 rounded-lg transition-all duration-200 hover:scale-[1.02] group hover:bg-[#f7f7f7] focus:bg-[#f7f7f7] hover:text-black focus:text-black text-left w-full"
-                                      tabIndex={0}
+                                {/* Lista dropdown */}
+                                <div className="flex flex-col w-[40%] items-start gap-2">
+                                  {item.dropdown.map((drop, index) => (
+                                    <motion.div
+                                      key={drop.title}
+                                      initial={{ opacity: 0, y: 8 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      transition={{ delay: 0.1 + index * 0.04, duration: 0.28 }}
+                                      className="w-full"
+                                      onMouseEnter={() => setHoveredDropdownIndex(index)}
+                                      onMouseLeave={() => setHoveredDropdownIndex(null)}
                                     >
-                                      <div className="font-semibold text-black text-[16px] leading-tight mb-1 transition-colors text-left">
-                                        {drop.title}
-                                      </div>
-                                      {'desc' in drop && (
-                                        <div className="text-gray-600 text-[14px] leading-snug transition-colors text-left">
-                                          {(drop as any).desc}
+                                      <Link
+                                        href={drop.href}
+                                        className="block py-3 px-3 rounded-lg transition-all duration-200 hover:scale-[1.02] group hover:bg-[#f7f7f7] focus:bg-[#f7f7f7] hover:text-black focus:text-black text-left w-full"
+                                        tabIndex={0}
+                                      >
+                                        <div className="font-semibold text-black text-[16px] leading-tight mb-1 transition-colors text-left">
+                                          {drop.title}
                                         </div>
+                                        {'desc' in drop && (
+                                          <div className="text-gray-600 text-[14px] leading-snug transition-colors text-left">
+                                            {(drop as any).desc}
+                                          </div>
+                                        )}
+                                      </Link>
+                                    </motion.div>
+                                  ))}
+                                </div>
+                                {/* Container dreapta la hover */}
+                                {hoveredDropdownIndex !== null && item.dropdown[hoveredDropdownIndex] && (
+                                  <div className="w-[60%] border border-gray-300 flex flex-col justify-center items-start px-10 py-8 overflow-hidden" style={{ borderRadius: 0, position: 'absolute', right: 0, top: 0, bottom: 0, height: '100%' }}>
+                                    {hoverContent[item.dropdown[hoveredDropdownIndex].title]?.image &&
+                                      typeof hoverContent[item.dropdown[hoveredDropdownIndex].title].image === 'string' && (
+                                        <div style={{
+                                          position: 'absolute',
+                                          inset: 0,
+                                          zIndex: 0,
+                                          backgroundImage: `url(${hoverContent[item.dropdown[hoveredDropdownIndex].title].image!.replace('public/', '/')})`,
+                                          backgroundSize: 'cover',
+                                          backgroundPosition: 'center 10%',
+                                          opacity: 0.8,
+                                          pointerEvents: 'none',
+                                          borderRadius: 0
+                                        }} />
                                       )}
-                                    </Link>
-                                  </motion.div>
-                                ))}
+                                    <div className="relative z-10 flex flex-col h-full justify-between">
+                                      {hoverContent[item.dropdown[hoveredDropdownIndex].title] ? (
+                                        <>
+                                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
+                                              <div style={{ marginTop: '140px' }} className="text-5xl font-extrabold text-black mb-2 text-left w-full">
+                                              {hoverContent[item.dropdown[hoveredDropdownIndex].title].title}
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <div className="text-gray-700 text-base">
+                                              {hoverContent[item.dropdown[hoveredDropdownIndex].title].subtitle}
+                                            </div>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div className="text-2xl font-bold text-black mb-2">
+                                            {item.dropdown[hoveredDropdownIndex].title}
+                                          </div>
+                                          {'desc' in item.dropdown[hoveredDropdownIndex] && (
+                                            <div className="text-gray-700 text-base">
+                                              {(item.dropdown[hoveredDropdownIndex] as any).desc}
+                                            </div>
+                                          )}
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
                               </motion.div>
                             </motion.div>
                           )}
