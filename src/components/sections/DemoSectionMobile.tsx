@@ -279,7 +279,11 @@ export default function DemoSectionDesktop() {
 
             {/* KEYPAD */}
             <div className="absolute left-1/2 -translate-x-1/2 top-[24%]" style={{ width: `${containerWidth}px` }} ref={keypadRef}>
-              <div className="grid grid-cols-3" style={{ gap: `${verticalSpacing}px ${horizontalSpacing}px` }}>
+              <div
+                className="grid grid-cols-3 select-none"
+                style={{ gap: `${verticalSpacing}px ${horizontalSpacing}px`, WebkitUserSelect: 'none', userSelect: 'none', WebkitTouchCallout: 'none' }}
+                onContextMenu={e => e.preventDefault()}
+              >
                 {/* Helper class string for buttons */}
                 {/** We keep inline classes to avoid extracting a component */}
 
