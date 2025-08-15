@@ -24,6 +24,38 @@ export default function DemoSectionDesktop() {
     };
   }, []);
 
+  // Listen for keyboard input globally (digits, plus, backspace)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Handle digits and plus
+      if (/^[0-9]$/.test(e.key) || e.key === '+') {
+        e.preventDefault();
+        const input = inputRef.current;
+        if (!input) return;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        setInputValue(prev => prev.slice(0, start) + e.key + prev.slice(end));
+        setTimeout(() => {
+          if (input) {
+            const caret = start + e.key.length;
+            input.setSelectionRange(caret, caret);
+            input.focus();
+          }
+        }, 0);
+      }
+      // Handle backspace
+      else if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleBackspace();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   // Backspace handler - delete at caret position
   const handleBackspace = () => {
     const input = inputRef.current;

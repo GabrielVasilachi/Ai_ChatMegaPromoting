@@ -10,6 +10,10 @@ export default function Testimonials() {
   // Ref pentru SVG path
   const svgLineRef = useRef<SVGPathElement | null>(null);
   const [svgLineDisplay, setSvgLineDisplay] = useState<'block' | 'none'>('block');
+  
+  // State separat pentru vizibilitatea SVG-urilor pe ecrane mici
+  const [showHeartAndBranches, setShowHeartAndBranches] = useState<boolean>(true);
+  
   // Listen for console.log messages from the section above to hide/show the SVG line
   useEffect(() => {
     const originalConsoleLog = window.console.log;
@@ -37,6 +41,18 @@ export default function Testimonials() {
   // Add state for mobile carousel
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Functie separata pentru a controla vizibilitatea SVG-urilor pe ecrane mai mici de 990px
+  useEffect(() => {
+    function handleSvgVisibility() {
+      const shouldShow = window.innerWidth >= 990;
+      setShowHeartAndBranches(shouldShow);
+    }
+    handleSvgVisibility();
+    window.addEventListener('resize', handleSvgVisibility);
+    return () => window.removeEventListener('resize', handleSvgVisibility);
+  }, []);
+  
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth < 990);
@@ -58,19 +74,23 @@ export default function Testimonials() {
     if (svgLineRef.current && sectionEl) {
       const path = svgLineRef.current;
       const pathLength = path.getTotalLength();
+      
+      // Ensure the path is visible initially
       gsap.set(path, {
         strokeDasharray: pathLength,
         strokeDashoffset: pathLength,
+        opacity: 0.6,
+        visibility: 'visible'
       });
 
       const st = ScrollTrigger.create({
         trigger: sectionEl,
-        start: 'center 14%',
-        end: 'bottom 15%',
+        start: 'top 60%',
+        end: 'center 60%',
         scrub: 2,
         onUpdate: (self) => {
           const progress = self.progress;
-          const delayedProgress = Math.max(0, (progress - 0.3) / 0.7);
+          const delayedProgress = Math.max(0, (progress - 0.1) / 0.9);
           gsap.set(path, {
             strokeDashoffset: pathLength * (1 - delayedProgress),
           });
@@ -159,134 +179,138 @@ export default function Testimonials() {
       {/* Buton pentru animatie inima + ramificatii */}
       {/* Heart and branch lines now appear/animate on scroll, no button */}
       {/* Vertical dashed line on the right, matching the section above, straight down as SVG */}
-      <svg
-        className="hidden md:block absolute z-20 pointer-events-none"
-        style={{
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          display: svgLineDisplay,
-        }}
-        width="100%"
-        height="100%"
-        viewBox="0 0 1000 1200"
-        fill="none"
-        preserveAspectRatio="none"
-      >
-        <path
-          ref={svgLineRef}
-          d="M120 0 V300 Q120 320 100 320 H-300 Q-320 320 -320 340 V390"
-          transform="translate(820,0)"
-          stroke="#b3b3b3"
-          strokeWidth="3"
-          opacity="0.6"
-        />
-      </svg>
+      {showHeartAndBranches && (
+        <svg
+          className="hidden md:block absolute z-20 pointer-events-none"
+          style={{
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: svgLineDisplay,
+          }}
+          width="100%"
+          height="100%"
+          viewBox="0 0 1000 1200"
+          fill="none"
+          preserveAspectRatio="none"
+        >
+          <path
+            ref={svgLineRef}
+            d="M120 0 V300 Q120 320 100 320 H-300 Q-320 320 -320 340 V390"
+            transform="translate(820,0)"
+            stroke="#b3b3b3"
+            strokeWidth="3"
+            opacity="0.6"
+          />
+        </svg>
+      )}
 
       {/* A doua linie animată (centrală, cu ramificații) - animată cu GSAP */}
-      <svg
-        className="hidden md:block absolute left-1/2 z-0 pointer-events-none"
-        style={{ top: '30%', transform: 'translate(-50%, 0)' }}
-        width="800"
-        height="400"
-        viewBox="0 0 800 400"
-        fill="none"
-      >
-        <path
-          ref={heartRef}
-          d="M400 105 C360 70, 350 40, 380 30 C395 25, 400 40, 400 50 C400 40, 405 25, 420 30 C450 40, 440 70, 400 105"
-          stroke="#b3b3b3"
-          strokeWidth="4"
+      {showHeartAndBranches && (
+        <svg
+          className="hidden md:block absolute left-1/2 z-0 pointer-events-none"
+          style={{ top: '30%', transform: 'translate(-50%, 0)' }}
+          width="800"
+          height="400"
+          viewBox="0 0 800 400"
           fill="none"
-        />
-        <line
-          ref={branchCenterRef}
-          x1="400"
-          y1="105"
-          x2="400"
-          y2="155"
-          stroke="#b3b3b3"
-          strokeWidth="4"
-        />
-        {/* Punct central de distribuție */}
-        <circle
-          cx="400"
-          cy="155"
-          r="6"
-          fill="#b3b3b3"
-          opacity="0.9"
-        />
-        {/* Stânga: linie directă spre centrul primului container */}
-        <line
-          ref={branchLeftRef}
-          x1="400"
-          y1="155"
-          x2="150"
-          y2="155"
-          stroke="#b3b3b3"
-          strokeWidth="4"
-        />
-        <line
-          x1="150"
-          y1="155"
-          x2="150"
-          y2="320"
-          stroke="#b3b3b3"
-          strokeWidth="4"
-          opacity="0.9"
-        />
-        <circle
-          cx="150"
-          cy="320"
-          r="4"
-          fill="#b3b3b3"
-          opacity="0.9"
-        />
-        {/* Centru: linie directă în jos spre centrul celui de-al doilea container */}
-        <line
-          x1="400"
-          y1="155"
-          x2="400"
-          y2="320"
-          stroke="#b3b3b3"
-          strokeWidth="4"
-          opacity="0.9"
-        />
-        <circle
-          cx="400"
-          cy="320"
-          r="4"
-          fill="#b3b3b3"
-          opacity="0.9"
-        />
-        {/* Dreapta: linie directă spre centrul celui de-al treilea container */}
-        <line
-          ref={branchRightRef}
-          x1="400"
-          y1="155"
-          x2="650"
-          y2="155"
-          stroke="#b3b3b3"
-          strokeWidth="4"
-        />
-        <line
-          x1="650"
-          y1="155"
-          x2="650"
-          y2="320"
-          stroke="#b3b3b3"
-          strokeWidth="4"
-          opacity="0.9"
-        />
-        <circle
-          cx="650"
-          cy="320"
-          r="4"
-          fill="#b3b3b3"
-          opacity="0.9"
-        />
-      </svg>
+        >
+          <path
+            ref={heartRef}
+            d="M400 105 C360 70, 350 40, 380 30 C395 25, 400 40, 400 50 C400 40, 405 25, 420 30 C450 40, 440 70, 400 105"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+            fill="none"
+          />
+          <line
+            ref={branchCenterRef}
+            x1="400"
+            y1="105"
+            x2="400"
+            y2="155"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+          />
+          {/* Punct central de distribuție */}
+          <circle
+            cx="400"
+            cy="155"
+            r="6"
+            fill="#b3b3b3"
+            opacity="0.9"
+          />
+          {/* Stânga: linie directă spre centrul primului container */}
+          <line
+            ref={branchLeftRef}
+            x1="400"
+            y1="155"
+            x2="150"
+            y2="155"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+          />
+          <line
+            x1="150"
+            y1="155"
+            x2="150"
+            y2="320"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+            opacity="0.9"
+          />
+          <circle
+            cx="150"
+            cy="320"
+            r="4"
+            fill="#b3b3b3"
+            opacity="0.9"
+          />
+          {/* Centru: linie directă în jos spre centrul celui de-al doilea container */}
+          <line
+            x1="400"
+            y1="155"
+            x2="400"
+            y2="320"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+            opacity="0.9"
+          />
+          <circle
+            cx="400"
+            cy="320"
+            r="4"
+            fill="#b3b3b3"
+            opacity="0.9"
+          />
+          {/* Dreapta: linie directă spre centrul celui de-al treilea container */}
+          <line
+            ref={branchRightRef}
+            x1="400"
+            y1="155"
+            x2="650"
+            y2="155"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+          />
+          <line
+            x1="650"
+            y1="155"
+            x2="650"
+            y2="320"
+            stroke="#b3b3b3"
+            strokeWidth="4"
+            opacity="0.9"
+          />
+          <circle
+            cx="650"
+            cy="320"
+            r="4"
+            fill="#b3b3b3"
+            opacity="0.9"
+          />
+        </svg>
+      )}
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
