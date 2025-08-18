@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
-import Header from '@/components/ui/Header';
+import ConditionalHeader from '@/components/ui/ConditionalHeader';
 import Footer from '@/components/sections/Footer';
+import ChatWidget from '@/components/ui/ChatWidget';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,11 +26,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body className="antialiased">
-        <Header />
+        <ConditionalHeader />
         <main className="min-h-screen">
           {children}
         </main>
         <Footer />
+        <ChatWidget />
       </body>
     </html>
   );
