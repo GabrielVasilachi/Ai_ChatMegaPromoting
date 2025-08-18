@@ -96,7 +96,7 @@ const navItems = [
     },
     {
       title: 'Ghiduri',
-      href: '/gids',
+      href: '/guides',
     },
     {
       title: 'Documentație',
