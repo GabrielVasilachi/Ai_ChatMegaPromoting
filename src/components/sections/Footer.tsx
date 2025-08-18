@@ -25,7 +25,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-2">
             <div className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 glow-text">
-              Otonom AI
+              Interes AI
             </div>
             <p className="text-gray-400 mb-4 md:mb-6 max-w-md text-sm md:text-base leading-relaxed">
               Your 24/7 AI receptionist that never sleeps, never takes a break, 
@@ -103,7 +103,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-white/10 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-gray-400 text-sm md:text-base text-center md:text-left">
-            © 2024 Otonom AI. All rights reserved.
+            © 2024 Interes AI. All rights reserved.
           </p>
           <div className="flex space-x-4 md:space-x-6">
             <a href="/terms" className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base">

@@ -139,7 +139,7 @@ const navItems = [
 
 export default function NavigationHeaderPillStatic({
   logoSrc,
-  logoAlt = 'Otonom AI',
+  logoAlt = 'Interes AI',
   leftImageSrc,
   rightImageSrc,
 }: NavigationHeaderPillStaticProps) {
@@ -237,7 +237,7 @@ export default function NavigationHeaderPillStatic({
                 </Link>
               ) : (
                 <Link href="/" className="inline-flex items-baseline font-bold tracking-tight text-white text-lg relative" aria-label="Home">
-                  <span>Otonom</span>
+                  <span>Interes</span>
                   <span
                     style={{
                       fontSize: '0.65em',
@@ -508,7 +508,7 @@ export default function NavigationHeaderPillStatic({
                   {/* Logo */}
                   <div className="shrink-0">
                     <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="inline-flex items-baseline font-bold tracking-tight text-white text-lg relative" aria-label="Home">
-                      <span>Otonom</span>
+                      <span>Interes</span>
                       <span
                         style={{
                           fontSize: '0.65em',

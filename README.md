@@ -1,6 +1,6 @@
-# Otonom AI - 24/7 AI Receptionist
+# Interes AI - 24/7 AI Receptionist
 
-A modern, responsive marketing website for Otonom AI - an AI agent that answers inbound messages for companies. Features a clean white background design with strategic black sections and a pill-shaped floating header.
+A modern, responsive marketing website for Interes AI - an AI agent that answers inbound messages for companies. Features a clean white background design with strategic black sections and a pill-shaped floating header.
 
 ## ✨ Features
 

@@ -13,38 +13,72 @@ export default function HeroSectionLeftClean() {
   const [isTextFullyTyped, setIsTextFullyTyped] = useState(false);
   const ref = useRef<HTMLElement>(null)
 
-  // Data for each right container
+  // Data for each right container with full conversation flows
   const rightBoxData = [
     {
-      name: 'Bot Alice',
-      text1: 'Hello',
-      response1: 'Hi! How can I help you today?',
-      text2: 'Info',
-      response2: 'I am your virtual assistant.'
+      name: 'Alex M.',
+      conversations: [
+        { sender: 'Alex', message: 'Bună, aș vrea mai multe detalii despre produse.' },
+        { sender: 'Bot', message: 'Desigur, Alex! Despre ce tip de produse doriți mai multe informații? Avem telefoane, laptopuri și accesorii.' },
+        { sender: 'Alex', message: 'Mă interesează în special telefoanele.' },
+        { sender: 'Bot', message: 'Perfect, telefoanele noastre sunt modele Apple, inclusiv cele mai recente versiuni de iPhone. Doriți să știți prețurile, specificațiile sau disponibilitatea în stoc?' },
+        { sender: 'Alex', message: 'În primul rând, prețurile.' },
+        { sender: 'Bot', message: 'Prețurile pentru iPhone variază între 12.000 și 25.000 MDL, în funcție de model și capacitatea de stocare. Vreți să vă dau exemple concrete pentru modelele cele mai populare?' },
+        { sender: 'Alex', message: 'Da, te rog.' },
+        { sender: 'Bot', message: 'De exemplu, iPhone 15 are un preț de la 19.500 MDL pentru varianta de 128 GB. Modelul Pro Max pornește de la 24.500 MDL.' },
+        { sender: 'Alex', message: 'Și ce garanție oferă produsele?' },
+        { sender: 'Bot', message: 'Toate produsele vin cu garanție oficială de 12 luni. În plus, oferim opțiunea de extindere a garanției până la 24 de luni.' },
+        { sender: 'Alex', message: 'Foarte bine, și în cât timp ajunge comanda?' },
+        { sender: 'Bot', message: 'Dacă produsul este pe stoc, livrarea în Chișinău se face în aceeași zi, iar în restul țării între 1–2 zile lucrătoare.' },
+        { sender: 'Alex', message: 'Mulțumesc mult pentru informații!' },
+        { sender: 'Bot', message: 'Cu mare drag, Alex! Dacă doriți, vă pot ajuta să plasați comanda chiar acum.' }
+      ]
     },
     {
-      name: 'Bot Bob',
-      text1: 'Whats up',
-      response1: 'All good! Need support?',
-      text2: 'Help',
-      response2: 'I can answer your questions.'
+      name: 'Cristina G.',
+      conversations: [
+        { sender: 'Cristina', message: 'Bună, aș vrea să știu dacă oferiți servicii de întreținere auto.' },
+        { sender: 'Bot', message: 'Bună, Cristina! Da, oferim servicii complete de întreținere auto: schimb de ulei, verificări tehnice și reparații mecanice.' },
+        { sender: 'Cristina', message: 'Interesant. Ce tipuri de verificări tehnice faceți?' },
+        { sender: 'Bot', message: 'Facem verificări pentru sistemul de frânare, suspensie, baterie, filtre, lichide și anvelope. În plus, oferim diagnosticare computerizată completă.' },
+        { sender: 'Cristina', message: 'Și cât durează o verificare standard?' },
+        { sender: 'Bot', message: 'O verificare completă durează aproximativ 60–90 de minute, în funcție de starea mașinii.' },
+        { sender: 'Cristina', message: 'Dacă este nevoie de reparații, cum procedați?' },
+        { sender: 'Bot', message: 'După diagnosticare, vă trimitem un raport detaliat cu recomandările și costurile estimate. Reparațiile se fac doar după ce primim acordul dumneavoastră.' },
+        { sender: 'Cristina', message: 'Foarte clar, mulțumesc pentru detalii!' },
+        { sender: 'Bot', message: 'Cu plăcere, Cristina! Doriți să vă ofer și informații despre pachetele noastre de întreținere periodică?' }
+      ]
     },
     {
-      name: 'Bot Carol',
-      text1: 'How are you?',
-      response1: 'I am always online!',
-      text2: 'Status',
-      response2: 'Ready to assist.'
+      name: 'Diana R.',
+      conversations: [
+        { sender: 'Diana', message: 'Salut! Caut servicii de web design pentru compania mea.' },
+        { sender: 'Bot', message: 'Bună ziua, Diana! Excelent, oferim servicii complete de web design și dezvoltare. Ce tip de site doriți să creați?' },
+        { sender: 'Diana', message: 'Am nevoie de un site e-commerce pentru produsele noastre.' },
+        { sender: 'Bot', message: 'Perfect! Pentru e-commerce oferim platforme moderne cu plăți online, gestiune stoc și panou admin. Câte produse aveți aproximativ?' },
+        { sender: 'Diana', message: 'Около 200 de produse în mai multe categorii.' },
+        { sender: 'Bot', message: 'Foarte bine! Pentru 200 de produse recomandăm o platformă robustă cu filtrare avansată și optimizare SEO. Doriți și integrare cu sistemele existente?' },
+        { sender: 'Diana', message: 'Da, și cu sistem de facturare și contabilitate.' },
+        { sender: 'Bot', message: 'Excelent! Putem integra cu sisteme populare de facturare. În cât timp doriți să fie gata proiectul?' }
+      ]
     },
     {
-      name: 'Bot Dave',
-      text1: 'Goodbye!',
-      response1: 'See you soon!',
-      text2: 'Feedback',
-      response2: 'Let us know how we did.'
-    },
+      name: 'Bogdan L.',
+      conversations: [
+        { sender: 'Bogdan', message: 'Bună! Mă interesează cursurile voastre de programare.' },
+        { sender: 'Bot', message: 'Salut, Bogdan! Avem cursuri pentru toate nivelurile: începători, intermediari și avansați. Ce limbaj de programare vă interesează?' },
+        { sender: 'Bogdan', message: 'JavaScript și React pentru frontend development.' },
+        { sender: 'Bot', message: 'Excelentă alegere! Cursul nostru de JavaScript + React durează 4 luni și include proiecte practice. Aveți experiență anterioară în programare?' },
+        { sender: 'Bogdan', message: 'Am ceva experiență cu HTML și CSS basic.' },
+        { sender: 'Bot', message: 'Perfect! Cu baza de HTML/CSS puteți începe direct cu modulul de JavaScript fundamentals. Oferim și sesiuni de mentorat individual.' },
+        { sender: 'Bogdan', message: 'Sună foarte bine! Care este prețul pentru întregul curs?' },
+        { sender: 'Bot', message: 'Cursul complet costă 8.500 MDL, dar puteți plăti în rate lunare de 2.200 MDL. Prima lecție este gratuită!' }
+      ]
+    }
   ];
   const [selectedBox, setSelectedBox] = useState(0)
+  const [currentMessageIndex, setCurrentMessageIndex] = useState([0, 0, 0, 0]) // Index pentru fiecare container separat
+  const [displayedMessages, setDisplayedMessages] = useState<{sender: string, message: string}[][]>([[], [], [], []]) // Mesajele afișate pentru fiecare container
   const [showFakeMouse, setShowFakeMouse] = useState(true)
   const [hideOnScroll, setHideOnScroll] = useState(false);
   // Ascunde mouse-ul fake și bubble-ul la scroll, reapare după 400ms fără scroll
@@ -60,6 +94,25 @@ export default function HeroSectionLeftClean() {
       window.removeEventListener('scroll', onScroll);
       clearTimeout(timeout);
     };
+  }, []);
+
+  // Inițializează primul mesaj pentru fiecare container când se încarcă componenta
+  useEffect(() => {
+    // Inițializează primul mesaj pentru fiecare container
+    rightBoxData.forEach((boxData, idx) => {
+      if (boxData.conversations.length > 0 && boxData.conversations[0].sender !== 'Bot') {
+        setDisplayedMessages(prev => {
+          const newMessages = [...prev];
+          newMessages[idx] = [boxData.conversations[0]];
+          return newMessages;
+        });
+        setCurrentMessageIndex(prev => {
+          const newIndices = [...prev];
+          newIndices[idx] = 1; // Următorul mesaj va fi de la bot
+          return newIndices;
+        });
+      }
+    });
   }, []);
 
   // --- viewport detection to conditionally render desktop vs mobile chat ---
@@ -84,18 +137,18 @@ export default function HeroSectionLeftClean() {
   const inputRef = useRef<HTMLInputElement>(null);
   const sendBtnRef = useRef<HTMLButtonElement>(null);
   const chatAreaRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+  // Keep track of which bot/container is the current target for the next send action
+  const lastTargetBotRef = useRef<number>(0);
+  // Guard to avoid retyping the same message before it is sent
+  const awaitingSendRef = useRef(false);
+  const awaitingBoxRef = useRef<number | null>(null);
 
   // Store sent messages per bot
   const [sentMessages, setSentMessages] = useState<string[][]>([[], [], [], []]);
   // For simulating typing per bot
   const [inputValues, setInputValues] = useState<string[]>(['', '', '', '']);
-  const randomMessages = [
-    'Bună, am o întrebare!',
-    'Cum pot obține suport?',
-    'Care este programul?',
-    'Mulțumesc pentru ajutor!',
-    'Salut, am nevoie de informații.'
-  ];
+  // Track pending user message additions to prevent duplicates
+  const [pendingUserMessages, setPendingUserMessages] = useState<boolean[]>([false, false, false, false]);
 
   // --- MouseResponses logic (now after all state/refs are declared) ---
   // Bubble texts for different areas
@@ -111,6 +164,7 @@ export default function HeroSectionLeftClean() {
   const [isOverLeftContainer, setIsOverLeftContainer] = useState(false);
   const [isOverInput, setIsOverInput] = useState(false);
   const [isOverSend, setIsOverSend] = useState(false);
+  const [isTyping, setIsTyping] = useState(false); // Flag pentru a preveni scrierea multiplă
   // Bubble text changes random la fiecare 5 secunde doar pentru left container
   useEffect(() => {
     if (!showFakeMouse) return;
@@ -183,7 +237,7 @@ export default function HeroSectionLeftClean() {
           position: 'fixed',
           left: bubblePos.x + 18,
           top: bubblePos.y - 30,
-          zIndex: 10000,
+          zIndex: 9000,
           pointerEvents: 'none',
           minWidth: 60,
           maxWidth: 220,
@@ -201,66 +255,62 @@ export default function HeroSectionLeftClean() {
     );
   };
 
-  // Functie separata pentru fake mouse typing & send
-  function fakeMouseTypeAndSend(selectedBoxIdx: number, callback?: () => void) {
-    const message = randomMessages[Math.floor(Math.random() * randomMessages.length)];
-    console.log('Starting to type message:', message, 'for bot index:', selectedBoxIdx);
-    let i = 0;
-    
-    function typeChar() {
-      setInputValues(vals => {
-        const newVals = [...vals];
-        newVals[selectedBoxIdx] = message.slice(0, i + 1);
-        console.log('Typing char:', message[i], 'current text:', newVals[selectedBoxIdx]);
-        return newVals;
-      });
-      i++;
-      if (i < message.length) {
-        setTimeout(typeChar, 60 + Math.random() * 40);
-      } else {
-        console.log('Finished typing, moving to send button');
-        // După ce textul a fost scris complet, mută mouse-ul la butonul Trimite
-        setTimeout(() => {
-          const btn = sendBtnRef.current;
-          if (btn) {
-            const rect = btn.getBoundingClientRect();
-            const x = rect.left + rect.width / 2;
-            const y = rect.top + rect.height / 2;
-            setMousePos({ x, y });
-            
-            // Stă 2 secunde pe butonul Trimite înainte de a face click
-            setTimeout(() => {
-              setIsClicking(true);
-              setTimeout(() => {
-                setIsClicking(false);
-                // Trimite mesajul
-                setSentMessages((msgs) => {
-                  const newMsgs = msgs.map(arr => [...arr]);
-                  newMsgs[selectedBoxIdx].push(message);
-                  return newMsgs;
-                });
-                setInputValues(vals => {
-                  const newVals = [...vals];
-                  newVals[selectedBoxIdx] = '';
-                  return newVals;
-                });
-                // Auto-scroll to bottom
-                setTimeout(() => {
-                  const chatArea = chatAreaRefs[selectedBoxIdx].current;
-                  if (chatArea) {
-                    chatArea.scrollTop = chatArea.scrollHeight;
-                  }
-                }, 50);
-                // Apelează callback-ul dacă există
-                if (callback) callback();
-              }, 180);
-            }, 2000); // 2 secunde pe buton înainte de click
-          }
-        }, 500);
-      }
+  // Functie: fake mouse typing - răspunde la ultimul mesaj al utilizatorului cu următorul mesaj bot
+  function fakeMouseType(selectedBoxIdx: number, callback?: () => void) {
+    // Dacă deja a fost scris și se așteaptă trimiterea, nu mai rescrie
+    if (awaitingSendRef.current && awaitingBoxRef.current === selectedBoxIdx) {
+      if (callback) callback();
+      return;
     }
-    typeChar();
+    // Ensure we are operating on the currently selected box
+    if (selectedBox !== selectedBoxIdx) {
+      setSelectedBox(selectedBoxIdx);
+    }
+    lastTargetBotRef.current = selectedBoxIdx;
+    
+    // Găsește următorul mesaj bot care să răspundă la ultimul mesaj al utilizatorului
+    const conversations = rightBoxData[selectedBoxIdx]?.conversations;
+    if (!conversations || currentMessageIndex[selectedBoxIdx] >= conversations.length) {
+      if (callback) callback();
+      return;
+    }
+    
+    const nextMessage = conversations[currentMessageIndex[selectedBoxIdx]];
+    if (nextMessage.sender !== 'Bot') {
+      if (callback) callback();
+      return;
+    }
+    
+    const message = nextMessage.message;
+    // Instantly fill input value with bot response
+    setInputValues(vals => {
+      const newVals = [...vals];
+      newVals[selectedBoxIdx] = message;
+      return newVals;
+    });
+    // Set awaiting-send lock
+    awaitingSendRef.current = true;
+    awaitingBoxRef.current = selectedBoxIdx;
+    if (callback) callback();
   }
+
+  // Auto-start typing when fake mouse hovers over input and it's Bot's turn (top-level effect)
+  useEffect(() => {
+    if (!showFakeMouse) return;
+    if (!isOverInput) return;
+    if (isTyping) return;
+    // Nu reporni typing dacă așteptăm trimiterea pentru acest box
+    if (awaitingSendRef.current && awaitingBoxRef.current === selectedBox) return;
+    
+    const conversations = rightBoxData[selectedBox]?.conversations;
+    const idx = currentMessageIndex[selectedBox];
+    
+    // Verifică dacă următorul mesaj este de la bot și poate fi folosit ca răspuns
+    if (conversations && idx < conversations.length && conversations[idx].sender === 'Bot') {
+      const t = setTimeout(() => fakeMouseType(selectedBox), 250);
+      return () => clearTimeout(t);
+    }
+  }, [isOverInput, isTyping, selectedBox, currentMessageIndex, showFakeMouse, awaitingSendRef.current]);
 
   // Random movement for fake mouse, always active when showFakeMouse is true
   useEffect(() => {
@@ -268,7 +318,6 @@ export default function HeroSectionLeftClean() {
     let timeout: NodeJS.Timeout;
     let running = true;
     // Secvența fixă: indexii botilor și acțiuni speciale
-    // 0: Alice, 2: Carol, 1: Bob, 'input', 'send', 3: Dave, 'input', 'send', 1: Bob, 0: Alice, 'input', 'send', 3: Dave, 2: Carol, 'input', 'send'
     const sequence = [0, 2, 1, 'input', 'send', 3, 'input', 'send', 1, 0, 'input', 'send', 3, 2, 'input', 'send'];
     let step = 0;
 
@@ -289,6 +338,7 @@ export default function HeroSectionLeftClean() {
             setTimeout(() => {
               setIsClicking(false);
               setSelectedBox(boxIdx);
+              lastTargetBotRef.current = boxIdx;
               step++;
               timeout = setTimeout(nextStep, 900);
             }, 180);
@@ -297,7 +347,9 @@ export default function HeroSectionLeftClean() {
           step++;
           timeout = setTimeout(nextStep, 500);
         }
-      } else if (action === 'input') {
+        return;
+      }
+      if (action === 'input') {
         // Move to input - folosește bot-ul din secvența anterioară
         const prevAction = sequence[step - 1];
         const currentBotIndex = typeof prevAction === 'number' ? prevAction : selectedBox;
@@ -306,30 +358,70 @@ export default function HeroSectionLeftClean() {
           const rect = input.getBoundingClientRect();
           const x = rect.left + rect.width / 2;
           const y = rect.top + rect.height / 2;
+          console.log('🎯 Moving mouse to input at coordinates:', { x, y });
           setMousePos({ x, y });
           setTimeout(() => {
             setIsClicking(true);
             setTimeout(() => {
               setIsClicking(false);
-              // Apelează fakeMouseTypeAndSend cu bot-ul corect
+              console.log('🖱️ Mouse clicked on input, starting typing sequence...');
               setTimeout(() => {
-                fakeMouseTypeAndSend(currentBotIndex, () => {
+                console.log('🚀 Starting typing sequence for bot:', currentBotIndex);
+                lastTargetBotRef.current = currentBotIndex;
+                // Dacă deja a fost scris și așteaptă send, sari direct la 'send'
+                if (awaitingSendRef.current && awaitingBoxRef.current === currentBotIndex) {
+                  console.log('⏭️ Already awaiting send, skipping typing for bot:', currentBotIndex);
                   step++;
                   if (step >= sequence.length) step = 0;
-                  timeout = setTimeout(nextStep, 1500);
-                });
-              }, 300);
-            }, 180);
-          }, 500);
+                  timeout = setTimeout(nextStep, 400);
+                } else {
+                  fakeMouseType(currentBotIndex, () => {
+                    console.log('✅ Typing sequence completed for bot (ready to send):', currentBotIndex);
+                    step++; // advance to 'send'
+                    if (step >= sequence.length) step = 0;
+                    timeout = setTimeout(nextStep, 600); // Short delay before send
+                  });
+                }
+              }, 500); // Delay scurt după click
+            }, 250); // Click duration pe input
+          }, 1000); // Delay mai mare pentru a ajunge la input
         } else {
           step++;
           timeout = setTimeout(nextStep, 500);
         }
-      } else if (action === 'send') {
-        // Skip - acum se face totul în 'input'
-        step++;
-        if (step >= sequence.length) step = 0;
-        timeout = setTimeout(nextStep, 500);
+        return;
+      }
+      if (action === 'send') {
+        // Explicit send step: move to button, hover, click, and add bot message
+        const boxIdx = lastTargetBotRef.current;
+        if (selectedBox !== boxIdx) setSelectedBox(boxIdx);
+        const btn = sendBtnRef.current;
+        if (btn) {
+          const rect = btn.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          setMousePos({ x, y });
+          setTimeout(() => {
+            setIsClicking(true);
+            setTimeout(() => {
+              setIsClicking(false);
+              // Simulează click real pe butonul Trimite
+              btn.click();
+              // Clear awaiting-send imediat după trimitere
+              awaitingSendRef.current = false;
+              awaitingBoxRef.current = null;
+              // Continue sequence - logica de adăugare a mesajului utilizatorului este doar în butonul Trimite
+              step++;
+              if (step >= sequence.length) step = 0;
+              timeout = setTimeout(nextStep, 2000);
+            }, 200); // Click duration
+          }, 900); // Hover + travel duration
+        } else {
+          step++;
+          if (step >= sequence.length) step = 0;
+          timeout = setTimeout(nextStep, 500);
+        }
+        return;
       }
     }
     nextStep();
@@ -395,7 +487,7 @@ export default function HeroSectionLeftClean() {
                   className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
                   style={{ display: 'inline-block' }}
                 ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Alice</span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Alex M.</span>
               </div>
               <div
                 className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 1 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
@@ -407,7 +499,7 @@ export default function HeroSectionLeftClean() {
                   className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
                   style={{ display: 'inline-block' }}
                 ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Bob</span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Cristina G.</span>
               </div>
               <div
                 className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 2 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
@@ -419,7 +511,7 @@ export default function HeroSectionLeftClean() {
                   className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
                   style={{ display: 'inline-block' }}
                 ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Carol</span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Diana R.</span>
               </div>
               <div
                 className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 3 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
@@ -431,7 +523,7 @@ export default function HeroSectionLeftClean() {
                   className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
                   style={{ display: 'inline-block' }}
                 ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bot Dave</span>
+                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bogdan L.</span>
               </div>
             </div>
           </div>
@@ -460,17 +552,18 @@ export default function HeroSectionLeftClean() {
               }}
               className="flex flex-col gap-3"
             >
-              {/* Static content */}
-              <div>
-                <div className="text-[13px] md:text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text1}</div>
-                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit break-words max-w-full">{rightBoxData[selectedBox].response1}</div>
-              </div>
-              <div>
-                <div className="text-[13px] md:text-base font-semibold text-gray-800 mb-1">{rightBoxData[selectedBox].text2}</div>
-                <div className="text-gray-600 text-[12px] md:text-sm bg-gray-100 rounded px-3 py-2 w-fit break-words max-w-full">{rightBoxData[selectedBox].response2}</div>
-              </div>
+              {/* Conversația dinamică */}
+              {displayedMessages[selectedBox].map((msg, idx) => (
+                <div key={idx} className={`text-[12px] md:text-sm rounded px-3 py-2 w-fit break-words max-w-full ${
+                  msg.sender === 'Bot' 
+                    ? 'bg-blue-100 text-blue-900 self-start' // Bot pe stânga, albastru
+                    : 'bg-gray-100 text-gray-600 self-end'    // Utilizator pe dreapta, gri
+                }`}>
+                  <strong>{msg.sender}:</strong> {msg.message}
+                </div>
+              ))}
               
-              {/* Chat messages */}
+              {/* Chat messages (mesajele trimise manual) */}
               {sentMessages[selectedBox] && sentMessages[selectedBox].map((msg, idx) => (
                 <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-[12px] md:text-sm shadow-sm break-words max-w-full">{msg}</div>
               ))}
@@ -534,16 +627,85 @@ export default function HeroSectionLeftClean() {
                   onClick={() => {
                     const val = inputValues[selectedBox];
                     if (val.trim()) {
-                      setSentMessages(msgs => {
-                        const newMsgs = msgs.map(arr => [...arr]);
-                        newMsgs[selectedBox].push(val);
-                        return newMsgs;
-                      });
+                      // Verifică dacă mesajul este răspunsul botului la următoarea întrebare
+                      const conversations = rightBoxData[selectedBox]?.conversations;
+                      const currentIdx = currentMessageIndex[selectedBox];
+                      
+                      if (conversations && currentIdx < conversations.length && 
+                          conversations[currentIdx]?.sender === 'Bot' &&
+                          conversations[currentIdx]?.message === val) {
+                        // Adaugă mesajul ca răspuns de la bot în displayedMessages
+                        setDisplayedMessages(prev => {
+                          const newMessages = [...prev];
+                          newMessages[selectedBox] = [...newMessages[selectedBox], conversations[currentIdx]];
+                          return newMessages;
+                        });
+                        
+                        // Capturează următorul index înainte de increment
+                        const nextIdx = currentIdx + 1;
+                        setCurrentMessageIndex(prev => {
+                          const newIndices = [...prev];
+                          newIndices[selectedBox] = nextIdx;
+                          return newIndices;
+                        });
+                        
+                        // După 3 secunde, adaugă următorul mesaj al utilizatorului (dacă există și nu e deja în proces)
+                        if (!pendingUserMessages[selectedBox]) {
+                          setPendingUserMessages(prev => {
+                            const newPending = [...prev];
+                            newPending[selectedBox] = true;
+                            return newPending;
+                          });
+                          
+                          setTimeout(() => {
+                            if (conversations && nextIdx < conversations.length && conversations[nextIdx]?.sender !== 'Bot') {
+                              const nextUserMsg = conversations[nextIdx];
+                              
+                              // Double check pentru a evita duplicarea
+                              setDisplayedMessages(prevMessages => {
+                                const currentMessages = prevMessages[selectedBox];
+                                const lastMsg = currentMessages[currentMessages.length - 1];
+                                
+                                if (!lastMsg || lastMsg.message !== nextUserMsg.message || lastMsg.sender !== nextUserMsg.sender) {
+                                  const newMessages = [...prevMessages];
+                                  newMessages[selectedBox] = [...currentMessages, nextUserMsg];
+                                  return newMessages;
+                                }
+                                return prevMessages;
+                              });
+                              
+                              setCurrentMessageIndex(prev => {
+                                const newIndices = [...prev];
+                                newIndices[selectedBox] = nextIdx + 1;
+                                return newIndices;
+                              });
+                            }
+                            
+                            // Reset pending flag
+                            setPendingUserMessages(prev => {
+                              const newPending = [...prev];
+                              newPending[selectedBox] = false;
+                              return newPending;
+                            });
+                          }, 3000);
+                        }
+                      } else {
+                        // Adaugă ca mesaj manual de la utilizator
+                        setSentMessages(msgs => {
+                          const newMsgs = msgs.map(arr => [...arr]);
+                          newMsgs[selectedBox].push(val);
+                          return newMsgs;
+                        });
+                      }
+                      
+                      // Clear input
                       setInputValues(vals => {
                         const newVals = [...vals];
                         newVals[selectedBox] = '';
                         return newVals;
                       });
+                      
+                      // Auto-scroll
                       setTimeout(() => {
                         const chatArea = chatAreaRefs[selectedBox].current;
                         if (chatArea) {
@@ -583,7 +745,7 @@ export default function HeroSectionLeftClean() {
               width: 22,
               height: 22,
               pointerEvents: 'none',
-              zIndex: 9999,
+              zIndex: 9000,
               transition: 'left 0.5s cubic-bezier(0.4,0,0.2,1), top 0.5s cubic-bezier(0.4,0,0.2,1)',
               filter: isClicking ? 'brightness(0.8)' : 'none',
             }}
@@ -606,7 +768,7 @@ export default function HeroSectionLeftClean() {
             width: 22,
             height: 22,
             pointerEvents: 'none',
-            zIndex: 9999,
+            zIndex: 9000,
           }}
         />
       )}
@@ -655,7 +817,7 @@ export default function HeroSectionLeftClean() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-left text-5xl sm:text-6xl md:text-7xl leading-[1.06] font-extrabold tracking-tight text-gray-900"
             >
-              Otonom AI pentru companii
+              Interes AI pentru companii
             </motion.h1>
 
             {/* Subtitle */}

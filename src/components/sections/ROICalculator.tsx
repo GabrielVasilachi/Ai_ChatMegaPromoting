@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // ==========================================
-//  otonom-style ROI calculator (visual replica)
+//  Interes-style ROI calculator (visual replica)
 //  Drop-in replacement: keeps the same export
 //  name (ROICalculator) and no external deps.
 // ==========================================
@@ -96,35 +96,35 @@ export default function ROICalculator() {
     // Ramp adoption over years (like screenshot table shows growing use)
     const ramp = [0.6, 0.8, 1.0];
 
-    // Employee cost after otonom (we model as proportional reduction by adoption)
+    // Employee cost after Interes (we model as proportional reduction by adoption)
     const afterCosts = ramp.map(r => beforeEmpCost * (1 - resolutionRate * r * 0.35));
 
-    // otonom platform cost grows with adoption + volume
-    const otonomCosts = ramp.map(r => resolvedPerYear * PRICE_PER_RESOLVED * r);
+    // Interes platform cost grows with adoption + volume
+    const InteresCosts = ramp.map(r => resolvedPerYear * PRICE_PER_RESOLVED * r);
 
     // Agents freed per year (rounded, scaled by ramp)
     const freed = ramp.map(r => Math.round(agentsFreed * r));
 
-    const savings = afterCosts.map(c => beforeEmpCost - c - 0); // gross savings vs before (excl. otonom cost)
-    const netSavings = savings.map((s, i) => s - otonomCosts[i]);
+    const savings = afterCosts.map(c => beforeEmpCost - c - 0); // gross savings vs before (excl. Interes cost)
+    const netSavings = savings.map((s, i) => s - InteresCosts[i]);
 
     const totals = {
       beforeEmpCost,
       afterEmpCost: afterCosts.reduce((a, b) => a + b, 0),
-      otonomCost: otonomCosts.reduce((a, b) => a + b, 0),
+      InteresCost: InteresCosts.reduce((a, b) => a + b, 0),
       freed: freed.reduce((a, b) => a + b, 0),
       netSavings: netSavings.reduce((a, b) => a + b, 0),
     };
 
-    // ROI over 3 years = total net savings / total otonom cost
-    const roiPct = totals.otonomCost > 0 ? Math.round((totals.netSavings / totals.otonomCost) * 100) : 0;
+    // ROI over 3 years = total net savings / total Interes cost
+    const roiPct = totals.InteresCost > 0 ? Math.round((totals.netSavings / totals.InteresCost) * 100) : 0;
 
     return {
       beforeEmpCost,
       year: [
-        { year: 1, afterEmpCost: afterCosts[0], otonomCost: otonomCosts[0], freed: freed[0], net: netSavings[0] },
-        { year: 2, afterEmpCost: afterCosts[1], otonomCost: otonomCosts[1], freed: freed[1], net: netSavings[1] },
-        { year: 3, afterEmpCost: afterCosts[2], otonomCost: otonomCosts[2], freed: freed[2], net: netSavings[2] },
+        { year: 1, afterEmpCost: afterCosts[0], InteresCost: InteresCosts[0], freed: freed[0], net: netSavings[0] },
+        { year: 2, afterEmpCost: afterCosts[1], InteresCost: InteresCosts[1], freed: freed[1], net: netSavings[1] },
+        { year: 3, afterEmpCost: afterCosts[2], InteresCost: InteresCosts[2], freed: freed[2], net: netSavings[2] },
       ],
       totals,
       roiPct,
@@ -163,9 +163,9 @@ export default function ROICalculator() {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">Otonom  calculator</h1>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">Interes  calculator</h1>
           <p className="mt-3 max-w-3xl text-[17px] leading-7 text-gray-300">
-            Otonom AI Agent funcționează non-stop pentru a rezolva imediat problemele clienților tăi, astfel încât agenții tăi să își poată concentra umanitatea pe activități specializate, strategice, creative și interesante.
+            Interes AI Agent funcționează non-stop pentru a rezolva imediat problemele clienților tăi, astfel încât agenții tăi să își poată concentra umanitatea pe activități specializate, strategice, creative și interesante.
           </p>
         </motion.div>
 
@@ -214,7 +214,7 @@ export default function ROICalculator() {
           <div className="lg:col-span-2 rounded-2xl bg-white/95 backdrop-blur-sm shadow-lg border border-white/20 p-4 sm:p-5 lg:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="rounded-xl border border-black/10 p-5">
-                <div className="text-sm font-medium text-[#3f3f46]">Otonom AI Agent will save</div>
+                <div className="text-sm font-medium text-[#3f3f46]">Interes AI Agent will save</div>
                 <div className="mt-1 text-4xl sm:text-5xl font-extrabold tracking-tight text-black">{fmtMoney(calc.totals.netSavings, currency)}</div>
                 <div className="text-sm text-[#6b7280] mt-1">over 3 years</div>
               </div>
@@ -230,7 +230,7 @@ export default function ROICalculator() {
                 <thead>
                   <tr className="text-left">
                     <th className="py-3 px-3 font-medium text-gray-600"></th>
-                    <th className="py-3 px-3 font-medium text-gray-600">Before otonom</th>
+                    <th className="py-3 px-3 font-medium text-gray-600">Before Interes</th>
                     <th className="py-3 px-3 font-medium text-gray-600">Anul 1</th>
                     <th className="py-3 px-3 font-medium text-gray-600">Anul 2</th>
                     <th className="py-3 px-3 font-medium text-gray-600">Anul 3</th>
@@ -248,14 +248,14 @@ export default function ROICalculator() {
                     <td className="py-3 px-3 font-semibold">{fmtMoney(calc.beforeEmpCost + calc.year[0].afterEmpCost + calc.year[1].afterEmpCost + calc.year[2].afterEmpCost, currency)}</td>
                   </tr>
 
-                  {/* otonom cost */}
+                  {/* Interes cost */}
                   <tr>
-                    <td className="py-3 px-3 text-gray-700">otonom cost</td>
+                    <td className="py-3 px-3 text-gray-700">Interes cost</td>
                     <td className="py-3 px-3">-</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[0].otonomCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[1].otonomCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[2].otonomCost, currency)}</td>
-                    <td className="py-3 px-3 font-semibold">{fmtMoney(calc.totals.otonomCost, currency)}</td>
+                    <td className="py-3 px-3">{fmtMoney(calc.year[0].InteresCost, currency)}</td>
+                    <td className="py-3 px-3">{fmtMoney(calc.year[1].InteresCost, currency)}</td>
+                    <td className="py-3 px-3">{fmtMoney(calc.year[2].InteresCost, currency)}</td>
+                    <td className="py-3 px-3 font-semibold">{fmtMoney(calc.totals.InteresCost, currency)}</td>
                   </tr>
 
                   {/* Agents freed */}
@@ -287,7 +287,7 @@ export default function ROICalculator() {
   );
 }
 
-// ====== Small form controls (clean, otonom-like) ======
+// ====== Small form controls (clean, Interes-like) ======
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">

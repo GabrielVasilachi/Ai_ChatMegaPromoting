@@ -182,7 +182,7 @@ export default function IndustryModules() {
                 className="mb-3 md:mb-10 md:mr-8 font-bold text-left md:mt-10"
                 style={{minWidth:'max-content', color:'#111', display:'inline-block'}}
               >
-                Otonom pentru orice
+                Interes pentru orice
               </span>
               <span
                 className="md:mt-10 md:mb-10"

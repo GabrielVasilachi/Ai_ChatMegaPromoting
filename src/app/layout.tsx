@@ -7,7 +7,7 @@ import Footer from '@/components/sections/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Otonom AI',
+  title: 'Interes AI',
   description: 'Never miss a customer inquiry again. Our AI agent handles inbound messages, qualifies leads, and routes complex issues to your team.',
 };
 
