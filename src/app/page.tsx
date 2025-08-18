@@ -1,4 +1,3 @@
-import Header from '@/components/ui/Header';
 import HeroSection from '@/components/sections/HeroSection';
 import LogoTicker from '@/components/sections/LogoTicker';
 import HowItWorks from '@/components/sections/HowItWorks';
@@ -7,27 +6,19 @@ import ROICalculator from '@/components/sections/ROICalculator';
 import Testimonials from '@/components/sections/Testimonials';
 import { ResponsiveDemoSection } from '@/components/sections/ResponsiveDemoSection';
 import Pricing from '@/components/sections/Pricing';
-import Footer from '@/components/sections/Footer';
 
 
 export default function HomePage() {
   return (
     <>
-      {/* Pill-shaped Header - Fixed position */}
-      <Header />
-      
-      <main className="min-h-screen">
-
-        <HeroSection />
-        <LogoTicker />
-        <HowItWorks />
-        <IndustryModules />
-        <ROICalculator />
-        <Testimonials />
-        <ResponsiveDemoSection />
-        <Pricing />
-        <Footer />
-      </main>
+      <HeroSection />
+      <LogoTicker />
+      <HowItWorks />
+      <IndustryModules />
+      <ROICalculator />
+      <Testimonials />
+      <ResponsiveDemoSection />
+      <Pricing />
     </>
   );
 }

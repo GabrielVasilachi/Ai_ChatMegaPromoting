@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { image } from 'framer-motion/client'
 
 /**
  * Improved: smooth morph between top bar and centered pill with seamless connected dropdowns.
@@ -32,65 +33,54 @@ const hoverContent: { [key: string]: HoverContentType } = {
   },
   'Studii de caz': {
     title: 'Povesti de Succes',
-    subtitle: 'Descoperă cum companiile și-au transformat procesele folosind soluțiile noastre AI pentru rezultate extraordinare.'
+    subtitle: 'Descoperă cum companiile și-au transformat procesele folosind soluțiile noastre AI pentru rezultate extraordinare.',
+    image: 'public/HeaderSection/Case-StudiesImage.png'
   },
   'Ghiduri': {
     title: 'Invata pas cu pas',
-    subtitle: 'Accesează ghiduri detaliate și tutoriale pentru a implementa cu succes automatizările în afacerea ta.'
+    subtitle: 'Accesează ghiduri detaliate și tutoriale pentru a implementa cu succes automatizările în afacerea ta.',
+    image: 'public/HeaderSection/GidsImage.png'
   },
   'Documentație': {
     title: 'Tot ce trebuie sa stii',
-    subtitle: 'Găsește răspunsuri complete la toate întrebările tehnice și implementează soluțiile cu ușurință.'
+    subtitle: 'Găsește răspunsuri complete la toate întrebările tehnice și implementează soluțiile cu ușurință.',
+    image: 'public/HeaderSection/DocumentationImage.png'
   },
   'FAQ': {
     title: 'Raspunsuri rapide',
-    subtitle: 'Găsește rapid răspunsuri la întrebările frecvente despre produsele și serviciile noastre.'
+    subtitle: 'Găsește rapid răspunsuri la întrebările frecvente despre produsele și serviciile noastre.',
+    image: 'public/HeaderSection/Faq-Image.png'
   },
   'Calculator ROI': {
     title: 'Calculeaza beneficiile',
-    subtitle: 'Descoperă exact cât timp și bani poți economisi implementând soluțiile noastre de automatizare.'
-  },
-  // Integrări
-  'ChatWidget': {
-    title: 'Conversatii pe site',
-    subtitle: 'Integrează un chatbot inteligent direct pe website-ul tău pentru a asista vizitatorii 24/7.'
-  },
-  'Facebook': {
-    title: 'Automatizare sociala',
-    subtitle: 'Conectează-te cu clienții pe Facebook și automatizează răspunsurile pentru o experiență perfectă.'
-  },
-  'Telegram': {
-    title: 'Mesagerie inteligenta',
-    subtitle: 'Creează un bot Telegram personalizat pentru a gestiona conversațiile cu clienții tăi.'
-  },
-  'AmoCrm': {
-    title: 'CRM conectat',
-    subtitle: 'Sincronizează datele clienților și automatizează fluxurile de lucru în sistemul tău CRM.'
-  },
-  '999.md': {
-    title: 'Marketplace conectat',
-    subtitle: 'Automatizează răspunsurile la întrebări și gestionează mai eficient anunțurile tale.'
+    subtitle: 'Descoperă exact cât timp și bani poți economisi implementând soluțiile noastre de automatizare.',
+    image: 'public/HeaderSection/RoiCalculatorImage.png'
   },
   // Companie
   'Despre Noi': {
     title: 'Povestea noastra',
-    subtitle: 'Află mai multe despre misiunea, valorile și echipa din spatele soluțiilor AI inovatoare.'
+    subtitle: 'Află mai multe despre misiunea, valorile și echipa din spatele soluțiilor AI inovatoare.',
+    image: 'public/HeaderSection/AboutUsImage.png'
   },
   'Cariera': {
     title: 'Alatura-te echipei',
-    subtitle: 'Descoperă oportunitățile de carieră și construiește viitorul AI împreună cu noi.'
+    subtitle: 'Descoperă oportunitățile de carieră și construiește viitorul AI împreună cu noi.',
+    image: 'public/HeaderSection/CarierImage.png'
   },
   'Parteneri': {
     title: 'Colaborari de succes',
-    subtitle: 'Conectează-te cu rețeaua noastră de parteneri și dezvoltă oportunități de business.'
+    subtitle: 'Conectează-te cu rețeaua noastră de parteneri și dezvoltă oportunități de business.',
+    image: 'public/HeaderSection/PartnersImage.png'
   },
   'TrustCenter': {
     title: 'Securitate si incredere',
-    subtitle: 'Află cum protejăm datele tale și respectăm standardele de securitate cele mai înalte.'
+    subtitle: 'Află cum protejăm datele tale și respectăm standardele de securitate cele mai înalte.',
+    image: 'public/HeaderSection/TrustCenterImage.png'
   },
   'Contact': {
     title: 'Hai sa vorbim',
-    subtitle: 'Contactează echipa noastră pentru consultanță personalizată și suport dedicat.'
+    subtitle: 'Contactează echipa noastră pentru consultanță personalizată și suport dedicat.',
+    image: 'public/HeaderSection/ContactImage.png'
   }
 }
 
@@ -121,32 +111,6 @@ const navItems = [
       href: '/roi-calculator',
     },
   ] },
-  { label: 'Integrări', dropdown: [
-    {
-      title: 'ChatWidget',
-      href: '/integrari/chatwidget',
-    },
-    {
-      title: 'Facebook',
-      href: '/integrari/facebook',
-    },
-    {
-      title: 'Telegram',
-      href: '/integrari/telegram',
-    },
-    {
-      title: 'AmoCrm',
-      href: '/integrari/amocrm',
-    },
-    {
-      title: 'ChatWidget',
-      href: '/integrari/chatwidget',
-    },
-    {
-      title: '999.md',
-      href: '/integrari/999md',
-    },
-  ] },
   { label: 'Companie', dropdown: [
     {
       title: 'Despre Noi',
@@ -154,7 +118,7 @@ const navItems = [
     },
     {
       title: 'Cariera',
-      href: '/cariera'
+      href: '/carier'
     },
     {
       title: 'Parteneri',
@@ -168,6 +132,7 @@ const navItems = [
       title: 'Contact',
       href: '/contact'
     } ] },
+    { label: 'Integrări', href: '/integrations' },
     { label: 'Prețuri', href: '/pricing' },
   ]
   
@@ -184,6 +149,7 @@ export default function NavigationHeaderPillStatic({
   const [expandedMobileSection, setExpandedMobileSection] = React.useState<string | null>(null)
   const closeTimeout = React.useRef<NodeJS.Timeout | null>(null)
   const [hoveredDropdownIndex, setHoveredDropdownIndex] = React.useState<number | null>(null)
+  const [activeDropdownIndex, setActiveDropdownIndex] = React.useState<number>(0) // Păstrează indexul activ pentru container
   React.useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12)
     window.addEventListener('scroll', onScroll)
@@ -339,20 +305,23 @@ export default function NavigationHeaderPillStatic({
                                 style={{ minHeight: '340px', display: 'flex', justifyContent: 'space-between' }}
                               >
                                 {/* Lista dropdown */}
-                                <div className="flex flex-col w-[40%] items-start gap-2">
+                                <div className="flex flex-col items-start gap-2 w-[300px]">
                                   {item.dropdown.map((drop, index) => (
                                     <motion.div
                                       key={drop.title}
                                       initial={{ opacity: 0, y: 8 }}
                                       animate={{ opacity: 1, y: 0 }}
                                       transition={{ delay: 0.1 + index * 0.04, duration: 0.28 }}
-                                      className="w-full"
-                                      onMouseEnter={() => setHoveredDropdownIndex(index)}
+                                      className={`${(hoveredDropdownIndex === null && activeDropdownIndex === index) || hoveredDropdownIndex === index ? 'bg-[#f7f7f7] rounded-lg' : ''} w-[300px]`}
+                                      onMouseEnter={() => {
+                                        setHoveredDropdownIndex(index);
+                                        setActiveDropdownIndex(index);
+                                      }}
                                       onMouseLeave={() => setHoveredDropdownIndex(null)}
                                     >
                                       <Link
                                         href={drop.href}
-                                        className="block py-3 px-3 rounded-lg transition-all duration-200 hover:scale-[1.02] group hover:bg-[#f7f7f7] focus:bg-[#f7f7f7] hover:text-black focus:text-black text-left w-full"
+                                        className={`block py-3 px-3 rounded-lg transition-all duration-200 hover:scale-[1.02] group focus:bg-[#f7f7f7] text-left ${(hoveredDropdownIndex === null && activeDropdownIndex === index) || hoveredDropdownIndex === index ? 'bg-[#f7f7f7] text-black' : 'hover:bg-[#f7f7f7] hover:text-black focus:text-black'}`}
                                         tabIndex={0}
                                       >
                                         <div className="font-semibold text-black text-[16px] leading-tight mb-1 transition-colors text-left">
@@ -367,45 +336,66 @@ export default function NavigationHeaderPillStatic({
                                     </motion.div>
                                   ))}
                                 </div>
-                                {/* Container dreapta la hover */}
-                                {hoveredDropdownIndex !== null && item.dropdown[hoveredDropdownIndex] && (
-                                  <div className="w-[60%] border border-gray-300 flex flex-col justify-center items-start px-10 py-8 overflow-hidden" style={{ borderRadius: 0, position: 'absolute', right: 0, top: 0, bottom: 0, height: '100%' }}>
-                                    {hoverContent[item.dropdown[hoveredDropdownIndex].title]?.image &&
-                                      typeof hoverContent[item.dropdown[hoveredDropdownIndex].title].image === 'string' && (
+                                {/* Container dreapta la hover sau default Blog */}
+                                {(hoveredDropdownIndex !== null || activeDropdownIndex !== null) && (
+                                  <div 
+                                    className="w-[60%] border border-gray-300 flex flex-col justify-center items-start px-10 py-8 overflow-hidden cursor-pointer" 
+                                    style={{ borderRadius: 0, position: 'absolute', right: 0, top: 0, bottom: 0, height: '100%' }}
+                                    onMouseEnter={() => {
+                                      // Păstrăm containerul vizibil când intrăm pe el
+                                    }}
+                                    onMouseLeave={() => {
+                                      // Resetăm la starea default când ieșim din container
+                                      setHoveredDropdownIndex(null);
+                                      setActiveDropdownIndex(0);
+                                    }}
+                                    onClick={() => {
+                                      // Navigăm la pagina elementului activ
+                                      const currentIndex = hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex;
+                                      window.location.href = item.dropdown[currentIndex].href;
+                                    }}
+                                  >
+                                    {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title]?.image &&
+                                      typeof hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].image === 'string' && (
                                         <div style={{
                                           position: 'absolute',
-                                          inset: 0,
+                                          top: '80px',
+                                          right: '10px',
+                                          width: '330px',
+                                          height: '330px',
                                           zIndex: 0,
-                                          backgroundImage: `url(${hoverContent[item.dropdown[hoveredDropdownIndex].title].image!.replace('public/', '/')})`,
-                                          backgroundSize: 'cover',
-                                          backgroundPosition: 'center 10%',
+                                          backgroundImage: `url(${hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].image!.replace('public/', '/')})`,
+                                          backgroundSize: 'contain',
+                                          backgroundRepeat: 'no-repeat',
+                                          backgroundPosition: 'top right',
                                           opacity: 0.8,
                                           pointerEvents: 'none',
-                                          borderRadius: 0
                                         }} />
                                       )}
                                     <div className="relative z-10 flex flex-col h-full justify-between">
-                                      {hoverContent[item.dropdown[hoveredDropdownIndex].title] ? (
+                                      {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title] ? (
                                         <>
                                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
-                                              <div style={{ marginTop: '140px' }} className="text-5xl font-extrabold text-black mb-2 text-left w-full">
-                                              {hoverContent[item.dropdown[hoveredDropdownIndex].title].title}
+                                            <div className="text-5xl font-extrabold text-black mb-2 text-left w-full" style={{ marginTop: '24px' }}>
+                                              <span style={{ display: 'inline-block', maxWidth: '340px', wordBreak: 'break-word', textAlign: 'left' }}>
+                                                {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].title}
+                                              </span>
                                             </div>
                                           </div>
                                           <div>
                                             <div className="text-gray-700 text-base">
-                                              {hoverContent[item.dropdown[hoveredDropdownIndex].title].subtitle}
+                                              {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].subtitle}
                                             </div>
                                           </div>
                                         </>
                                       ) : (
                                         <>
                                           <div className="text-2xl font-bold text-black mb-2">
-                                            {item.dropdown[hoveredDropdownIndex].title}
+                                            {item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title}
                                           </div>
-                                          {'desc' in item.dropdown[hoveredDropdownIndex] && (
+                                          {'desc' in item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex] && (
                                             <div className="text-gray-700 text-base">
-                                              {(item.dropdown[hoveredDropdownIndex] as any).desc}
+                                              {(item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex] as any).desc}
                                             </div>
                                           )}
                                         </>
