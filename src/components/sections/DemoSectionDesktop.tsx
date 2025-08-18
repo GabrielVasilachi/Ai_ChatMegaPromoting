@@ -177,7 +177,7 @@ export default function DemoSectionDesktop() {
 
       <div className="w-full flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-12 lg:gap-[100px] relative z-20 px-4">
         {/* Left Content */}
-        <div className="flex flex-col space-y-8 ml-5 w-full md:w-auto max-w-lg flex-shrink-0">
+  <div className="flex flex-col space-y-8 ml-5 w-full md:w-auto max-w-lg flex-shrink-0 -mt-36">
           {/* Card above title */}
           <div className="bg-white/80 border border-gray-300 rounded-lg px-4 py-2 inline-block shadow-md w-[150px]">
             <span className="text-black text-sm font-medium">Prezentare Demo</span>

@@ -14,20 +14,20 @@ export default function Testimonials() {
   // State separat pentru vizibilitatea SVG-urilor pe ecrane mici
   const [showHeartAndBranches, setShowHeartAndBranches] = useState<boolean>(true);
 
-  // Listen for console.log messages from the section above to hide/show the SVG line
+  // Hide SVG line when screen width is 1690px or less
   useEffect(() => {
-    const originalConsoleLog = window.console.log;
-    function customConsoleLog(...args: any[]) {
-      if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-hidden')) {
-        setSvgLineDisplay('none');
-      } else if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-visible')) {
-        setSvgLineDisplay('block');
-      }
-      originalConsoleLog.apply(window.console, args as unknown as [any]);
-    }
-    window.console.log = customConsoleLog;
+    const checkScreenWidth = () => {
+      const shouldHide = window.innerWidth <= 1690;
+      setSvgLineDisplay(shouldHide ? 'none' : 'block');
+    };
+    
+    // Check on mount
+    checkScreenWidth();
+    
+    // Check on resize
+    window.addEventListener('resize', checkScreenWidth);
     return () => {
-      window.console.log = originalConsoleLog;
+      window.removeEventListener('resize', checkScreenWidth);
     };
   }, []);
 
@@ -351,7 +351,7 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-8">What Our Clients Say</h2>
+            <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-8 mt-10 md:mt-16">What Our Clients Say</h2>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
             Real stories from businesses that transformed their customer service with our AI solutions
           </p>

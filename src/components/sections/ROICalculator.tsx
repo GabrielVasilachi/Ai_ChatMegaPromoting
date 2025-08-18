@@ -25,19 +25,18 @@ export default function ROICalculator() {
   const [svgLineDisplay, setSvgLineDisplay] = useState<'block' | 'none'>('block');
 
   useEffect(() => {
-    const originalConsoleLog = window.console.log;
-    function customConsoleLog(...args: any[]) {
-      if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-hidden')) {
-        setSvgLineDisplay('none');
-      } else if (typeof args[0] === 'string' && args[0].includes('howitworks-svg-line-visible')) {
-        setSvgLineDisplay('block');
-      }
-      // @ts-ignore
-      originalConsoleLog.apply(window.console, args);
-    }
-    window.console.log = customConsoleLog as any;
+    const checkScreenWidth = () => {
+      const shouldHide = window.innerWidth <= 1690;
+      setSvgLineDisplay(shouldHide ? 'none' : 'block');
+    };
+    
+    // Check on mount
+    checkScreenWidth();
+    
+    // Check on resize
+    window.addEventListener('resize', checkScreenWidth);
     return () => {
-      window.console.log = originalConsoleLog;
+      window.removeEventListener('resize', checkScreenWidth);
     };
   }, []);
 
@@ -55,7 +54,7 @@ export default function ROICalculator() {
     const st = ScrollTrigger.create({
       trigger: triggerTarget,
       start: 'top 75%',
-      end: 'bottom 55%',
+      end: 'bottom 65%',
       scrub: true,
       onUpdate: self => {
         const progress = self.progress; // 0..1
@@ -133,7 +132,7 @@ export default function ROICalculator() {
 
   // ===== UI
   return (
-    <section ref={ref as any} className="relative bg-black text-white py-14 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+  <section ref={ref as any} className="relative bg-black text-white py-14 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* SVG linie animată verticală pe dreapta */}
       <svg
         className="hidden md:block absolute z-20 pointer-events-none"
@@ -163,7 +162,7 @@ export default function ROICalculator() {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">Interes  calculator</h1>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mt-10 md:mt-16">Interes  calculator</h1>
           <p className="mt-3 max-w-3xl text-[17px] leading-7 text-gray-300">
             Interes AI Agent funcționează non-stop pentru a rezolva imediat problemele clienților tăi, astfel încât agenții tăi să își poată concentra umanitatea pe activități specializate, strategice, creative și interesante.
           </p>
@@ -282,6 +281,20 @@ export default function ROICalculator() {
             </div>
           </div>
         </motion.div>
+
+        {/* CTA container inspirat de exemplul dat */}
+        <div className="w-full flex justify-center items-center bg-[#181312] py-8 px-2 md:px-0 mt-8 rounded-xl">
+          <div className="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 px-4">
+            <div className="flex flex-col items-start text-left">
+              <span className="text-white text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2">Get started with Interes AI Agent today</span>
+              <a href="#" className="text-white text-base underline underline-offset-2 hover:text-gray-300 transition">Learn more</a>
+            </div>
+            <div className="flex flex-row gap-3 mt-4 md:mt-0">
+              <button className="border border-white text-white font-semibold rounded-lg px-6 py-2 text-base md:text-lg hover:bg-white hover:text-black transition">View demo</button>
+              <button className="bg-white text-black font-bold rounded-lg px-6 py-2 text-base md:text-lg hover:bg-black hover:text-white border border-white transition">Start free trial</button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import { footerLinks } from '@/lib/data';
 
 export default function Footer() {
@@ -18,16 +20,30 @@ export default function Footer() {
     }
   };
 
+  const titleRef = useRef(null);
+  const isInView = useInView(titleRef, { once: true, margin: '-100px' });
+
   return (
     <footer className="bg-black text-white py-12 md:py-16 overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="w-full flex flex-col items-center mb-10">
+          <motion.h2
+            ref={titleRef}
+            initial={{ opacity: 0, y: -60 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -60 }}
+            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            className="text-6xl md:text-9xl font-extrabold text-white text-center tracking-tight mb-2"
+          >
+            Interes AI
+          </motion.h2>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-2">
             <div className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 glow-text">
               Interes AI
             </div>
-            <p className="text-gray-400 mb-4 md:mb-6 max-w-md text-sm md:text-base leading-relaxed">
+            <p className="text-gray-400 mb-4 md:mb-6 max-w-md text-sm md:text-base leading-relaxed -mt-12">
               Your 24/7 AI receptionist that never sleeps, never takes a break, 
               and always provides perfect customer service.
             </p>

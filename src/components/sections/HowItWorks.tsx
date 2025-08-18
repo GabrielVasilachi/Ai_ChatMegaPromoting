@@ -21,49 +21,21 @@ export default function HowItWorks() {
   }, []);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
-  // Hide vertical SVG line when it overlaps any element in the section
+  // Hide vertical SVG line when screen width is 1690px or less
   const [hideSvgLine, setHideSvgLine] = useState(false);
   useEffect(() => {
-    const checkOverlap = () => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const secRect = section.getBoundingClientRect();
-      // SVG path X corresponds to 120 in a 1000-wide viewBox => 12% of width
-      const x = secRect.left + secRect.width * 0.12;
-      // Consider a 4px strip around the line for visibility
-      const stripLeft = x - 2;
-      const stripRight = x + 2;
-      let overlap = false;
-      const all = Array.from(section.querySelectorAll('*')) as HTMLElement[];
-      for (const el of all) {
-        const tag = el.tagName.toLowerCase();
-        if (tag === 'svg' || tag === 'path') continue; // ignore the line itself
-        const rect = el.getBoundingClientRect();
-        if (stripLeft < rect.right && stripRight > rect.left && secRect.top < rect.bottom && secRect.bottom > rect.top) {
-          overlap = true;
-          break;
-        }
-      }
-      setHideSvgLine(prev => {
-        if (prev !== overlap) {
-          if (overlap) {
-            console.log('howitworks-svg-line-hidden');
-          } else {
-            console.log('howitworks-svg-line-visible');
-          }
-        }
-        return overlap;
-      });
+    const checkScreenWidth = () => {
+      const shouldHide = window.innerWidth <= 1690;
+      setHideSvgLine(shouldHide);
     };
-    const onScroll = () => requestAnimationFrame(checkOverlap);
-    const onResize = () => requestAnimationFrame(checkOverlap);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-    // initial
-    setTimeout(checkOverlap, 0);
+    
+    // Check on mount
+    checkScreenWidth();
+    
+    // Check on resize
+    window.addEventListener('resize', checkScreenWidth);
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', checkScreenWidth);
     };
   }, []);
 
@@ -200,6 +172,21 @@ export default function HowItWorks() {
       className="min-h-[60vh] bg-white py-6 md:py-10 flex items-center justify-center overflow-hidden relative"
       style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
+      {/* Full-width background image at the very top */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '300px',
+        backgroundImage: "url('/AnimeStyleImages/ImageTopTrees.png')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }} />
+
       {/* SVG vertical dashed line */}
       <svg
         className="hidden md:block absolute z-20 pointer-events-none"
@@ -214,52 +201,27 @@ export default function HowItWorks() {
       </svg>
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Top image container */}
+        {/* Top image container (content only, no image) */}
         <div className="flex justify-center items-center mb-[60px] md:mb-[200px] relative" style={{ minHeight: '300px' }}>
           <div className="w-full flex justify-center relative">
-            <img
-              src="/AnimeStyleImages/ImageTopTrees.png"
-              alt="Decorative Anime Trees"
-              className="w-full h-auto object-contain mx-auto"
-              style={{ maxWidth: '1200px', maxHeight: '300px', objectFit: 'cover', objectPosition: 'top center' }}
-            />
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8 }}
-              className="absolute left-0 top-0 w-full flex flex-col items-start"
-              style={{ zIndex: 2, maxWidth: '100%', pointerEvents: 'auto', height: '100%' }}
+              className="absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center"
+              style={{ zIndex: 2, maxWidth: '100%', pointerEvents: 'auto', height: '100%', transform: 'translateY(40px)' }}
             >
-              <h2
-                className="font-extrabold text-white mb-1 md:mb-4 drop-shadow-lg text-2xl sm:text-3xl md:text-6xl lg:text-7xl text-left sm:text-left mobile-center-title"
-                style={{
-                  paddingLeft: '2.2rem',
-                  paddingTop: '1.5rem',
-                  lineHeight: 1.08,
-                  maxWidth: '90%',
-                  fontSize: 'clamp(1.2rem, 5vw, 2.2rem)',
-                  position: 'relative',
-                  ...(typeof window !== 'undefined' && window.innerWidth >= 768 ? { fontSize: '3.7rem', textAlign: 'left', paddingLeft: '2.2rem' } : {}),
-                  ...(typeof window !== 'undefined' && window.innerWidth < 768 ? { textAlign: 'center', paddingLeft: 0, width: '100%', fontSize: '2.3rem' } : {}),
-                }}
-              >
-                Cum lucrează agentul <span style={{ color: '#fff' }}>AI</span>
-              </h2>
               <p
-                className="text-white font-semibold drop-shadow-lg text-base sm:text-lg md:text-2xl lg:text-3xl text-left sm:text-left mobile-center-title"
-                style={{
-                  marginTop: '0.7rem',
-                  paddingLeft: '2.2rem',
-                  maxWidth: '90%',
-                  fontSize: 'clamp(0.95rem, 3.5vw, 1.1rem)',
-                  position: 'relative',
-                  marginBottom: 0,
-                  ...(typeof window !== 'undefined' && window.innerWidth >= 768 ? { fontSize: '1.3rem', textAlign: 'left', paddingLeft: '2.2rem' } : {}),
-                  ...(typeof window !== 'undefined' && window.innerWidth < 768 ? { textAlign: 'center', paddingLeft: 0, width: '100%', fontSize: '1.4rem' } : {}),
-                }}
+                className="text-white font-semibold drop-shadow-lg text-base sm:text-lg md:text-2xl lg:text-3xl text-center mx-auto mb-2 max-w-3xl"
               >
                 Activează-ți agentul AI în doar trei pași simpli
               </p>
+              <h2
+                className="font-extrabold text-white mb-1 md:mb-4 drop-shadow-lg text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-center mx-auto max-w-4xl"
+                style={{lineHeight: 1.08, marginBottom: '2.2rem'}}
+              >
+                Cum lucrează agentul <span style={{ color: '#fff' }}>AI</span>
+              </h2>
             </motion.div>
           </div>
         </div>

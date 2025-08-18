@@ -124,19 +124,18 @@ export default function IndustryModules() {
   const [hideSvgLine, setHideSvgLine] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    // Listen for HowItWorks line visibility via console.log
-    const origLog = window.console.log;
-    function customLog(...args: any[]) {
-      if (args[0] === 'howitworks-svg-line-hidden') {
-        setHideSvgLine(true);
-      } else if (args[0] === 'howitworks-svg-line-visible') {
-        setHideSvgLine(false);
-      }
-      origLog.apply(window.console, args);
-    }
-    window.console.log = customLog;
+    const checkScreenWidth = () => {
+      const shouldHide = window.innerWidth <= 1690;
+      setHideSvgLine(shouldHide);
+    };
+    
+    // Check on mount
+    checkScreenWidth();
+    
+    // Check on resize
+    window.addEventListener('resize', checkScreenWidth);
     return () => {
-      window.console.log = origLog;
+      window.removeEventListener('resize', checkScreenWidth);
     };
   }, []);
 
@@ -336,59 +335,48 @@ export default function IndustryModules() {
         background: 'linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))',
       }}
     />
-    <div className="w-full flex justify-center items-end" style={{position:'absolute', left:0, bottom:0, zIndex:1, marginBottom:'0px'}}>
-      <div 
-        className="relative w-full flex justify-center items-end"
-        style={{
-          maxWidth: '1200px', 
-          width: '100%',
-          marginLeft: '16px',
-          marginRight: '16px',
-        }}
-      >
-        <img
-          src="/AnimeStyleImages/GroundImage.png"
-          alt="Decorative Anime Ground"
-          className="w-full h-auto object-contain mx-auto"
-          style={{
-            maxWidth: '1200px',
-            maxHeight: '300px',
-            objectFit: 'cover',
-            objectPosition: 'top center',
-            display: 'block',
-          }}
-        />
-        {/* Overlayed text and button, custom layout */}
-        <div className="absolute inset-0 w-full h-full pointer-events-auto" style={{zIndex:2}}>
-          <div className="flex flex-col items-start w-full" style={{paddingLeft:'1.5rem', paddingTop:'3.5rem', position:'relative'}}>
-            {/* Responsive: Remove margin on md and up */}
-            <style>{`
-              @media (min-width: 768px) {
-                #industry-modules-section .bottom-img-container,
-                #industry-modules-section .bottom-img-container img {
-                  margin-left: 0 !important;
-                  margin-right: 0 !important;
-                }
-              }
-            `}</style>
-            <div className="flex flex-row items-center w-full justify-between">
-              <div className="flex flex-col md:flex-row items-center w-full justify-between">
-                <span
-                  className="text-white text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold select-none whitespace-nowrap"
-                  style={{textShadow:'none', fontSize: 'clamp(1.3rem, 8vw, 3.5rem)'}}>
-                  Incearca acum
-                </span>
-                <button
-                  className="mt-6 md:mt-0 ml-0 md:ml-3 px-3 py-1.5 md:px-5 md:py-2.5 rounded-full border-2 border-black bg-white text-black font-semibold text-xs md:text-base transition-colors duration-200 hover:bg-black hover:text-white mr-2 md:mr-8 whitespace-nowrap"
-                  style={{minWidth:'64px', maxWidth:'120px', boxShadow:'none', fontSize:'0.95rem', lineHeight:'1.1'}}>
-                  Get started
-                </button>
-              </div>
-            </div>
-          </div>
+    {/* Full-width background image at the bottom */}
+    <div style={{
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      width: '100vw',
+      height: '300px',
+      backgroundImage: "url('/AnimeStyleImages/GroundImage.png')",
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundPosition: 'top center',
+      zIndex: 1,
+      pointerEvents: 'none',
+    }} />
+    
+    {/* Overlayed text and button, positioned over the full-width image */}
+    <div className="absolute bottom-0 left-0 w-full h-[300px] pointer-events-auto flex items-center justify-center" style={{zIndex:2}}>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex items-center">
+  <div className="flex flex-col md:flex-row items-center w-full justify-center gap-6 md:gap-24">
+          <span
+            className="text-white text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold select-none whitespace-nowrap"
+            style={{textShadow:'2px 2px 4px rgba(0,0,0,0.5)', fontSize: 'clamp(1.3rem, 8vw, 3.5rem)'}}>
+            Incearca acum
+          </span>
+              <button
+                className="ml-0 px-3 py-1.5 md:px-12 md:py-2 rounded-full border-2 border-black bg-white text-black font-semibold text-xs md:text-4xl transition-colors duration-200 hover:bg-black hover:text-white whitespace-nowrap md:h-12 md:min-w-[340px] md:max-w-[480px] w-full flex justify-center items-center"
+            style={{
+              minWidth: '64px',
+              maxWidth: '120px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              fontSize: '0.95rem',
+              lineHeight: '1.1',
+              marginTop: 0,
+              // Forțează lățimea pe desktop
+              ...(typeof window !== 'undefined' && window.innerWidth >= 768 ? { minWidth: 260, maxWidth: 340 } : {})
+            }}>
+            Get started
+          </button>
         </div>
       </div>
     </div>
+
   </section>
   );
 }
