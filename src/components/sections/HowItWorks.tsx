@@ -274,7 +274,7 @@ export default function HowItWorks() {
                 }}
               >
                 {/* Step number - large background for all containers */}
-                <div aria-hidden className="absolute select-none pointer-events-none" style={{ left: 'calc(18% - 2.5rem)', bottom: '-6.5rem', fontSize: '17rem', fontWeight: 900, color: 'rgba(255,255,255,0.38)', lineHeight: 1, zIndex: 1, textShadow: '0 4px 32px rgba(0,0,0,0.18)' }}>
+                <div aria-hidden className="absolute select-none pointer-events-none" style={{ left: 'calc(18% - 2.5rem)', bottom: '-6.5rem', fontSize: '17rem', fontWeight: 900, color: 'rgba(255,255,255,0.20)', lineHeight: 1, zIndex: 1 }}>
                   {step.id}
                 </div>
                 {/* Content */}
@@ -363,7 +363,7 @@ export default function HowItWorks() {
                       onClick={() => snapTo(i)}
                     >
                       {/* Large step number */}
-                      <div aria-hidden className="absolute select-none pointer-events-none" style={{ left: 'calc(18% - 2.5rem)', bottom: '-6.5rem', fontSize: '17rem', fontWeight: 900, color: 'rgba(255,255,255,0.38)', lineHeight: 1, zIndex: 1, textShadow: '0 4px 32px rgba(0,0,0,0.18)' }}>
+                      <div aria-hidden className="absolute select-none pointer-events-none" style={{ left: 'calc(18% - 2.5rem)', bottom: '-6.5rem', fontSize: '17rem', fontWeight: 900, color: 'rgba(255,255,255,0.38)', lineHeight: 1, zIndex: 1 }}>
                         {step.id}
                       </div>
 

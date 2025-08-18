@@ -214,6 +214,9 @@ export default function IndustryModules() {
               </span>
             </span>
           </h2>
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto md:mx-0 mt-2 md:mt-4 font-medium">
+            Soluții AI conversaționale adaptate fiecărei industrii — automatizează, personalizează și scalează interacțiunea cu clienții tăi, indiferent de domeniu.
+          </p>
         </div>
         {/* Two-column layout */}
         <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center justify-center -mt-16">

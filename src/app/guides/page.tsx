@@ -1,276 +1,312 @@
-import type { Metadata } from 'next';
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Gid-uri',
-  description: 'Gid-uri complete',
+import type { Metadata } from 'next';
+import { useMemo, useState } from 'react';
+
+// export const metadata: Metadata = {
+//   title: 'Gid-uri',
+//   description: 'Gid-uri complete',
+// };
+
+// ——— Helpers (monochrome only) ———
+function ImgPlaceholder({ label = 'IMAGINE', className = '' }: { label?: string; className?: string }) {
+  return (
+    <div className={`relative grid place-items-center bg-gray-100 text-gray-500 border border-gray-200 rounded-xl ${className}`}>
+      <span className="text-[10px] tracking-widest">{label}</span>
+    </div>
+  );
+}
+
+function Badge({ children, tone = 'solid' as 'solid' | 'ghost' }: { children: React.ReactNode; tone?: 'solid' | 'ghost' }) {
+  return tone === 'solid' ? (
+    <span className="inline-flex items-center rounded-lg bg-black px-2.5 py-1 text-xs font-medium text-white">{children}</span>
+  ) : (
+    <span className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-800">{children}</span>
+  );
+}
+
+function Pill({ active, children, onClick }: { active?: boolean; children: React.ReactNode; onClick?: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={[
+        'whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors',
+        active ? 'bg-black text-white' : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50',
+      ].join(' ')}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ——— Data ———
+const CATEGORIES = ['Toate', 'Început', 'Configurare', 'Integrare', 'Optimizare', 'Avansate'] as const;
+
+type Category = typeof CATEGORIES[number];
+
+type Guide = {
+  id: string;
+  title: string;
+  category: Category;
+  readTime: string;
+  level: 'Începător' | 'Intermediar' | 'Avansat';
+  blurb: string;
 };
 
+const FEATURED: Guide[] = [
+  {
+    id: 'start-5min',
+    title: 'Primii pași: conectează agentul AI în 5 minute',
+    category: 'Început',
+    readTime: '10 min',
+    level: 'Începător',
+    blurb: 'Creează contul, generează cheile și activează widgetul pe site.',
+  },
+  {
+    id: 'style-voice',
+    title: 'Personalizează vocea și răspunsurile',
+    category: 'Configurare',
+    readTime: '15 min',
+    level: 'Intermediar',
+    blurb: 'Ghid pentru ton, reguli și fallback la operator uman.',
+  },
+  {
+    id: 'metrics',
+    title: 'Măsoară performanța: CSAT, TTR, conversii',
+    category: 'Optimizare',
+    readTime: '20 min',
+    level: 'Intermediar',
+    blurb: 'Dashboard, evenimente și bune practici de A/B testing.',
+  },
+];
+
+const LIBRARY: Guide[] = [
+  {
+    id: 'embed-web',
+    title: 'Integrare pe website: script & CSS',
+    category: 'Integrare',
+    readTime: '12 min',
+    level: 'Intermediar',
+    blurb: 'Adaugă snippetul, poziționează launcher-ul și verifică încărcarea.',
+  },
+  {
+    id: 'whatsapp',
+    title: 'Conectează WhatsApp Business API',
+    category: 'Integrare',
+    readTime: '25 min',
+    level: 'Avansat',
+    blurb: 'Setare furnizor, webhook, template-uri și recepționare mesaje.',
+  },
+  {
+    id: 'instagram',
+    title: 'Instagram DM: permisiuni și fluxuri',
+    category: 'Integrare',
+    readTime: '18 min',
+    level: 'Intermediar',
+    blurb: 'Conectează pagina, aprobă permisiuni și pornește automatizările.',
+  },
+  {
+    id: 'human-handoff',
+    title: 'Handoff către operator: reguli și SLA',
+    category: 'Configurare',
+    readTime: '14 min',
+    level: 'Intermediar',
+    blurb: 'Escaladare contextuală, ferestre de timp și notificări.',
+  },
+  {
+    id: 'kb-training',
+    title: 'Antrenare pe baza de cunoștințe',
+    category: 'Configurare',
+    readTime: '16 min',
+    level: 'Începător',
+    blurb: 'Încărcare documente, sitemap crawl și reguli de citare.',
+  },
+  {
+    id: 'api-webhooks',
+    title: 'API & Webhooks pentru automatizări',
+    category: 'Avansate',
+    readTime: '35 min',
+    level: 'Avansat',
+    blurb: 'Autentificare, evenimente și exemple de integrare custom.',
+  },
+];
+
+// ——— Blocks ———
+function GuideCard({ g, index }: { g: Guide; index?: number }) {
+  return (
+    <article className="group rounded-2xl border border-gray-200 bg-white p-5 transition-shadow hover:shadow-sm">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="grid h-12 w-12 place-items-center rounded-xl border border-gray-200 bg-gray-50 text-sm font-bold text-gray-900">
+          {index ?? '•'}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-base font-semibold text-gray-900">{g.title}</h3>
+            <Badge>{g.category}</Badge>
+          </div>
+          <div className="mt-1 text-xs text-gray-500">{g.level} • {g.readTime} citire</div>
+        </div>
+      </div>
+      <p className="text-sm leading-relaxed text-gray-600">{g.blurb}</p>
+      <div className="mt-4">
+        <button className="rounded-lg bg-black px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800">Citește ghidul</button>
+      </div>
+    </article>
+  );
+}
+
+function Step({ n, title, text }: { n: number; title: string; text: string }) {
+  return (
+    <div className="relative rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="mb-3 flex items-center gap-3">
+        <div className="grid h-8 w-8 place-items-center rounded-full bg-black text-xs font-semibold text-white">{n}</div>
+        <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
+      </div>
+      <p className="text-sm text-gray-600">{text}</p>
+    </div>
+  );
+}
+
+function LibraryRow({ g }: { g: Guide }) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 sm:pr-6">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Badge tone="ghost">{g.category}</Badge>
+            <span className="text-xs text-gray-500">{g.level} • {g.readTime} citire</span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">{g.title}</h3>
+          <p className="mt-1 text-sm text-gray-600">{g.blurb}</p>
+        </div>
+        <div className="flex items-center gap-2 sm:shrink-0">
+          <button className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">Citește</button>
+          <button className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50">Salvează</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GidsPage() {
+  const [q, setQ] = useState('');
+  const [cat, setCat] = useState<Category>('Toate');
+
+  const filtered = useMemo(() => {
+    const byCat = cat === 'Toate' ? [...LIBRARY] : LIBRARY.filter((g) => g.category === cat);
+    if (!q.trim()) return byCat;
+    const s = q.toLowerCase();
+    return byCat.filter((g) => g.title.toLowerCase().includes(s) || g.blurb.toLowerCase().includes(s));
+  }, [q, cat]);
+
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl lg:text-6xl font-bold text-black mb-6">
-              Gid-uri Complete
-            </h1>
-            <p className="text-xl text-gray-600">
-              Tot ce ai nevoie să știi pentru a utiliza AI Chat la maximum
-            </p>
-          </div>
+      {/* subtle grid background */}
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.04),transparent_60%)]" />
 
-          {/* Categories */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <button className="bg-black text-white px-6 py-3 rounded-lg font-semibold">
-              Toate
-            </button>
-            <button className="bg-gray-200 text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
-              Început
-            </button>
-            <button className="bg-gray-200 text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
-              Configurare
-            </button>
-            <button className="bg-gray-200 text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
-              Optimizare
-            </button>
-            <button className="bg-gray-200 text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
-              Avansate
-            </button>
-          </div>
+      <div className="mx-auto w-full max-w-7xl px-6 py-10 lg:py-16">
+        {/* Hero */}
+        <header className="mx-auto max-w-3xl text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Gid‑uri complete</h1>
+          <p className="mt-3 text-base text-gray-600 sm:text-lg">Instruiri pas cu pas pentru conectare, configurare și optimizare — totul în alb & negru.</p>
 
-          {/* Featured Guides */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-black mb-8 text-center">
-              Gid-uri Populare
-            </h2>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mr-4">
-                    <span className="text-black font-bold">1</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-black">GUIDE 1</h3>
-                    <span className="bg-black text-white px-3 py-1 rounded-lg text-sm">Început</span>
-                  </div>
-                </div>
-                <h4 className="text-xl font-bold text-black mb-3">
-                  Primii pași cu AI Chat
-                </h4>
-                <p className="text-gray-600 mb-4">
-                  Află cum să configurezi primul tău chatbot în mai puțin de 10 minute. 
-                  Ghid pas cu pas pentru începători.
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">15 min citire</span>
-                  <button className="text-black hover:text-gray-600 font-medium">
-                    Citește ghidul
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mr-4">
-                    <span className="text-black font-bold">2</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-black">GUIDE 2</h3>
-                    <span className="bg-gray-200 text-black px-3 py-1 rounded-lg text-sm">Configurare</span>
-                  </div>
-                </div>
-                <h4 className="text-xl font-bold text-black mb-3">
-                  Personalizarea conversațiilor
-                </h4>
-                <p className="text-gray-600 mb-4">
-                  Învață să creezi conversații naturale și utile care reflectă vocea brand-ului tău.
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">25 min citire</span>
-                  <button className="text-black hover:text-gray-600 font-medium">
-                    Citește ghidul
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mr-4">
-                    <span className="text-black font-bold">3</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-black">GUIDE 3</h3>
-                    <span className="bg-gray-200 text-black px-3 py-1 rounded-lg text-sm">Optimizare</span>
-                  </div>
-                </div>
-                <h4 className="text-xl font-bold text-black mb-3">
-                  Analiza performanțelor
-                </h4>
-                <p className="text-gray-600 mb-4">
-                  Folosește dashboard-ul de analytics pentru a optimiza rata de conversie a chatbot-ului.
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">20 min citire</span>
-                  <button className="text-black hover:text-gray-600 font-medium">
-                    Citește ghidul
-                  </button>
-                </div>
-              </div>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="relative w-full max-w-md">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </span>
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                type="search"
+                placeholder="Caută un ghid (ex: WhatsApp, API, handoff)"
+                className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+              />
             </div>
           </div>
+        </header>
 
-          {/* All Guides */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-black mb-8 text-center">
-              Toate Gidsurile
-            </h2>
-            
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="bg-black text-white px-3 py-1 rounded-lg text-sm">Început</span>
-                      <h3 className="text-xl font-bold text-black">Configurarea inițială</h3>
-                    </div>
-                    <p className="text-gray-600 mb-4">
-                      Un ghid complet pentru configurarea primului tău chatbot AI, de la crearea contului 
-                      până la prima conversație cu un client.
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>GUIDE 4</span>
-                      <span>•</span>
-                      <span>10 min citire</span>
-                      <span>•</span>
-                      <span>Nivel: Începător</span>
-                    </div>
-                  </div>
-                  <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    Citește
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="bg-gray-200 text-black px-3 py-1 rounded-lg text-sm">Configurare</span>
-                      <h3 className="text-xl font-bold text-black">Integrarea cu website-ul</h3>
-                    </div>
-                    <p className="text-gray-600 mb-4">
-                      Pasii necesari pentru a integra chatbot-ul pe website-ul tău, inclusiv opțiuni 
-                      de personalizare și best practices.
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>GUIDE 5</span>
-                      <span>•</span>
-                      <span>15 min citire</span>
-                      <span>•</span>
-                      <span>Nivel: Intermediar</span>
-                    </div>
-                  </div>
-                  <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    Citește
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 hover:bg-gray-100 transition-colors">
-                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="bg-gray-200 text-black px-3 py-1 rounded-lg text-sm">Avansate</span>
-                      <h3 className="text-xl font-bold text-black">API și integrări personalizate</h3>
-                    </div>
-                    <p className="text-gray-600 mb-4">
-                      Pentru dezvoltatori: cum să folosești API-ul nostru pentru integrări personalizate 
-                      și automatizări avansate.
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>GUIDE 6</span>
-                      <span>•</span>
-                      <span>35 min citire</span>
-                      <span>•</span>
-                      <span>Nivel: Avansat</span>
-                    </div>
-                  </div>
-                  <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    Citește
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Video Tutorials */}
-          <div className="bg-black rounded-lg p-12 text-white mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-center">
-              Tutoriale Video
-            </h2>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="bg-gray-800 rounded-lg aspect-video flex items-center justify-center mb-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-black font-bold">▶</span>
-                    </div>
-                    <p className="text-gray-300">VIDEO 1</p>
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Primul chatbot în 5 minute</h3>
-                <p className="text-gray-300 text-sm">Tutorial video pas cu pas</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-gray-800 rounded-lg aspect-video flex items-center justify-center mb-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-black font-bold">▶</span>
-                    </div>
-                    <p className="text-gray-300">VIDEO 2</p>
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Personalizarea aspectului</h3>
-                <p className="text-gray-300 text-sm">Adaptează chatbot-ul la brand-ul tău</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-gray-800 rounded-lg aspect-video flex items-center justify-center mb-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-black font-bold">▶</span>
-                    </div>
-                    <p className="text-gray-300">VIDEO 3</p>
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Analiza rezultatelor</h3>
-                <p className="text-gray-300 text-sm">Interpretează datele din dashboard</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Help CTA */}
-          <div className="text-center bg-gray-50 rounded-lg p-12">
-            <h2 className="text-3xl font-bold text-black mb-4">
-              Ai nevoie de ajutor suplimentar?
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Contactează echipa noastră de suport pentru asistență personalizată
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
-                Contactează suportul
-              </button>
-              <button className="border-2 border-black text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Programează sesiune 1-on-1
-              </button>
-            </div>
+        {/* Sticky category pills */}
+        <div className="sticky top-0 z-10 mt-8 -mx-6 border-y border-gray-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70">
+          <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-6 py-3">
+            {CATEGORIES.map((c) => (
+              <Pill key={c} active={c === cat} onClick={() => setCat(c)}>
+                {c}
+              </Pill>
+            ))}
           </div>
         </div>
+
+        {/* Featured */}
+        <section className="mt-10">
+          <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">Gid‑uri populare</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURED.map((g, i) => (
+              <GuideCard key={g.id} g={g} index={i + 1} />
+            ))}
+          </div>
+        </section>
+
+        {/* Quick steps */}
+        <section className="mt-14">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">Conectare în 6 pași</h2>
+            <Badge tone="ghost">Monocrom • UX simplu</Badge>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Step n={1} title="Creează contul" text="Înregistrează-te și verifică emailul." />
+            <Step n={2} title="Generează cheile" text="API key / Webhook secret pentru canale." />
+            <Step n={3} title="Alege canalul" text="Website, WhatsApp, Instagram sau Email." />
+            <Step n={4} title="Încarcă baza de cunoștințe" text="Documente, FAQ, sitemap crawler." />
+            <Step n={5} title="Definește handoff" text="Reguli de escaladare la operator uman." />
+            <Step n={6} title="Publică & măsoară" text="Activează și urmărește CSAT, TTR, conversii." />
+          </div>
+        </section>
+
+        {/* Library */}
+        <section className="mt-14">
+          <h2 className="mb-4 text-center text-2xl font-bold text-gray-900">Toate gid‑urile</h2>
+          <div className="space-y-4">
+            {filtered.map((g) => (
+              <LibraryRow key={g.id} g={g} />
+            ))}
+            {!filtered.length && (
+              <div className="rounded-2xl border border-dashed border-gray-300 p-10 text-center text-sm text-gray-500">Niciun rezultat pentru căutarea curentă.</div>
+            )}
+          </div>
+        </section>
+
+        {/* Video section */}
+        <section className="mt-16 rounded-2xl border border-gray-200 bg-black p-8 text-white">
+          <h2 className="mb-6 text-center text-2xl font-bold">Tutoriale video</h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="text-center">
+              <ImgPlaceholder className="mb-4 aspect-video w-full rounded-xl bg-gray-800" label="VIDEO" />
+              <h3 className="text-sm font-semibold">Primul chatbot în 5 minute</h3>
+              <p className="mt-1 text-xs text-gray-300">Setup end‑to‑end</p>
+            </div>
+            <div className="text-center">
+              <ImgPlaceholder className="mb-4 aspect-video w-full rounded-xl bg-gray-800" label="VIDEO" />
+              <h3 className="text-sm font-semibold">Personalizarea aspectului</h3>
+              <p className="mt-1 text-xs text-gray-300">Teme, poziționare, launcher</p>
+            </div>
+            <div className="text-center">
+              <ImgPlaceholder className="mb-4 aspect-video w-full rounded-xl bg-gray-800" label="VIDEO" />
+              <h3 className="text-sm font-semibold">Analiza rezultatelor</h3>
+              <p className="mt-1 text-xs text-gray-300">KPIs & raportare</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Help CTA */}
+        <section className="mt-12 rounded-2xl border border-gray-200 bg-gray-50 p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900">Ai nevoie de ajutor?</h2>
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-gray-600">Programează o sesiune 1‑la‑1 sau scrie-ne. Păstrăm totul simplu, clar și monocrom.</p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <button className="rounded-lg bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-gray-800">Contactează suportul</button>
+            <button className="rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50">Programează 1‑on‑1</button>
+          </div>
+        </section>
       </div>
     </div>
   );

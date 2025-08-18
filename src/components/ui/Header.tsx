@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { image } from 'framer-motion/client'
 
@@ -135,6 +135,35 @@ const navItems = [
     { label: 'Integrări', href: '/integrations' },
     { label: 'Prețuri', href: '/pricing' },
   ]
+
+const sponsorsData = [
+  {
+    text: '🏆 We won 1st Place at ElevenLabs Hackathon – $20,000 for our AI Agents',
+    url: '/blog/elevenlabs-hackathon-winner',
+  },
+  {
+    text: '🚀 EBRD selected Aichat.md for the prestigious Star Venture Program',
+    url: '/blog/ebrd-star-venture-program',
+  },
+  {
+    text: '🥈 2nd Place at Sevan Startup Summit – $6,000 award for Aichat.md',
+    url: '/blog/sevan-startup-summit-second-place',
+  },
+  {
+    text: '🏅 Winner of the YoHealth Challenge at Sevan',
+    url: '/blog/sevan-startup-summit-second-place',
+  },
+  {
+    text: '🚀 Backed by Google Cloud – $25K grant to scale our AI infrastructure',
+    url: '/blog/google-cloud-partnership-grant',
+  },
+  {
+    text: '🔥 Part of UpNext Accelerator by Dreamups – with $10K start funding to grow Aichat.md',
+    url: '/blog/upnext-accelerator-partnership',
+  },
+];
+
+const duplicatedSponsors = [...sponsorsData, ...sponsorsData, ...sponsorsData];
   
 
 export default function NavigationHeaderPillStatic({
@@ -150,6 +179,69 @@ export default function NavigationHeaderPillStatic({
   const closeTimeout = React.useRef<NodeJS.Timeout | null>(null)
   const [hoveredDropdownIndex, setHoveredDropdownIndex] = React.useState<number | null>(null)
   const [activeDropdownIndex, setActiveDropdownIndex] = React.useState<number>(0) // Păstrează indexul activ pentru container
+  const [isTickerPaused, setIsTickerPaused] = useState(false);
+
+  const tickerStyles = {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '32px',
+    background: 'linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
+    overflow: 'hidden',
+    zIndex: 10000,
+    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+  };
+
+  const tickerTrackStyles = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '120px', // Perfect spacing between sponsors
+    whiteSpace: 'nowrap' as const,
+    animation: 'ticker-smooth-roll 120s linear infinite',
+    willChange: 'transform', // Optimize for smooth animation
+  };
+
+  const tickerItemStyles = {
+    color: '#ffffff',
+    fontWeight: 600,
+    fontSize: '14px',
+    letterSpacing: '0.5px',
+    display: 'inline-block',
+    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+    minWidth: 'max-content',
+    opacity: 0.95,
+    cursor: 'pointer',
+    transition: 'text-decoration 0.2s, transform 0.18s cubic-bezier(0.4,0,0.2,1)',
+    textDecoration: 'none',
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !document.getElementById('ticker-keyframes')) {
+      const style = document.createElement('style');
+      style.id = 'ticker-keyframes';
+      style.innerHTML = `
+        @keyframes ticker-smooth-roll { 
+          0% { 
+            transform: translateX(0%); 
+          } 
+          100% { 
+            transform: translateX(-33.333%); 
+          } 
+        }
+        .ticker-track {
+          animation-play-state: running;
+        }
+        .ticker-track.ticker-paused {
+          animation-play-state: paused !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
   React.useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12)
     window.addEventListener('scroll', onScroll)
@@ -172,7 +264,7 @@ export default function NavigationHeaderPillStatic({
   const ease = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
   // Layout values for both states
-  const top = isScrolled ? 16 : 0 // px
+  const top = isScrolled ? 38 : 32 // px - adjusted to account for ticker
   const width = isScrolled ? 'min(1120px, 92vw)' : 'min(1280px, 96vw)'
   const radius = isScrolled ? 9999 : 14
   const bg = isScrolled ? 'rgba(0,0,0,0.72)' : 'rgba(0,0,0,0.82)'
@@ -196,7 +288,44 @@ export default function NavigationHeaderPillStatic({
   }
 
   return (
-    <header role="banner" className="fixed z-[9999] top-[2px] left-1/2 -translate-x-1/2 w-full pointer-events-none">
+  <header role="banner" className="fixed z-[9999] top-0 left-1/2 -translate-x-1/2 w-full">
+      {/* Sponsors ticker line */}
+  <div style={{...tickerStyles, pointerEvents: 'auto'}}>
+        <div
+          style={{ ...tickerTrackStyles, animationPlayState: isTickerPaused ? 'paused' : 'running', pointerEvents: 'auto' }}
+          className={`ticker-track${isTickerPaused ? ' ticker-paused' : ''}`}
+        >
+          {duplicatedSponsors.map((item, idx) => (
+            <a
+              href={item.url}
+              key={`sponsor-${idx}`}
+              style={{...tickerItemStyles, pointerEvents: 'auto'}}
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={e => {
+                setIsTickerPaused(true);
+                e.currentTarget.style.transform = 'translateY(-3px)';
+              }}
+              onMouseLeave={e => {
+                setIsTickerPaused(false);
+                e.currentTarget.style.transform = 'none';
+              }}
+              tabIndex={0}
+              onFocus={e => {
+                setIsTickerPaused(true);
+                e.currentTarget.style.transform = 'translateY(-3px)';
+              }}
+              onBlur={e => {
+                setIsTickerPaused(false);
+                e.currentTarget.style.transform = 'none';
+              }}
+              className="hover:underline focus:underline"
+            >
+              {item.text}
+            </a>
+          ))}
+        </div>
+      </div>
       {/* Inner shell that morphs - ascuns complet cand popup-ul mobil este deschis */}
       {!isMobileMenuOpen && (
         <div
@@ -492,7 +621,7 @@ export default function NavigationHeaderPillStatic({
               borderRadius: '16px',
               background: isScrolled ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.90)',
               position: 'absolute',
-              top: isScrolled ? 16 : 0,
+              top: isScrolled ? 48 : 32,
               left: '50%',
               transform: 'translateX(-50%)',
             }}
