@@ -55,3 +55,24 @@ html, body {
 .animate-dropdown-smooth {
   animation: dropdown-smooth 0.44s cubic-bezier(0.22,1,0.36,1);
 }
+
+
+
+/* Rainbow animated shadow for Get Started button */
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+/* For a seamless infinite loop, double the gradient stops and animate from 0% to 200% */
+.rainbow-shadow {
+  background: linear-gradient(90deg, #FF5C5C, #FFB95C, #FFF95C, #5CFF8A, #5CCEFF, #A95CFF, #FF5C5C, #FFB95C, #FFF95C, #5CFF8A, #5CCEFF, #A95CFF, #FF5C5C);
+  background-size: 200% 100%;
+  filter: blur(7px);
+  opacity: 0.85;
+  border-radius: 999px;
+  animation: rainbow 6s linear infinite;
+}
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}

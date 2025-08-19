@@ -264,7 +264,7 @@ export default function NavigationHeaderPillStatic({
   const ease = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
   // Layout values for both states
-  const top = isScrolled ? 38 : 32 // px - adjusted to account for ticker
+  const top = isScrolled ? 42 : 37 // 5px lower when at top (ticker is 32px + 5px)
   const width = isScrolled ? 'min(1120px, 92vw)' : 'min(1280px, 96vw)'
   const radius = isScrolled ? 9999 : 14
   const bg = isScrolled ? 'rgba(0,0,0,0.72)' : 'rgba(0,0,0,0.82)'

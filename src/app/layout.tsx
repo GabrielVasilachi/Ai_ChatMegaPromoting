@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import ConditionalHeader from '@/components/ui/ConditionalHeader';
 import Footer from '@/components/sections/Footer';
 import ChatWidget from '@/components/ui/ChatWidget';
+import CookiesConsent from '@/components/ui/CookiesConsent';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         <main className="min-h-screen">
           {children}
         </main>
+  <CookiesConsent />
         <Footer />
         <ChatWidget />
       </body>

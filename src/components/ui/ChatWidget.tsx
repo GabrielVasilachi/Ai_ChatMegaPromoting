@@ -22,16 +22,28 @@ export default function ChatWidget() {
   ])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  
+  // State for showing/hiding the info containers
+  const [showDesktopInfo, setShowDesktopInfo] = useState(true)
+  const [showMobileInfo, setShowMobileInfo] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Auto scroll to bottom when new messages arrive
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesEndRef.current && messagesEndRef.current.parentElement) {
+      const container = messagesEndRef.current.parentElement;
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }
 
   useEffect(() => {
-    scrollToBottom()
+    // Timeout to ensure DOM is painted and input is measured
+    const t = setTimeout(scrollToBottom, 30);
+    return () => clearTimeout(t);
   }, [messages])
 
   // Focus input when chat opens
@@ -104,16 +116,69 @@ export default function ChatWidget() {
 
   return (
     <>
+      {/* Info Containers above chat widget */}
+      {/* Desktop container */}
+
+      {/* Desktop info container - positioned above chat widget button */}
+      <AnimatePresence>
+        {showDesktopInfo && (
+          <motion.div
+            className="hidden sm:flex fixed right-6 bottom-[6.5rem] w-96 h-32 bg-white border border-gray-300 rounded-2xl shadow-xl z-50 items-start justify-between p-4"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <div className="flex-1 flex flex-col justify-center">
+              <span className="font-semibold text-gray-800 text-base">Salutare! Acesta este un container informativ pentru utilizatorii desktop.</span>
+              <span className="text-gray-500 text-sm mt-1">Poți adăuga orice text dorești aici pentru detalii despre funcționalitatea chatului.</span>
+            </div>
+            <button
+              className="w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors ml-2 mt-[-8px] mr-[-8px]"
+              onClick={() => setShowDesktopInfo(false)}
+              aria-label="Închide info desktop"
+            >
+              <span className="text-gray-600 text-xs font-bold">×</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile info container - positioned above chat widget button */}
+      <AnimatePresence>
+        {showMobileInfo && (
+          <motion.div
+            className="flex sm:hidden fixed right-3 bottom-[4rem] w-[90vw] h-20 bg-white border border-gray-300 rounded-2xl shadow-xl z-50 items-start justify-between p-3"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <div className="flex-1 flex flex-col justify-center">
+              <span className="font-semibold text-gray-800 text-[13px]">Salut! Container informativ pentru mobil.</span>
+              <span className="text-gray-500 text-[11px] mt-1">Informații scurte și utile pentru utilizatorii de mobil.</span>
+            </div>
+            <button
+              className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors ml-2 mt-[-6px] mr-[-6px]"
+              onClick={() => setShowMobileInfo(false)}
+              aria-label="Închide info mobil"
+            >
+              <span className="text-gray-600 text-xs font-bold">×</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Chat Widget Button - Fixed position in bottom right */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-3 right-3 z-50 sm:bottom-6 sm:right-6"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
       >
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-16 h-16 bg-gray-600 hover:bg-gray-700 text-white rounded-full shadow-lg flex items-center justify-center transition-colors relative"
+          className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-600 hover:bg-gray-700 text-white rounded-full shadow-lg flex items-center justify-center transition-colors relative"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -160,23 +225,23 @@ export default function ChatWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-40 overflow-hidden"
+            className="fixed bottom-20 right-2 w-[95vw] max-w-xs h-[70vh] min-h-[340px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-40 overflow-hidden sm:bottom-24 sm:right-6 sm:w-[480px] sm:max-w-lg sm:h-[500px] flex flex-col"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             {/* Header + Phone Button */}
-            <div className="bg-gray-600 text-white p-4 flex items-center gap-3 justify-between relative">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-gray-600 text-white p-2 sm:p-4 flex items-center gap-2 sm:gap-3 justify-between relative">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-500 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold">Interes AI</h3>
-                  <p className="text-sm text-blue-100">Online</p>
+                    <h3 className="font-semibold text-[11px] sm:text-base">Interes AI</h3>
+                  <p className="text-[10px] sm:text-sm text-blue-100">Online</p>
                 </div>
               </div>
               {/* Phone Button */}
@@ -184,21 +249,21 @@ export default function ChatWidget() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 h-80">
+            <div className="relative flex-1 min-h-0 overflow-y-auto p-2 sm:p-4 space-y-3 sm:space-y-4 pb-16 sm:pb-20">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-xs px-4 py-2 rounded-2xl ${
+                    className={`max-w-[80vw] sm:max-w-xs px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl ${
                       message.isUser
                         ? 'bg-gray-600 text-white'
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    <p className="text-sm">{message.text}</p>
-                    <p className={`text-xs mt-1 ${
+                    <p className="text-[11px] sm:text-sm leading-snug">{message.text}</p>
+                    <p className={`text-[9px] sm:text-xs mt-1 ${
                       message.isUser ? 'text-blue-100' : 'text-gray-500'
                     }`}>
                       {message.timestamp.toLocaleTimeString('ro-RO', { 
@@ -213,11 +278,11 @@ export default function ChatWidget() {
               {/* Typing indicator */}
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-100 px-4 py-2 rounded-2xl">
+                  <div className="bg-gray-100 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -226,9 +291,9 @@ export default function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="border-t border-gray-200 p-4">
-              <div className="flex gap-2">
+            {/* Input - fixed bottom */}
+            <div className="absolute left-0 bottom-0 w-full border-t border-gray-200 p-2 sm:p-4 bg-white">
+              <div className="flex gap-1 sm:gap-2">
                 <input
                   ref={inputRef}
                   type="text"
@@ -236,14 +301,14 @@ export default function ChatWidget() {
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Scrie un mesaj..."
-                  className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="flex-1 border border-gray-300 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isTyping}
-                  className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white rounded-full p-2 transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white rounded-full p-2 sm:p-2.5 transition-colors"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </button>
@@ -291,7 +356,7 @@ function PhonePopup() {
             transition={{ duration: 0.2 }}
             className="flex items-center bg-white text-gray-900 px-3 py-1 rounded-lg shadow border border-gray-200 text-sm font-medium select-none mr-1"
           >
-            <span>Facem un apel?</span>
+              <span className="text-[11px] sm:text-base">Facem un apel?</span>
             <svg className="w-4 h-4 ml-1 text-green-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -326,21 +391,21 @@ function PhonePopup() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                <label htmlFor="phone-input" className="text-sm font-medium">Noi te vom suna :)</label>
+                <label htmlFor="phone-input" className="text-xs sm:text-sm font-medium">Noi te vom suna :)</label>
                 <input
                   id="phone-input"
                   ref={inputRef}
                   type="tel"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-                  placeholder="07xxxxxxxx"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                  placeholder="+373xxxxxxxx"
                   required
                   minLength={7}
                 />
                 <button
                   type="submit"
-                  className="bg-green-500 hover:bg-green-600 text-white rounded-lg px-4 py-2 mt-2 font-semibold transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-white rounded-lg px-4 py-2 mt-2 font-semibold transition-colors text-xs sm:text-sm"
                 >Trimite</button>
               </form>
             )}

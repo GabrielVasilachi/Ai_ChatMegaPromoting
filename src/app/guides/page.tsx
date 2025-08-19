@@ -200,7 +200,7 @@ export default function GidsPage() {
   }, [q, cat]);
 
   return (
-    <div className="min-h-screen bg-white">
+  <div className="min-h-screen bg-white mt-16">
       {/* subtle grid background */}
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.04),transparent_60%)]" />
 

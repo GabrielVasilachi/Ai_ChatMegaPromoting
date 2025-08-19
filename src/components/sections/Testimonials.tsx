@@ -231,19 +231,43 @@ export default function Testimonials() {
     const container = containerRef.current;
     if (!container) return;
 
-    const obs = new IntersectionObserver(
+    const updateActiveByScroll = () => {
+      // Find the item most centered in the viewport
+      let minDiff = Infinity;
+      let bestIdx = 1;
+      const containerRect = container.getBoundingClientRect();
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      itemRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const elCenter = rect.left + rect.width / 2;
+        const diff = Math.abs(containerCenter - elCenter);
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestIdx = i;
+        }
+      });
+      setCurrentLoopIndex(bestIdx);
+    };
+
+    // IntersectionObserver for best browser support
+    const obs = new window.IntersectionObserver(
       (entries) => {
+        let maxRatio = 0;
+        let bestIdx = 1;
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.7) {
-            const idx = Number((entry.target as HTMLElement).dataset.index || '0');
-            setCurrentLoopIndex(idx);
+          const idx = Number((entry.target as HTMLElement).dataset.index || '0');
+          if (entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            bestIdx = idx;
           }
         });
+        setCurrentLoopIndex(bestIdx);
       },
-      { 
-        root: container, 
-        threshold: [0.5, 0.6, 0.7, 0.8, 0.9], // Multiple thresholds for better precision
-        rootMargin: '-20% 0px' // Tighter margins for better center detection
+      {
+        root: container,
+        threshold: Array.from({ length: 11 }, (_, i) => i / 10),
+        rootMargin: '-20% 0px',
       }
     );
 
@@ -254,7 +278,13 @@ export default function Testimonials() {
       }
     });
 
-    return () => obs.disconnect();
+    // Fallback: update on scroll (for mobile browsers where observer is unreliable)
+    container.addEventListener('scroll', updateActiveByScroll, { passive: true });
+
+    return () => {
+      obs.disconnect();
+      container.removeEventListener('scroll', updateActiveByScroll);
+    };
   }, [isMobile, looped.length]);
 
   // Handle edges for infinite illusion + compute active real index
@@ -263,25 +293,41 @@ export default function Testimonials() {
     const total = n;
     if (!total) return;
 
-    // Edge jump without animation (after snap completes) with improved timing
-    if (currentLoopIndex === 0) {
-      // left clone => jump to last real (index n) with slight delay for smoother experience
-      const timer = setTimeout(() => scrollToLoopIndex(total, 'auto'), 50);
-      return () => clearTimeout(timer);
-    } else if (currentLoopIndex === total + 1) {
-      // right clone => jump to first real (index 1) with slight delay for smoother experience  
-      const timer = setTimeout(() => scrollToLoopIndex(1, 'auto'), 50);
-      return () => clearTimeout(timer);
+    let scrollTimeout: NodeJS.Timeout | null = null;
+    const container = containerRef.current;
+
+    // Helper: debounce scroll end
+    const onScroll = () => {
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        if (currentLoopIndex === 0) {
+          scrollToLoopIndex(total, 'auto');
+        } else if (currentLoopIndex === total + 1) {
+          scrollToLoopIndex(1, 'auto');
+        }
+      }, 60); // Wait for scroll to finish
+    };
+
+    if (container) {
+      container.addEventListener('scroll', onScroll, { passive: true });
     }
 
     // Active real index (wrap)
     const real = ((currentLoopIndex - 1 + total) % total + total) % total;
     setActiveIndex(real);
+
+    return () => {
+      if (container) container.removeEventListener('scroll', onScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+    };
   }, [currentLoopIndex, isMobile, n]);
 
   const goNext = () => scrollToLoopIndex(currentLoopIndex + 1, 'smooth');
   const goPrev = () => scrollToLoopIndex(currentLoopIndex - 1, 'smooth');
-  const gotoReal = (realIndex: number) => scrollToLoopIndex(realIndex + 1, 'smooth');
+  const gotoReal = (realIndex: number) => {
+    setCurrentLoopIndex(realIndex + 1);
+    scrollToLoopIndex(realIndex + 1, 'smooth');
+  };
 
   const pillFor = (realIndex: number) => {
     switch (realIndex) {
@@ -375,21 +421,22 @@ export default function Testimonials() {
                   ref={(el) => { itemRefs.current[i] = el; }}
                   className="snap-center shrink-0 w-[85%] max-w-[420px]"
                 >
-                  <div className="bg-white rounded-xl p-8 shadow-lg transition-shadow duration-300 flex flex-col justify-between min-h-[420px]">
-                    <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">{t.quote}</blockquote>
-                    <div className="mt-auto">
-                      <div className="flex items-center space-x-4 mb-4">
-                        <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-white font-bold text-lg">{t.name?.[0] ?? '•'}</span>
+                  <div className="bg-white rounded-xl p-5 shadow-lg transition-shadow duration-300 flex flex-col h-[370px] relative">
+                    <blockquote className="text-base text-gray-800 leading-relaxed mb-4">{t.quote}</blockquote>
+                    {/* Bottom row: left = persoana, right = procente */}
+                    <div className="absolute left-0 bottom-0 w-full flex flex-col gap-2 px-2 pb-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-bold text-base">{t.name?.[0] ?? '•'}</span>
                         </div>
-                        <div>
-                          <div className="font-bold text-gray-900 text-base">{t.name}</div>
-                          <div className="text-gray-600 text-sm">{t.title}</div>
-                          <div className="text-gray-500 text-sm">{t.company}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-gray-900 text-sm w-full truncate">{t.name}</div>
+                          <div className="text-gray-600 text-xs w-full truncate">{t.title}</div>
+                          <div className="text-gray-500 text-xs w-full truncate">{t.company}</div>
                         </div>
                       </div>
-                      <div className="pt-4 border-t border-gray-200">
-                        <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">
+                      <div className="w-full flex">
+                        <div className="bg-black px-3 py-1.5 rounded-full text-white text-xs font-semibold whitespace-nowrap mx-auto">
                           {pillFor((t as any).__realIndex)}
                         </div>
                       </div>
@@ -457,14 +504,18 @@ export default function Testimonials() {
 
             {/* Dots */}
             <div className="mt-3 flex items-center justify-center gap-2">
-              {Array.from({ length: n }).map((_, i) => (
-                <button
-                  key={`dot-${i}`}
-                  aria-label={`Go to slide ${i + 1}`}
-                  onClick={() => gotoReal(i)}
-                  className={`h-2 w-2 rounded-full transition-all ${activeIndex === i ? 'bg-white w-5' : 'bg-white/40'}`}
-                />
-              ))}
+              {testimonials.map((_, i) => {
+                // Calculate real index from currentLoopIndex (1..n), wrap around
+                const real = ((currentLoopIndex - 1 + n) % n + n) % n;
+                return (
+                  <button
+                    key={`dot-${i}`}
+                    aria-label={`Go to slide ${i + 1}`}
+                    onClick={() => gotoReal(i)}
+                    className={`h-2 w-2 rounded-full transition-all ${real === i ? 'bg-white w-5' : 'bg-white/40'}`}
+                  />
+                );
+              })}
             </div>
           </div>
         ) : (

@@ -56,7 +56,7 @@ export default function HeroSectionLeftClean() {
         { sender: 'Bot', message: 'Bună ziua, Diana! Excelent, oferim servicii complete de web design și dezvoltare. Ce tip de site doriți să creați?' },
         { sender: 'Diana', message: 'Am nevoie de un site e-commerce pentru produsele noastre.' },
         { sender: 'Bot', message: 'Perfect! Pentru e-commerce oferim platforme moderne cu plăți online, gestiune stoc și panou admin. Câte produse aveți aproximativ?' },
-        { sender: 'Diana', message: 'Около 200 de produse în mai multe categorii.' },
+        { sender: 'Diana', message: 'Aproape 200 de produse în mai multe categorii.' },
         { sender: 'Bot', message: 'Foarte bine! Pentru 200 de produse recomandăm o platformă robustă cu filtrare avansată și optimizare SEO. Doriți și integrare cu sistemele existente?' },
         { sender: 'Diana', message: 'Da, și cu sistem de facturare și contabilitate.' },
         { sender: 'Bot', message: 'Excelent! Putem integra cu sisteme populare de facturare. În cât timp doriți să fie gata proiectul?' }
@@ -81,6 +81,13 @@ export default function HeroSectionLeftClean() {
   const [displayedMessages, setDisplayedMessages] = useState<{sender: string, message: string}[][]>([[], [], [], []]) // Mesajele afișate pentru fiecare container
   const [showFakeMouse, setShowFakeMouse] = useState(true)
   const [hideOnScroll, setHideOnScroll] = useState(false);
+  const [isTypingSimulation, setIsTypingSimulation] = useState([false, false, false, false]); // Simulare typing pentru fiecare chat
+  const [lastActivity, setLastActivity] = useState([Date.now(), Date.now() - 300000, Date.now() - 120000, Date.now() - 60000]); // Ultima activitate pentru fiecare user
+  const [onlineStatus, setOnlineStatus] = useState([true, false, true, true]); // Status online pentru fiecare user
+  const [unreadCount, setUnreadCount] = useState([3, 1, 2, 0]); // Numărul de mesaje necitite
+  const [messageStatus, setMessageStatus] = useState<('sent' | 'delivered' | 'read' | 'new')[][]>([[], [], [], []]); // Status pentru fiecare mesaj
+  const [showNewMessageNotification, setShowNewMessageNotification] = useState([false, false, false, false]); // Notificare mesaj nou
+  const [lastBotMessageTime, setLastBotMessageTime] = useState([0, 0, 0, 0]); // Timpul ultimului mesaj de la bot
   // Ascunde mouse-ul fake și bubble-ul la scroll, reapare după 400ms fără scroll
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -114,6 +121,81 @@ export default function HeroSectionLeftClean() {
       }
     });
   }, []);
+
+  // Simulare activitate realistă - typing indicators, status updates, mesaje noi
+  useEffect(() => {
+    const intervals: NodeJS.Timeout[] = [];
+    
+    // Simulare typing pentru fiecare chat la intervale diferite
+    rightBoxData.forEach((_, idx) => {
+      const typingInterval = setInterval(() => {
+        if (Math.random() < 0.3 && !isTypingSimulation[idx]) { // 30% șansă să înceapă typing
+          setIsTypingSimulation(prev => {
+            const newTyping = [...prev];
+            newTyping[idx] = true;
+            return newTyping;
+          });
+          
+          // Oprește typing după 2-5 secunde
+          setTimeout(() => {
+            setIsTypingSimulation(prev => {
+              const newTyping = [...prev];
+              newTyping[idx] = false;
+              return newTyping;
+            });
+          }, 2000 + Math.random() * 3000);
+        }
+      }, 8000 + Math.random() * 7000); // Între 8-15 secunde
+      
+      intervals.push(typingInterval);
+    });
+    
+    // Simulare schimbări de status online/offline
+    const statusInterval = setInterval(() => {
+      setOnlineStatus(prev => {
+        const newStatus = [...prev];
+        const randomIndex = Math.floor(Math.random() * 4);
+        newStatus[randomIndex] = Math.random() > 0.7; // 30% șansă să schimbe statusul
+        return newStatus;
+      });
+    }, 15000); // La fiecare 15 secunde
+    
+    intervals.push(statusInterval);
+    
+    // Simulare mesaje noi - incrementează unread count
+    const messageInterval = setInterval(() => {
+      if (Math.random() < 0.2) { // 20% șansă să primești mesaj nou
+        const randomUser = Math.floor(Math.random() * 4);
+        setUnreadCount(prev => {
+          const newCount = [...prev];
+          if (randomUser !== selectedBox) { // Nu adăuga mesaje necitite pentru chat-ul activ
+            newCount[randomUser] = Math.min(newCount[randomUser] + 1, 9); // Max 9 mesaje
+          }
+          return newCount;
+        });
+        
+        // Actualizează ultima activitate
+        setLastActivity(prev => {
+          const newActivity = [...prev];
+          newActivity[randomUser] = Date.now();
+          return newActivity;
+        });
+      }
+    }, 10000); // La fiecare 10 secunde
+    
+    intervals.push(messageInterval);
+    
+    return () => intervals.forEach(interval => clearInterval(interval));
+  }, [selectedBox]);
+
+  // Resetează unread count când selectezi un chat
+  useEffect(() => {
+    setUnreadCount(prev => {
+      const newCount = [...prev];
+      newCount[selectedBox] = 0;
+      return newCount;
+    });
+  }, [selectedBox]);
 
   // --- viewport detection to conditionally render desktop vs mobile chat ---
   const [isMobile, setIsMobile] = useState(false);
@@ -477,54 +559,76 @@ export default function HeroSectionLeftClean() {
             <div className="absolute top-3 left-3 flex gap-1"></div>
             {/* Four stacked containers, responsive heights */}
             <div className="flex flex-col w-full h-full">
-              <div
-                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 0 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                onClick={() => setSelectedBox(0)}
-                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                ref={rightBoxRefs[0]}
-              >
-                <span
-                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
-                  style={{ display: 'inline-block' }}
-                ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Alex M.</span>
-              </div>
-              <div
-                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 1 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                onClick={() => setSelectedBox(1)}
-                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                ref={rightBoxRefs[1]}
-              >
-                <span
-                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
-                  style={{ display: 'inline-block' }}
-                ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Cristina G.</span>
-              </div>
-              <div
-                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 2 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                onClick={() => setSelectedBox(2)}
-                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                ref={rightBoxRefs[2]}
-              >
-                <span
-                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
-                  style={{ display: 'inline-block' }}
-                ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Diana R.</span>
-              </div>
-              <div
-                className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center ${selectedBox === 3 ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''}`}
-                onClick={() => setSelectedBox(3)}
-                style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
-                ref={rightBoxRefs[3]}
-              >
-                <span
-                  className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block mr-2 ml-2 shrink-0"
-                  style={{ display: 'inline-block' }}
-                ></span>
-                <span className="text-[13px] md:text-[15px] text-gray-700 font-medium">Bogdan L.</span>
-              </div>
+              {rightBoxData.map((user, idx) => {
+                const timeSinceActivity = Date.now() - lastActivity[idx];
+                const minutesAgo = Math.floor(timeSinceActivity / 60000);
+                
+                let statusText = '';
+                let statusColor = 'text-gray-500';
+                
+                if (isTypingSimulation[idx]) {
+                  statusText = 'În curs de scriere...';
+                  statusColor = 'text-green-600 animate-pulse';
+                } else if (onlineStatus[idx]) {
+                  if (minutesAgo < 1) {
+                    statusText = 'Online acum';
+                    statusColor = 'text-green-600';
+                  } else if (minutesAgo < 5) {
+                    statusText = `Acum ${minutesAgo} min`;
+                  } else {
+                    statusText = `${Math.floor(minutesAgo / 60)}h în urmă`;
+                  }
+                } else {
+                  statusText = 'Offline';
+                  statusColor = 'text-gray-400';
+                }
+                
+                const currentTime = new Date();
+                const timeString = `${currentTime.getHours()}:${currentTime.getMinutes().toString().padStart(2, '0')}`;
+                
+                return (
+                  <div
+                    key={idx}
+                    className={`flex-1 min-h-0 w-full border border-gray-200 flex items-center justify-between ${selectedBox === idx ? 'bg-gray-100' : 'bg-white'} transition ${isInsideBigContainer ? 'cursor-none' : ''} hover:bg-gray-50`}
+                    onClick={() => setSelectedBox(idx)}
+                    style={{cursor: isInsideBigContainer ? 'none' : 'pointer'}}
+                    ref={rightBoxRefs[idx]}
+                  >
+                    <div className="flex items-center flex-1 min-w-0">
+                      <div className="relative mr-2 ml-2 flex-shrink-0">
+                        <span
+                          className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block shrink-0"
+                          style={{ display: 'inline-block' }}
+                        ></span>
+                        {/* Dynamic notification and online indicators */}
+                        {unreadCount[idx] > 0 && (
+                          <div className="absolute -top-1 -right-1 min-w-[12px] h-3 bg-red-500 rounded-full border border-white flex items-center justify-center animate-pulse">
+                            {unreadCount[idx] > 9 ? (
+                              <span className="text-[8px] text-white font-bold">9+</span>
+                            ) : (
+                              <span className="text-[8px] text-white font-bold">{unreadCount[idx]}</span>
+                            )}
+                          </div>
+                        )}
+                        {unreadCount[idx] === 0 && onlineStatus[idx] && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-white"></div>
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-[13px] md:text-[15px] text-gray-700 font-medium truncate">
+                          {user.name}
+                        </span>
+                        <span className={`text-[10px] md:text-[11px] ${statusColor} truncate font-medium`}>
+                          {statusText}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mr-2 text-[10px] text-gray-400 flex-shrink-0">
+                      {timeString}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
           {/* Right main container */}
@@ -554,12 +658,58 @@ export default function HeroSectionLeftClean() {
             >
               {/* Conversația dinamică */}
               {displayedMessages[selectedBox].map((msg, idx) => (
-                <div key={idx} className={`text-[12px] md:text-sm rounded px-3 py-2 w-fit break-words max-w-full ${
-                  msg.sender === 'Bot' 
-                    ? 'bg-blue-100 text-blue-900 self-start' // Bot pe stânga, albastru
-                    : 'bg-gray-100 text-gray-600 self-end'    // Utilizator pe dreapta, gri
+                <div key={idx} className={`flex flex-col gap-1 ${
+                  msg.sender === 'Bot' ? 'items-start' : 'items-end'
                 }`}>
-                  <strong>{msg.sender}:</strong> {msg.message}
+                  <div className={`text-[12px] md:text-sm rounded px-3 py-2 w-fit break-words max-w-full ${
+                    msg.sender === 'Bot' 
+                      ? 'bg-blue-100 text-blue-900 self-start' // Bot pe stânga, albastru
+                      : 'bg-gray-100 text-gray-600 self-end'    // Utilizator pe dreapta, gri
+                  }`}>
+                    <strong>{msg.sender}:</strong> {msg.message}
+                  </div>
+                  {/* Status indicators pentru mesaje */}
+                  {msg.sender === 'Bot' && (
+                    <div className="flex items-center gap-1 text-[10px] text-gray-400 self-start">
+                      {messageStatus[selectedBox] && messageStatus[selectedBox][idx] === 'read' && (
+                        <>
+                          <svg className="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <svg className="w-3 h-3 text-blue-500 -ml-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <span>Citit</span>
+                        </>
+                      )}
+                      {messageStatus[selectedBox] && messageStatus[selectedBox][idx] === 'delivered' && (
+                        <>
+                          <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <svg className="w-3 h-3 text-gray-400 -ml-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <span>Livrat</span>
+                        </>
+                      )}
+                      {messageStatus[selectedBox] && messageStatus[selectedBox][idx] === 'sent' && (
+                        <>
+                          <svg className="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          <span>Trimis</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {/* Notificare mesaj nou pentru răspunsuri utilizator */}
+                  {msg.sender !== 'Bot' && messageStatus[selectedBox] && messageStatus[selectedBox][idx] === 'new' && (
+                    <div className="flex items-center gap-1 text-[10px] text-green-600 self-end animate-pulse">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                      <span className="font-medium">Mesaj nou</span>
+                    </div>
+                  )}
                 </div>
               ))}
               
@@ -635,10 +785,47 @@ export default function HeroSectionLeftClean() {
                           conversations[currentIdx]?.sender === 'Bot' &&
                           conversations[currentIdx]?.message === val) {
                         // Adaugă mesajul ca răspuns de la bot în displayedMessages
+                        const currentMsgIndex = displayedMessages[selectedBox].length;
                         setDisplayedMessages(prev => {
                           const newMessages = [...prev];
                           newMessages[selectedBox] = [...newMessages[selectedBox], conversations[currentIdx]];
                           return newMessages;
+                        });
+                        
+                        // Adaugă status pentru mesajul botului
+                        setMessageStatus(prev => {
+                          const newStatus = [...prev];
+                          if (!newStatus[selectedBox]) newStatus[selectedBox] = [];
+                          newStatus[selectedBox][currentMsgIndex] = 'sent';
+                          return newStatus;
+                        });
+                        
+                        // După 1 secundă, schimbă la "delivered"
+                        setTimeout(() => {
+                          setMessageStatus(prev => {
+                            const newStatus = [...prev];
+                            if (newStatus[selectedBox]) {
+                              newStatus[selectedBox][currentMsgIndex] = 'delivered';
+                            }
+                            return newStatus;
+                          });
+                        }, 1000);
+                        
+                        // După 3 secunde, schimbă la "read"
+                        setTimeout(() => {
+                          setMessageStatus(prev => {
+                            const newStatus = [...prev];
+                            if (newStatus[selectedBox]) {
+                              newStatus[selectedBox][currentMsgIndex] = 'read';
+                            }
+                            return newStatus;
+                          });
+                        }, 3000);
+                        
+                        setLastBotMessageTime(prev => {
+                          const newTimes = [...prev];
+                          newTimes[selectedBox] = Date.now();
+                          return newTimes;
                         });
                         
                         // Capturează următorul index înainte de increment
@@ -669,6 +856,26 @@ export default function HeroSectionLeftClean() {
                                 if (!lastMsg || lastMsg.message !== nextUserMsg.message || lastMsg.sender !== nextUserMsg.sender) {
                                   const newMessages = [...prevMessages];
                                   newMessages[selectedBox] = [...currentMessages, nextUserMsg];
+                                  
+                                  // Adaugă status "new" pentru mesajul utilizatorului
+                                  setMessageStatus(prevStatus => {
+                                    const newStatus = [...prevStatus];
+                                    if (!newStatus[selectedBox]) newStatus[selectedBox] = [];
+                                    newStatus[selectedBox][currentMessages.length] = 'new';
+                                    return newStatus;
+                                  });
+                                  
+                                  // După 4 secunde, elimină notificarea "Mesaj nou"
+                                  setTimeout(() => {
+                                    setMessageStatus(prevStatus => {
+                                      const newStatus = [...prevStatus];
+                                      if (newStatus[selectedBox]) {
+                                        delete newStatus[selectedBox][currentMessages.length];
+                                      }
+                                      return newStatus;
+                                    });
+                                  }, 4000);
+                                  
                                   return newMessages;
                                 }
                                 return prevMessages;
@@ -846,17 +1053,24 @@ export default function HeroSectionLeftClean() {
             {/* Auth buttons */}
             <div className="mt-5 flex gap-3">
               <button
-                className="px-5 py-2 rounded-full border border-black text-black font-semibold bg-white hover:bg-black hover:text-white"
+                className="px-5 py-2 rounded-full border border-black text-black font-semibold bg-white hover:bg-gray-100 hover:text-black"
                 type="button"
               >
                 Sign In
               </button>
-              <button
-                className="px-5 py-2 rounded-full border border-black bg-black text-white font-semibold hover:bg-white hover:text-black"
-                type="button"
-              >
-                Get Started
-              </button>
+              <div className="relative inline-block">
+                <button
+                  className="px-5 py-2 rounded-full border border-black bg-black text-white font-semibold hover:bg-gray-800 hover:text-white relative z-10"
+                  type="button"
+                >
+                  Get Started
+                </button>
+                {/* Rainbow shadow using a blurred gradient pseudo-element */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 -translate-y-1 w-full h-2 z-0 rainbow-shadow"
+                />
+              </div>
             </div>
           </div>
 
