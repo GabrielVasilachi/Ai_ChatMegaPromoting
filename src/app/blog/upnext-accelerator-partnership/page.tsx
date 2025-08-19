@@ -179,7 +179,7 @@ export default function UpnextAcceleratorPartnership() {
                 <h4 className="font-semibold text-gray-900 mb-2">Phase 6 — Demo Day & Next Steps</h4>
                 <ul className="text-gray-700 space-y-1 text-sm">
                   <li>• Deliver a crisp, numbers-first pitch.</li>
-                  <li>• Convert investor interest into meetings.</li>
+                  <li>• Convert investor Bravint into meetings.</li>
                   <li>• Publish our six-month results and the 12-month execution plan.</li>
                 </ul>
               </div>

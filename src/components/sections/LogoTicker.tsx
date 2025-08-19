@@ -35,7 +35,7 @@ const sponsors: Sponsor[] = [
 
 export default function LogoWall() {
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-white py-10 md:py-10">
       <div className="w-full px-0 flex flex-col items-center">
         {/* Eyebrow + rating row (optional, easy to remove) */}
         <div className="text-center mb-8">

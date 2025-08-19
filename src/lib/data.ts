@@ -1,4 +1,4 @@
-// Sample data for Interes AI marketing site
+// Sample data for Bravin AI marketing site
 
 export interface Company {
   id: number;
@@ -366,7 +366,7 @@ async function handleMessage(message, userId) {
     
     return response.reply;
   } catch (error) {
-    console.error('Interes AI error:', error);
+    console.error('Bravin AI error:', error);
     return 'Sorry, I encountered an error. Please try again.';
   }
 }`,

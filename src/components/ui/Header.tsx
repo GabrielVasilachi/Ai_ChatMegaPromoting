@@ -168,7 +168,7 @@ const duplicatedSponsors = [...sponsorsData, ...sponsorsData, ...sponsorsData];
 
 export default function NavigationHeaderPillStatic({
   logoSrc,
-  logoAlt = 'Interes AI',
+  logoAlt = 'Bravin AI',
   leftImageSrc,
   rightImageSrc,
 }: NavigationHeaderPillStaticProps) {
@@ -366,7 +366,7 @@ export default function NavigationHeaderPillStatic({
                 </Link>
               ) : (
                 <Link href="/" className="inline-flex items-baseline font-bold tracking-tight text-white text-lg relative" aria-label="Home">
-                  <span>Interes</span>
+                  <span>Bravin</span>
                   <span
                     style={{
                       fontSize: '0.65em',
@@ -637,7 +637,7 @@ export default function NavigationHeaderPillStatic({
                   {/* Logo */}
                   <div className="shrink-0">
                     <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="inline-flex items-baseline font-bold tracking-tight text-white text-lg relative" aria-label="Home">
-                      <span>Interes</span>
+                      <span>Bravin</span>
                       <span
                         style={{
                           fontSize: '0.65em',

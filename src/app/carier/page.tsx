@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ArrowRight, MapPin, Clock, Users, TrendingUp } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Carieră - Alătură-te echipei noastre | Interes AI',
-  description: 'Descoperă oportunitățile de carieră la Interes AI. Construiește viitorul inteligenței artificiale împreună cu noi.',
+  title: 'Carieră - Alătură-te echipei noastre | Bravin AI',
+  description: 'Descoperă oportunitățile de carieră la Bravin AI. Construiește viitorul inteligenței artificiale împreună cu noi.',
 };
 
 const jobOpenings = [
@@ -82,7 +82,7 @@ export default function CareerPage() {
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Alătură-te echipei
-              <span className="text-blue-600"> Interes AI</span>
+              <span className="text-blue-600"> Bravin AI</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               Construiește viitorul inteligenței artificiale împreună cu noi. 
@@ -176,7 +176,7 @@ export default function CareerPage() {
                     </div>
                     <div className="mt-4 lg:mt-0">
                       <Link
-                        href={`mailto:careers@interes.ai?subject=Aplicație pentru ${job.title}&body=Salut,%0D%0A%0D%0AAș dori să aplic pentru poziția de ${job.title}.%0D%0A%0D%0AVă rog să găsiți CV-ul meu atașat.%0D%0A%0D%0AMulțumesc!`}
+                        href={`mailto:careers@Bravin.ai?subject=Aplicație pentru ${job.title}&body=Salut,%0D%0A%0D%0AAș dori să aplic pentru poziția de ${job.title}.%0D%0A%0D%0AVă rog să găsiți CV-ul meu atașat.%0D%0A%0D%0AMulțumesc!`}
                         className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                       >
                         Aplică acum
@@ -225,7 +225,7 @@ export default function CareerPage() {
               Trimite-ne CV-ul tău și te vom contacta când va apărea o oportunitate potrivită pentru tine.
             </p>
             <Link
-              href="mailto:careers@interes.ai?subject=Aplicație spontană&body=Salut,%0D%0A%0D%0AAș fi interessat să mă alătur echipei Interes AI.%0D%0A%0D%0AVă rog să găsiți CV-ul meu atașat.%0D%0A%0D%0AMulțumesc!"
+              href="mailto:careers@Bravin.ai?subject=Aplicație spontană&body=Salut,%0D%0A%0D%0AAș fi Bravinsat să mă alătur echipei Bravin AI.%0D%0A%0D%0AVă rog să găsiți CV-ul meu atașat.%0D%0A%0D%0AMulțumesc!"
               className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-gray-50 transition-colors"
             >
               Trimite CV-ul spontan

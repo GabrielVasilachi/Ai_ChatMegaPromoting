@@ -57,7 +57,7 @@ export default function ChatWidget() {
   const generateAIResponse = (userMessage: string) => {
     const responses = [
       'Înțeleg întrebarea ta. Pot să îți ofer mai multe detalii despre soluțiile noastre AI.',
-      'Sunt aici să te ajut! Ce anume te interesează cel mai mult?',
+      'Sunt aici să te ajut! Ce anume te Bravinează cel mai mult?',
       'Excelentă întrebare! Soluțiile noastre AI pot automatiza multe procese pentru afacerea ta.',
       'Îți pot explica cum funcționează tehnologia noastră și ce beneficii aduce.',
       'Pentru informații detaliate, echipa noastră de specialiști îți poate oferi o consultanță gratuită.'
@@ -240,7 +240,7 @@ export default function ChatWidget() {
                   </svg>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-[11px] sm:text-base">Interes AI</h3>
+                    <h3 className="font-semibold text-[11px] sm:text-base">Bravin AI</h3>
                   <p className="text-[10px] sm:text-sm text-blue-100">Online</p>
                 </div>
               </div>

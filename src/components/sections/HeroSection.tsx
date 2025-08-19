@@ -20,7 +20,7 @@ export default function HeroSectionLeftClean() {
       conversations: [
         { sender: 'Alex', message: 'Bună, aș vrea mai multe detalii despre produse.' },
         { sender: 'Bot', message: 'Desigur, Alex! Despre ce tip de produse doriți mai multe informații? Avem telefoane, laptopuri și accesorii.' },
-        { sender: 'Alex', message: 'Mă interesează în special telefoanele.' },
+        { sender: 'Alex', message: 'Mă Bravinează în special telefoanele.' },
         { sender: 'Bot', message: 'Perfect, telefoanele noastre sunt modele Apple, inclusiv cele mai recente versiuni de iPhone. Doriți să știți prețurile, specificațiile sau disponibilitatea în stoc?' },
         { sender: 'Alex', message: 'În primul rând, prețurile.' },
         { sender: 'Bot', message: 'Prețurile pentru iPhone variază între 12.000 și 25.000 MDL, în funcție de model și capacitatea de stocare. Vreți să vă dau exemple concrete pentru modelele cele mai populare?' },
@@ -39,7 +39,7 @@ export default function HeroSectionLeftClean() {
       conversations: [
         { sender: 'Cristina', message: 'Bună, aș vrea să știu dacă oferiți servicii de întreținere auto.' },
         { sender: 'Bot', message: 'Bună, Cristina! Da, oferim servicii complete de întreținere auto: schimb de ulei, verificări tehnice și reparații mecanice.' },
-        { sender: 'Cristina', message: 'Interesant. Ce tipuri de verificări tehnice faceți?' },
+        { sender: 'Cristina', message: 'Bravinant. Ce tipuri de verificări tehnice faceți?' },
         { sender: 'Bot', message: 'Facem verificări pentru sistemul de frânare, suspensie, baterie, filtre, lichide și anvelope. În plus, oferim diagnosticare computerizată completă.' },
         { sender: 'Cristina', message: 'Și cât durează o verificare standard?' },
         { sender: 'Bot', message: 'O verificare completă durează aproximativ 60–90 de minute, în funcție de starea mașinii.' },
@@ -65,8 +65,8 @@ export default function HeroSectionLeftClean() {
     {
       name: 'Bogdan L.',
       conversations: [
-        { sender: 'Bogdan', message: 'Bună! Mă interesează cursurile voastre de programare.' },
-        { sender: 'Bot', message: 'Salut, Bogdan! Avem cursuri pentru toate nivelurile: începători, intermediari și avansați. Ce limbaj de programare vă interesează?' },
+        { sender: 'Bogdan', message: 'Bună! Mă Bravinează cursurile voastre de programare.' },
+        { sender: 'Bot', message: 'Salut, Bogdan! Avem cursuri pentru toate nivelurile: începători, intermediari și avansați. Ce limbaj de programare vă Bravinează?' },
         { sender: 'Bogdan', message: 'JavaScript și React pentru frontend development.' },
         { sender: 'Bot', message: 'Excelentă alegere! Cursul nostru de JavaScript + React durează 4 luni și include proiecte practice. Aveți experiență anterioară în programare?' },
         { sender: 'Bogdan', message: 'Am ceva experiență cu HTML și CSS basic.' },
@@ -595,7 +595,7 @@ export default function HeroSectionLeftClean() {
                     ref={rightBoxRefs[idx]}
                   >
                     <div className="flex items-center flex-1 min-w-0">
-                      <div className="relative mr-2 ml-2 flex-shrink-0">
+                      <div className="relative mr-2 ml-2 flex-shrink-0 hidden md:block">
                         <span
                           className="bg-gray-200 aspect-square w-5 h-5 rounded-full inline-block shrink-0"
                           style={{ display: 'inline-block' }}
@@ -614,16 +614,16 @@ export default function HeroSectionLeftClean() {
                           <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-white"></div>
                         )}
                       </div>
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-[13px] md:text-[15px] text-gray-700 font-medium truncate">
+                      <div className="flex flex-col min-w-0 flex-1 pl-[2px]">
+                        <span className="text-[11px] md:text-[15px] text-gray-700 font-medium truncate">
                           {user.name}
                         </span>
-                        <span className={`text-[10px] md:text-[11px] ${statusColor} truncate font-medium`}>
+                        <span className={`text-[9px] md:text-[11px] ${statusColor} truncate font-medium`}>
                           {statusText}
                         </span>
                       </div>
                     </div>
-                    <div className="mr-2 text-[10px] text-gray-400 flex-shrink-0">
+                    <div className="mr-2 text-[9px] md:text-[10px] text-gray-400 flex-shrink-0">
                       {timeString}
                     </div>
                   </div>
@@ -661,7 +661,7 @@ export default function HeroSectionLeftClean() {
                 <div key={idx} className={`flex flex-col gap-1 ${
                   msg.sender === 'Bot' ? 'items-start' : 'items-end'
                 }`}>
-                  <div className={`text-[12px] md:text-sm rounded px-3 py-2 w-fit break-words max-w-full ${
+                  <div className={`text-[10px] md:text-sm rounded px-3 py-2 w-fit break-words max-w-full ${
                     msg.sender === 'Bot' 
                       ? 'bg-blue-100 text-blue-900 self-start' // Bot pe stânga, albastru
                       : 'bg-gray-100 text-gray-600 self-end'    // Utilizator pe dreapta, gri
@@ -715,7 +715,7 @@ export default function HeroSectionLeftClean() {
               
               {/* Chat messages (mesajele trimise manual) */}
               {sentMessages[selectedBox] && sentMessages[selectedBox].map((msg, idx) => (
-                <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-[12px] md:text-sm shadow-sm break-words max-w-full">{msg}</div>
+                <div key={idx} className="bg-blue-100 text-blue-900 px-3 py-2 rounded-lg w-fit self-end text-[10px] md:text-sm shadow-sm break-words max-w-full">{msg}</div>
               ))}
             </div>
             {/* Input container mic jos */}
@@ -937,7 +937,7 @@ export default function HeroSectionLeftClean() {
   return (
     <section
       ref={ref}
-      className="relative min-h-[78vh] flex items-center overflow-hidden px-6 md:px-10 py-20 md:py-28"
+  className="bg-white relative min-h-[78vh] flex items-center overflow-hidden px-6 md:px-10 pt-32 sm:pt-20 md:pt-28 pb-4 md:pb-6"
     >
       {/* Fake mouse image absolutely positioned at section level */}
       {showFakeMouse && !isInsideBigContainer && !hideOnScroll && (
@@ -1024,7 +1024,7 @@ export default function HeroSectionLeftClean() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-left text-5xl sm:text-6xl md:text-7xl leading-[1.06] font-extrabold tracking-tight text-gray-900"
             >
-              Interes AI pentru companii
+              Bravin AI pentru companii
             </motion.h1>
 
             {/* Subtitle */}

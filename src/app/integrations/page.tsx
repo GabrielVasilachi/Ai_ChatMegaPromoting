@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Integrări - Interes',
-  description: 'Conectează Interes cu platformele și sistemele pe care le folosești deja.',
+  title: 'Integrări - Bravin',
+  description: 'Conectează Bravin cu platformele și sistemele pe care le folosești deja.',
 };
 
 export default function IntegrationsPage() {
@@ -20,7 +20,7 @@ export default function IntegrationsPage() {
               </span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-black mb-4">
-              Bine ai venit la Interes!
+              Bine ai venit la Bravin!
             </h1>
             <p className="text-gray-600 mb-6 max-w-xl">
               Folosește uneltele noastre pentru a automatiza procesele și pentru a îmbunătăți interacțiunea cu clienții.

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { MessageSquare, Zap, PlugZap, UserCog, PiggyBank } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 // import { SVGAnimationWrapper } from '@/hooks/useExistingSVGAnimation';
 // import { SimpleSVGAnimationWrapper } from '@/hooks/useSimpleSVGAnimation';
@@ -80,8 +81,8 @@ export default function IndustryModules() {
           setProgress(0);
           setSelectedIndex((prev) => (prev + 1) % menuItems.length);
         }
-      }, 140); // slower interval
-    }, 1800); // delay before progress starts (increased)
+      }, 50); // slower interval
+    }, 50); // delay before progress starts (increased)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       clearTimeout(startDelay);
@@ -170,7 +171,7 @@ export default function IndustryModules() {
           opacity="0.6"
         />
       </svg>
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Animated title */}
         <div className="text-center md:text-left mb-16 md:mb-24 mt-8 md:mt-36">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4 md:mb-6">
@@ -178,10 +179,10 @@ export default function IndustryModules() {
               className="flex flex-col md:flex-row items-center md:items-center md:justify-start justify-center w-full"
               style={{lineHeight:'1.2'}}>
               <span
-                className="mb-3 md:mb-10 md:mr-8 font-bold text-left md:mt-10"
-                style={{minWidth:'max-content', color:'#111', display:'inline-block'}}
+                className="mb-3 md:mb-10 md:mr-8 font-bold text-left md:mt-10 text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
+                style={{minWidth:'max-content', color:'#111', display:'inline-block', lineHeight: 1.1}}
               >
-                Interes pentru orice
+                Bravin pentru orice
               </span>
               <span
                 className="md:mt-10 md:mb-10"
@@ -221,106 +222,98 @@ export default function IndustryModules() {
         {/* Two-column layout */}
         <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center justify-center -mt-16">
           {/* Left menu as containers */}
-          <div className="w-full md:w-1/2 lg:w-2/5 flex flex-col gap-0 md:ml-8">
-            {menuItems.map((item: any, idx: number) => (
-              <div
-                key={item.id}
-                className="bg-transparent rounded-xl cursor-pointer select-none"
-                onClick={() => setSelectedIndex(idx)}
-                tabIndex={0}
-                role="button"
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setSelectedIndex(idx); }}
-                style={{ position: 'relative' }}
-              >
-                <div className={`relative w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-base md:text-lg shadow-sm ${selectedIndex === idx ? 'text-red-800' : 'text-black hover:text-blue-800'}`}
-                  style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+          <div className="w-full md:w-1/2 lg:w-2/5 flex flex-col gap-3 md:ml-8">
+            {menuItems.map((item: any, idx: number) => {
+              const active = selectedIndex === idx;
+              const baseClasses = `group relative overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer select-none ${active ? 'border-transparent' : 'border-black/10 hover:border-black/20'}`;
+              return (
+                <div
+                  key={item.id}
+                  className={baseClasses}
+                  onClick={() => setSelectedIndex(idx)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setSelectedIndex(idx); }}
                 >
-                  {item.title}
+                  {/* gradient ring when active */}
+                  {active && (
+                    <div className="pointer-events-none absolute inset-0 rounded-2xl p-[1.5px] bg-gradient-to-br from-fuchsia-500/50 via-amber-400/50 to-sky-500/50">
+                      <div className="h-full w-full rounded-2xl bg-white" />
+                    </div>
+                  )}
+                  <div className={`relative z-[1] flex items-start gap-3 px-4 py-4 ${active ? '' : 'bg-white'}`}>
+                    {/* Icon */}
+                    <div className={`shrink-0 grid place-items-center h-10 w-10 rounded-xl ${active ? 'bg-gradient-to-br from-fuchsia-500/15 via-amber-400/15 to-sky-500/15' : 'bg-black/5'}`}>
+                      {idx === 0 && <MessageSquare className={`h-5 w-5 ${active ? 'text-fuchsia-600' : 'text-black/70'}`} />}
+                      {idx === 1 && <Zap className={`h-5 w-5 ${active ? 'text-amber-600' : 'text-black/70'}`} />}
+                      {idx === 2 && <PlugZap className={`h-5 w-5 ${active ? 'text-sky-600' : 'text-black/70'}`} />}
+                      {idx === 3 && <UserCog className={`h-5 w-5 ${active ? 'text-violet-600' : 'text-black/70'}`} />}
+                      {idx === 4 && <PiggyBank className={`h-5 w-5 ${active ? 'text-emerald-600' : 'text-black/70'}`} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-base md:text-lg font-semibold ${active ? 'text-black' : 'text-gray-900 group-hover:text-black'}`}>{item.title}</div>
+                      <AnimatePresence initial={false}>
+                        {active && (
+                          <motion.p
+                            key="sub"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="text-sm md:text-base text-gray-600 mt-1 pr-2"
+                          >
+                            {item.subtitle}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                      {/* progress bar (sleek, non-rainbow) */}
+                      <div className="mt-3 h-2 w-full rounded-full bg-gradient-to-b from-black/5 to-black/10 border border-black/10 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full relative transition-[width] duration-150 ease-linear ${active ? 'bg-gradient-to-r from-violet-300 via-pink-200 via-yellow-200 via-cyan-200 to-blue-300' : 'bg-black/20'}`}
+                          style={{ width: active ? `${progress}%` : selectedIndex > idx ? '100%' : '0%' }}
+                        >
+                          {active && (
+                            <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 rounded-t-full" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {selectedIndex === idx ? (
-                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '72px' }}>
-                    <div className="px-6 text-gray-700 text-base" style={{paddingTop: '0.25rem', paddingBottom: 0, marginTop: '0.25rem', lineHeight: '1.2'}}>
-                      {item.subtitle}
-                    </div>
-                    <div style={{ flex: 1 }} />
-                    <div className="w-full h-[2px] bg-yellow-300 relative overflow-hidden" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, margin: 0 }}>
-                      <div
-                        className="h-full bg-red-300 transition-all duration-100"
-                        style={{
-                          width: `${progress}%`,
-                          transition: 'width 0.1s linear',
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full h-[2px] bg-yellow-300 mt-3 relative overflow-hidden">
-                    <div
-                      className="h-full bg-yellow-300 transition-all duration-100"
-                      style={{
-                        width: selectedIndex > idx ? '100%' : '0%',
-                        transition: 'none',
-                      }}
-                    ></div>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
           {/* Right card (fixed, no animation) */}
           <div className="w-full md:w-1/2 lg:w-3/5 flex justify-center my-auto pt-0 pb-0 -mt-2 md:pl-52">
-            {selectedIndex === 0 ? (
-              <div className="p-0 bg-transparent rounded-2xl max-w-xl w-full flex items-center justify-center min-h-[320px] aspect-auto md:aspect-square">
-                <img 
-                  src="/IndustryModulesImages/1stImage.png" 
-                  alt="Industry Module 1"
-                  className="object-cover w-full h-full rounded-xl"
-                />
-              </div>
-            ) : selectedIndex === 1 ? (
-              <div className="p-0 bg-transparent rounded-2xl max-w-xl w-full flex items-center justify-center min-h-[320px] aspect-auto md:aspect-square">
-                <img 
-                  src="/IndustryModulesImages/2ndImage.png" 
-                  alt="Industry Module 2"
-                  className="object-cover w-full h-full rounded-xl"
-                />
-              </div>
-            ) : selectedIndex === 2 ? (
-              <div className="p-0 bg-transparent rounded-2xl max-w-xl w-full flex items-center justify-center min-h-[320px] aspect-auto md:aspect-square">
-                <img 
-                  src="/IndustryModulesImages/3rdImage.png" 
-                  alt="Industry Module 3"
-                  className="object-cover w-full h-full rounded-xl"
-                />
-              </div>
-            ) : selectedIndex === 3 ? (
-              <div className="p-0 bg-transparent rounded-2xl max-w-xl w-full flex items-center justify-center min-h-[320px] aspect-auto md:aspect-square">
-                <img 
-                  src="/IndustryModulesImages/4thImage.png" 
-                  alt="Industry Module 4"
-                  className="object-cover w-full h-full rounded-xl"
-                />
-              </div>
-            ) : selectedIndex === 4 ? (
-              <div className="p-0 bg-transparent rounded-2xl max-w-xl w-full flex items-center justify-center min-h-[320px] aspect-auto md:aspect-square">
-                <img 
-                  src="/IndustryModulesImages/5thImage.png" 
-                  alt="Industry Module 5"
-                  className="object-cover w-full h-full rounded-xl"
-                />
-              </div>
-            ) : (
-              <div className="p-8 bg-transparent rounded-2xl max-w-xl w-full aspect-auto md:aspect-square flex items-center justify-center">
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <h3 className="text-2xl font-bold text-black">{menuItems[selectedIndex].title}</h3>
-                  </div>
-                  <p className="text-gray-600 mb-4 leading-relaxed text-base md:text-lg">
-                    {menuItems[selectedIndex].subtitle}
-                  </p>
+            <div className="relative max-w-xl w-full">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-fuchsia-500/25 via-amber-400/25 to-sky-500/25 blur-2xl opacity-50" />
+              <div className="relative rounded-3xl p-[2px] bg-gradient-to-br from-fuchsia-500/50 via-amber-400/50 to-sky-500/50 shadow-xl">
+                <div className="rounded-3xl bg-white/90 backdrop-blur-md p-2 sm:p-3">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={selectedIndex}
+                      initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                      className="rounded-2xl overflow-hidden min-h-[320px] aspect-auto md:aspect-square"
+                    >
+                      <img
+                        src={
+                          selectedIndex === 0 ? '/IndustryModulesImages/1stImage.png' :
+                          selectedIndex === 1 ? '/IndustryModulesImages/2ndImage.png' :
+                          selectedIndex === 2 ? '/IndustryModulesImages/3rdImage.png' :
+                          selectedIndex === 3 ? '/IndustryModulesImages/4thImage.png' :
+                          '/IndustryModulesImages/5thImage.png'
+                        }
+                        alt={`Industry Module ${selectedIndex + 1}`}
+                        className="object-cover w-full h-full"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
     </div>
