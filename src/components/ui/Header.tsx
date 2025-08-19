@@ -27,14 +27,14 @@ type HoverContentType = { title: string; subtitle: string; image?: string };
 const hoverContent: { [key: string]: HoverContentType } = {
   // Resurse
   'Blog': {
-    title: 'Afla noile Noutati',
-    subtitle: 'Descoperă ultimele articole, sfaturi și tendințe din domeniul AI și automatizărilor pentru afacerea ta.',
-    image: 'public/HeaderSection/BlogImage.png'
-  },
-  'Studii de caz': {
     title: 'Povesti de Succes',
     subtitle: 'Descoperă cum companiile și-au transformat procesele folosind soluțiile noastre AI pentru rezultate extraordinare.',
-    image: 'public/HeaderSection/Case-StudiesImage.png'
+    image: 'public/HeaderSection/BlogImage.png'
+  },
+  'Noutăți': {
+    title: 'Ultimele Noutăți',
+    subtitle: 'Rămâi la curent cu ultimele dezvoltări din lumea AI și automatizării din Moldova.',
+    image: 'public/HeaderSection/BlogImage.png'
   },
   'Ghiduri': {
     title: 'Invata pas cu pas',
@@ -91,8 +91,8 @@ const navItems = [
       href: '/blog',
     },
     {
-      title: 'Studii de caz',
-      href: '/case-studies',
+      title: 'Noutăți',
+      href: '/news',
     },
     {
       title: 'Ghiduri',
@@ -131,7 +131,7 @@ const navItems = [
     {
       title: 'Contact',
       href: '/contact'
-    } ] },
+    }]},
     { label: 'Integrări', href: '/integrations' },
     { label: 'Prețuri', href: '/pricing' },
   ]
