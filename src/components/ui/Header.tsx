@@ -180,6 +180,8 @@ export default function NavigationHeaderPillStatic({
   const [hoveredDropdownIndex, setHoveredDropdownIndex] = React.useState<number | null>(null)
   const [activeDropdownIndex, setActiveDropdownIndex] = React.useState<number>(0) // Păstrează indexul activ pentru container
   const [isTickerPaused, setIsTickerPaused] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('RO');
 
   const tickerStyles = {
     position: 'fixed' as const,
@@ -569,21 +571,82 @@ export default function NavigationHeaderPillStatic({
               </button>
               {/* Right controls (desktop only) */}
               <div className="ml-auto hidden lg:flex items-center gap-2">
-                <Link
-                  href="#lang"
-                  className="inline-flex items-center h-9 px-3 rounded-full text-white/85 hover:text-white hover:bg-white/10"
-                >
-                  <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4" aria-hidden>
-                    <path
-                      d="M12 2a10 10 0 100 20 10 10 0 000-20Zm0 0c2.5 0 5 4.03 5 10s-2.5 10-5 10-5-4.03-5-10 2.5-10 5-10Zm-9 10h18M3.5 8h17M3.5 16h17"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
+                {/* Language Selector */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                    onBlur={() => setTimeout(() => setIsLanguageDropdownOpen(false), 150)}
+                    className="inline-flex items-center h-9 px-3 rounded-full text-white/85 hover:text-white hover:bg-white/10 transition-all duration-200"
+                    aria-label="Select language"
+                  >
+                    <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4" aria-hidden>
+                      <path
+                        d="M12 2a10 10 0 100 20 10 10 0 000-20Zm0 0c2.5 0 5 4.03 5 10s-2.5 10-5 10-5-4.03-5-10 2.5-10 5-10Zm-9 10h18M3.5 8h17M3.5 16h17"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    {currentLanguage}
+                    <svg 
+                      className={`ml-2 h-3 w-3 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} 
+                      viewBox="0 0 20 20" 
                       fill="none"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  RO
-                </Link>
+                    >
+                      <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  
+                  {/* Language Dropdown */}
+                  <AnimatePresence>
+                    {isLanguageDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="absolute top-full right-0 mt-2 w-32 bg-white/95 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl overflow-hidden z-50"
+                      >
+                        <div className="py-1">
+                          <button
+                            onClick={() => {
+                              setCurrentLanguage('RO');
+                              setIsLanguageDropdownOpen(false);
+                            }}
+                            className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:bg-black/5 ${
+                              currentLanguage === 'RO' ? 'text-black bg-black/5' : 'text-gray-700'
+                            }`}
+                          >
+                            Română
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCurrentLanguage('EN');
+                              setIsLanguageDropdownOpen(false);
+                            }}
+                            className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:bg-black/5 ${
+                              currentLanguage === 'EN' ? 'text-black bg-black/5' : 'text-gray-700'
+                            }`}
+                          >
+                            English
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCurrentLanguage('RU');
+                              setIsLanguageDropdownOpen(false);
+                            }}
+                            className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:bg-black/5 ${
+                              currentLanguage === 'RU' ? 'text-black bg-black/5' : 'text-gray-700'
+                            }`}
+                          >
+                            Русский
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
                 <Link
                   href="https://aichat.md/en/register"
                   className="min-w-[90px] h-9 inline-flex items-center justify-center rounded-[16px] px-4 font-semibold bg-white text-black border border-black"
@@ -752,23 +815,71 @@ export default function NavigationHeaderPillStatic({
                   ))}
                 </nav>
 
-                {/* Mobile Menu Footer */}
-                <div className="border-t border-white/10 px-6 py-4 space-y-3">
-                  <div className="flex items-center justify-center space-x-3">
-                    <Link
-                      href="https://aichat.md/en/register"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex-1 py-2.5 px-4 text-center text-sm font-semibold border border-white/30 rounded-xl text-white hover:bg-white/10 transition-colors"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="https://aichat.md/en/login"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex-1 py-2.5 px-4 text-center text-sm font-semibold bg-white text-black rounded-xl hover:bg-white/90 transition-colors"
-                    >
-                      Get Started
-                    </Link>
+                {/* Mobile Language Selector */}
+                <div className="border-t border-white/10 px-6 py-4">
+                  <div className="mb-4">
+                    <h3 className="text-white/70 text-sm font-medium mb-3">Limba / Language</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        onClick={() => {
+                          setCurrentLanguage('RO');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`py-2.5 px-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentLanguage === 'RO' 
+                            ? 'bg-white text-black' 
+                            : 'text-white/80 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        Română
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCurrentLanguage('EN');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`py-2.5 px-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentLanguage === 'EN' 
+                            ? 'bg-white text-black' 
+                            : 'text-white/80 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCurrentLanguage('RU');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`py-2.5 px-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          currentLanguage === 'RU' 
+                            ? 'bg-white text-black' 
+                            : 'text-white/80 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        Русский
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Mobile Menu Footer */}
+                  <div className="border-t border-white/10 pt-4 space-y-3">
+                    <div className="flex items-center justify-center space-x-3">
+                      <Link
+                        href="https://aichat.md/en/register"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex-1 py-2.5 px-4 text-center text-sm font-semibold border border-white/30 rounded-xl text-white hover:bg-white/10 transition-colors"
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        href="https://aichat.md/en/login"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex-1 py-2.5 px-4 text-center text-sm font-semibold bg-white text-black rounded-xl hover:bg-white/90 transition-colors"
+                      >
+                        Get Started
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </motion.div>
