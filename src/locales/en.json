@@ -1,0 +1,75 @@
+{
+  "HeroSection": {
+    "news": "News",
+    "virtual_agent": "24/7 Virtual Agent for companies",
+    "title": "Bravin AI for companies",
+    "subtitle": "A virtual agent that instantly responds on web, WhatsApp, Facebook, and email. It reduces support costs and increases conversions — while keeping your brand's voice.",
+    "under_subtitle_cards1": "No code",
+    "under_subtitle_cards2": "Multichannel",
+    "under_subtitle_cards3": "GDPR-ready",
+    "chat": {
+      "rightBoxData": [
+        {
+          "name": "Alex M.",
+          "conversations": [
+            { "sender": "Alex", "message": "Hi, I’d like more details about the products." },
+            { "sender": "Bot", "message": "Of course, Alex! Which type of products would you like more information about? We have phones, laptops, and accessories." },
+            { "sender": "Alex", "message": "I’m especially interested in the phones." },
+            { "sender": "Bot", "message": "Perfect, our phones are Apple models, including the latest iPhone versions. Would you like to know the prices, specifications, or stock availability?" },
+            { "sender": "Alex", "message": "First of all, the prices." },
+            { "sender": "Bot", "message": "iPhone prices range between 12,000 and 25,000 MDL, depending on the model and storage capacity. Would you like me to give you concrete examples for the most popular models?" },
+            { "sender": "Alex", "message": "Yes, please." },
+            { "sender": "Bot", "message": "For example, the iPhone 15 starts at 19,500 MDL for the 128 GB version. The Pro Max model starts at 24,500 MDL." },
+            { "sender": "Alex", "message": "And what warranty do the products come with?" },
+            { "sender": "Bot", "message": "All products come with an official 12-month warranty. In addition, we offer the option to extend the warranty up to 24 months." },
+            { "sender": "Alex", "message": "Great, and how long does delivery take?" },
+            { "sender": "Bot", "message": "If the product is in stock, delivery in Chișinău is the same day, and in the rest of the country within 1–2 working days." },
+            { "sender": "Alex", "message": "Thank you very much for the information!" },
+            { "sender": "Bot", "message": "My pleasure, Alex! If you’d like, I can help you place the order right now." }
+          ]
+        },
+        {
+          "name": "Cristina G.",
+          "conversations": [
+            { "sender": "Cristina", "message": "Hello, I’d like to know if you offer car maintenance services." },
+            { "sender": "Bot", "message": "Hello, Cristina! Yes, we provide full car maintenance services: oil changes, technical inspections, and mechanical repairs." },
+            { "sender": "Cristina", "message": "Great. What kind of technical inspections do you do?" },
+            { "sender": "Bot", "message": "We check the braking system, suspension, battery, filters, fluids, and tires. In addition, we provide full computerized diagnostics." },
+            { "sender": "Cristina", "message": "And how long does a standard inspection take?" },
+            { "sender": "Bot", "message": "A full inspection takes about 60–90 minutes, depending on the car’s condition." },
+            { "sender": "Cristina", "message": "If repairs are needed, how do you proceed?" },
+            { "sender": "Bot", "message": "After diagnostics, we send you a detailed report with recommendations and estimated costs. Repairs are done only after we receive your approval." },
+            { "sender": "Cristina", "message": "Very clear, thank you for the details!" },
+            { "sender": "Bot", "message": "You’re welcome, Cristina! Would you like me to also give you information about our periodic maintenance packages?" }
+          ]
+        },
+        {
+          "name": "Diana R.",
+          "conversations": [
+            { "sender": "Diana", "message": "Hi! I’m looking for web design services for my company." },
+            { "sender": "Bot", "message": "Hello, Diana! Excellent, we provide complete web design and development services. What type of website would you like to create?" },
+            { "sender": "Diana", "message": "I need an e-commerce site for our products." },
+            { "sender": "Bot", "message": "Perfect! For e-commerce, we offer modern platforms with online payments, stock management, and an admin panel. Approximately how many products do you have?" },
+            { "sender": "Diana", "message": "Around 200 products in several categories." },
+            { "sender": "Bot", "message": "Very good! For 200 products, we recommend a robust platform with advanced filtering and SEO optimization. Would you also like integration with your existing systems?" },
+            { "sender": "Diana", "message": "Yes, including with invoicing and accounting systems." },
+            { "sender": "Bot", "message": "Excellent! We can integrate with popular invoicing systems. By when would you like the project to be completed?" }
+          ]
+        },
+        {
+          "name": "Bogdan L.",
+          "conversations": [
+            { "sender": "Bogdan", "message": "Hi! I’m interested in your programming courses." },
+            { "sender": "Bot", "message": "Hello, Bogdan! We have courses for all levels: beginner, intermediate, and advanced. Which programming language are you interested in?" },
+            { "sender": "Bogdan", "message": "JavaScript and React for frontend development." },
+            { "sender": "Bot", "message": "Excellent choice! Our JavaScript + React course lasts 4 months and includes practical projects. Do you have any prior programming experience?" },
+            { "sender": "Bogdan", "message": "I have some experience with basic HTML and CSS." },
+            { "sender": "Bot", "message": "Perfect! With an HTML/CSS foundation, you can start directly with the JavaScript fundamentals module. We also provide individual mentoring sessions." },
+            { "sender": "Bogdan", "message": "Sounds very good! What is the price for the full course?" },
+            { "sender": "Bot", "message": "The full course costs 8,500 MDL, but you can pay in monthly installments of 2,200 MDL. The first lesson is free!" }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,24 +1,6 @@
-import HeroSection from '@/components/sections/HeroSection';
-import LogoTicker from '@/components/sections/LogoTicker';
-import HowItWorks from '@/components/sections/HowItWorks';
-import IndustryModules from '@/components/sections/IndustryModules';
-import ROICalculator from '@/components/sections/ROICalculator';
-import Testimonials from '@/components/sections/Testimonials';
-import { ResponsiveDemoSection } from '@/components/sections/ResponsiveDemoSection';
-import Pricing from '@/components/sections/Pricing';
+import { redirect } from 'next/navigation';
 
-
-export default function HomePage() {
-  return (
-    <>
-      <HeroSection />
-      <LogoTicker />
-      <HowItWorks />
-      <IndustryModules />
-      <ROICalculator />
-      <Testimonials />
-      <ResponsiveDemoSection />
-      <Pricing />
-    </>
-  );
+export default function RootPage() {
+  // Redirect la limba implicită (en)
+  redirect('/en');
 }

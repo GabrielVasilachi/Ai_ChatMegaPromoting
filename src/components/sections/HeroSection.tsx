@@ -2,80 +2,42 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
+import { tr } from 'framer-motion/client';
+
+// Locales (structured under HeroSection)
+import enLocale from '../../locales/en.json'
+import ruLocale from '../../locales/ru.json'
+import roLocale from '../../locales/ro.json'
 
 /**
  * Minimal Hero: only left-aligned badge, title, and subtitle.
  * - No CTAs, no right-side content, no extra elements
  * - Subtle background grid + soft spotlight that follows cursor
  */
-export default function HeroSectionLeftClean() {
+type HeroProps = { lang?: string }
+
+export default function HeroSectionLeftClean({ lang }: HeroProps) {
   // Track if the text is fully typed
   const [isTextFullyTyped, setIsTextFullyTyped] = useState(false);
   const ref = useRef<HTMLElement>(null)
 
-  // Data for each right container with full conversation flows
-  const rightBoxData = [
-    {
-      name: 'Alex M.',
-      conversations: [
-        { sender: 'Alex', message: 'Bună, aș vrea mai multe detalii despre produse.' },
-        { sender: 'Bot', message: 'Desigur, Alex! Despre ce tip de produse doriți mai multe informații? Avem telefoane, laptopuri și accesorii.' },
-        { sender: 'Alex', message: 'Mă Bravinează în special telefoanele.' },
-        { sender: 'Bot', message: 'Perfect, telefoanele noastre sunt modele Apple, inclusiv cele mai recente versiuni de iPhone. Doriți să știți prețurile, specificațiile sau disponibilitatea în stoc?' },
-        { sender: 'Alex', message: 'În primul rând, prețurile.' },
-        { sender: 'Bot', message: 'Prețurile pentru iPhone variază între 12.000 și 25.000 MDL, în funcție de model și capacitatea de stocare. Vreți să vă dau exemple concrete pentru modelele cele mai populare?' },
-        { sender: 'Alex', message: 'Da, te rog.' },
-        { sender: 'Bot', message: 'De exemplu, iPhone 15 are un preț de la 19.500 MDL pentru varianta de 128 GB. Modelul Pro Max pornește de la 24.500 MDL.' },
-        { sender: 'Alex', message: 'Și ce garanție oferă produsele?' },
-        { sender: 'Bot', message: 'Toate produsele vin cu garanție oficială de 12 luni. În plus, oferim opțiunea de extindere a garanției până la 24 de luni.' },
-        { sender: 'Alex', message: 'Foarte bine, și în cât timp ajunge comanda?' },
-        { sender: 'Bot', message: 'Dacă produsul este pe stoc, livrarea în Chișinău se face în aceeași zi, iar în restul țării între 1–2 zile lucrătoare.' },
-        { sender: 'Alex', message: 'Mulțumesc mult pentru informații!' },
-        { sender: 'Bot', message: 'Cu mare drag, Alex! Dacă doriți, vă pot ajuta să plasați comanda chiar acum.' }
-      ]
-    },
-    {
-      name: 'Cristina G.',
-      conversations: [
-        { sender: 'Cristina', message: 'Bună, aș vrea să știu dacă oferiți servicii de întreținere auto.' },
-        { sender: 'Bot', message: 'Bună, Cristina! Da, oferim servicii complete de întreținere auto: schimb de ulei, verificări tehnice și reparații mecanice.' },
-        { sender: 'Cristina', message: 'Bravinant. Ce tipuri de verificări tehnice faceți?' },
-        { sender: 'Bot', message: 'Facem verificări pentru sistemul de frânare, suspensie, baterie, filtre, lichide și anvelope. În plus, oferim diagnosticare computerizată completă.' },
-        { sender: 'Cristina', message: 'Și cât durează o verificare standard?' },
-        { sender: 'Bot', message: 'O verificare completă durează aproximativ 60–90 de minute, în funcție de starea mașinii.' },
-        { sender: 'Cristina', message: 'Dacă este nevoie de reparații, cum procedați?' },
-        { sender: 'Bot', message: 'După diagnosticare, vă trimitem un raport detaliat cu recomandările și costurile estimate. Reparațiile se fac doar după ce primim acordul dumneavoastră.' },
-        { sender: 'Cristina', message: 'Foarte clar, mulțumesc pentru detalii!' },
-        { sender: 'Bot', message: 'Cu plăcere, Cristina! Doriți să vă ofer și informații despre pachetele noastre de întreținere periodică?' }
-      ]
-    },
-    {
-      name: 'Diana R.',
-      conversations: [
-        { sender: 'Diana', message: 'Salut! Caut servicii de web design pentru compania mea.' },
-        { sender: 'Bot', message: 'Bună ziua, Diana! Excelent, oferim servicii complete de web design și dezvoltare. Ce tip de site doriți să creați?' },
-        { sender: 'Diana', message: 'Am nevoie de un site e-commerce pentru produsele noastre.' },
-        { sender: 'Bot', message: 'Perfect! Pentru e-commerce oferim platforme moderne cu plăți online, gestiune stoc și panou admin. Câte produse aveți aproximativ?' },
-        { sender: 'Diana', message: 'Aproape 200 de produse în mai multe categorii.' },
-        { sender: 'Bot', message: 'Foarte bine! Pentru 200 de produse recomandăm o platformă robustă cu filtrare avansată și optimizare SEO. Doriți și integrare cu sistemele existente?' },
-        { sender: 'Diana', message: 'Da, și cu sistem de facturare și contabilitate.' },
-        { sender: 'Bot', message: 'Excelent! Putem integra cu sisteme populare de facturare. În cât timp doriți să fie gata proiectul?' }
-      ]
-    },
-    {
-      name: 'Bogdan L.',
-      conversations: [
-        { sender: 'Bogdan', message: 'Bună! Mă Bravinează cursurile voastre de programare.' },
-        { sender: 'Bot', message: 'Salut, Bogdan! Avem cursuri pentru toate nivelurile: începători, intermediari și avansați. Ce limbaj de programare vă Bravinează?' },
-        { sender: 'Bogdan', message: 'JavaScript și React pentru frontend development.' },
-        { sender: 'Bot', message: 'Excelentă alegere! Cursul nostru de JavaScript + React durează 4 luni și include proiecte practice. Aveți experiență anterioară în programare?' },
-        { sender: 'Bogdan', message: 'Am ceva experiență cu HTML și CSS basic.' },
-        { sender: 'Bot', message: 'Perfect! Cu baza de HTML/CSS puteți începe direct cu modulul de JavaScript fundamentals. Oferim și sesiuni de mentorat individual.' },
-        { sender: 'Bogdan', message: 'Sună foarte bine! Care este prețul pentru întregul curs?' },
-        { sender: 'Bot', message: 'Cursul complet costă 8.500 MDL, dar puteți plăti în rate lunare de 2.200 MDL. Prima lecție este gratuită!' }
-      ]
+  // Pick translations based on provided lang prop (server-rendered) or fallback to path/client detection.
+  const locales: Record<string, any> = { en: enLocale, ru: ruLocale, ro: roLocale };
+  let initialLang = 'ro';
+  if (lang && Object.keys(locales).includes(lang)) {
+    initialLang = lang;
+  } else if (typeof window !== 'undefined') {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (segments.length > 0 && Object.keys(locales).includes(segments[0])) {
+      initialLang = segments[0];
     }
-  ];
+  }
+  const [currentLang, setCurrentLang] = useState(initialLang);
+  const translations = locales[currentLang] ?? roLocale;
+  // Chat data types and translation-backed source
+  type Conversation = { sender: string; message: string };
+  type RightBox = { name: string; conversations: Conversation[] };
+  const rightBoxData: RightBox[] = translations?.HeroSection?.chat?.rightBoxData as RightBox[];
   const [selectedBox, setSelectedBox] = useState(0)
   const [currentMessageIndex, setCurrentMessageIndex] = useState([0, 0, 0, 0]) // Index pentru fiecare container separat
   const [displayedMessages, setDisplayedMessages] = useState<{sender: string, message: string}[][]>([[], [], [], []]) // Mesajele afișate pentru fiecare container
@@ -1012,9 +974,9 @@ export default function HeroSectionLeftClean() {
               transition={{ duration: 0.5 }}
               className="mb-5 inline-flex items-center gap-2 border border-black/10 bg-white/70 px-3 py-1.5 backdrop-blur-md shadow-sm rounded-md"
             >
-              <span className="text-[11px] font-medium tracking-wide text-gray-700">Noutate</span>
+              <span className="text-[11px] font-medium tracking-wide text-gray-700">{translations?.HeroSection?.news}</span>
               <span className="h-1 w-1 rounded-full bg-gray-400" />
-              <span className="text-[11px] text-gray-600">Agent virtual 24/7 pentru companii</span>
+              <span className="text-[11px] text-gray-600">{translations?.HeroSection?.virtual_agent}</span>
             </motion.div>
 
             {/* Title */}
@@ -1024,7 +986,7 @@ export default function HeroSectionLeftClean() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-left text-5xl sm:text-6xl md:text-7xl leading-[1.06] font-extrabold tracking-tight text-gray-900"
             >
-              Bravin AI pentru companii
+              {translations?.HeroSection?.title}
             </motion.h1>
 
             {/* Subtitle */}
@@ -1034,7 +996,7 @@ export default function HeroSectionLeftClean() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mt-5 max-w-xl text-left text-base md:text-lg text-gray-600"
             >
-              Un agent virtual care răspunde instant pe web, WhatsApp, Facebook și email. Reduce costurile de suport și crește conversiile — păstrând vocea brandului tău.
+              {translations?.HeroSection?.subtitle}
             </motion.p>
 
             {/* Mobile-only: chat container under subtitle */}
@@ -1046,9 +1008,9 @@ export default function HeroSectionLeftClean() {
 
             {/* Tiny extras to fill a bit of space (left only) */}
             <div className="mt-8 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">Fără cod</span>
-              <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">Multichannel</span>
-              <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">GDPR‑ready</span>
+              <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">{translations?.HeroSection?.under_subtitle_cards1}</span>
+              <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">{translations?.HeroSection?.under_subtitle_cards2}</span>
+              <span className="inline-flex items-center rounded-full bg-black/5 px-3 py-1 text-xs text-gray-700">{translations?.HeroSection?.under_subtitle_cards3}</span>
             </div>
             {/* Auth buttons */}
             <div className="mt-5 flex gap-3">
@@ -1085,3 +1047,4 @@ export default function HeroSectionLeftClean() {
     </section>
   )
 }
+

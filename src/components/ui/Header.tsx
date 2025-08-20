@@ -6,6 +6,7 @@ import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { image } from 'framer-motion/client'
+import { useRouter, usePathname } from 'next/navigation'
 
 /**
  * Improved: smooth morph between top bar and centered pill with seamless connected dropdowns.
@@ -182,6 +183,37 @@ export default function NavigationHeaderPillStatic({
   const [isTickerPaused, setIsTickerPaused] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('RO');
+  
+  // Hook-uri pentru routing
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Detectează limba din URL
+  useEffect(() => {
+    const langMatch = pathname.match(/^\/([a-z]{2})/);
+    if (langMatch) {
+      setCurrentLanguage(langMatch[1].toUpperCase());
+    }
+  }, [pathname]);
+
+  // Funcție pentru schimbarea limbii
+  const changeLanguage = (newLang: string) => {
+    const langCode = newLang.toLowerCase();
+    setCurrentLanguage(newLang);
+    
+    const currentPath = pathname;
+    const langMatch = currentPath.match(/^\/([a-z]{2})(\/.*)?$/);
+    
+    if (langMatch) {
+      // Înlocuiește limba existentă
+      const newPath = `/${langCode}${langMatch[2] || ''}`;
+      router.push(newPath);
+    } else {
+      // Adaugă limba la path-ul curent
+      const newPath = `/${langCode}${currentPath === '/' ? '' : currentPath}`;
+      router.push(newPath);
+    }
+  };
 
   const tickerStyles = {
     position: 'fixed' as const,
@@ -611,7 +643,7 @@ export default function NavigationHeaderPillStatic({
                         <div className="py-1">
                           <button
                             onClick={() => {
-                              setCurrentLanguage('RO');
+                              changeLanguage('RO');
                               setIsLanguageDropdownOpen(false);
                             }}
                             className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:bg-black/5 ${
@@ -622,7 +654,7 @@ export default function NavigationHeaderPillStatic({
                           </button>
                           <button
                             onClick={() => {
-                              setCurrentLanguage('EN');
+                              changeLanguage('EN');
                               setIsLanguageDropdownOpen(false);
                             }}
                             className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:bg-black/5 ${
@@ -633,7 +665,7 @@ export default function NavigationHeaderPillStatic({
                           </button>
                           <button
                             onClick={() => {
-                              setCurrentLanguage('RU');
+                              changeLanguage('RU');
                               setIsLanguageDropdownOpen(false);
                             }}
                             className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:bg-black/5 ${
