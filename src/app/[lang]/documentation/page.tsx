@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Documentație - AI Chat Mega Promoting',
-  description: 'Documentație tehnică completă pentru dezvoltatori și administratori AI Chat.',
+  title: 'Documentație - Bravin AI Mega Promoting',
+  description: 'Documentație tehnică completă pentru dezvoltatori și administratori Bravin AI.',
 };
 
 export default function DocumentationPage() {
@@ -73,7 +73,7 @@ const chat = new AIChat({
                     <div>
                       <h3 className="text-xl font-semibold text-black mb-3">2. Integrarea de Bază</h3>
                       <p className="text-gray-600 mb-4">
-                        Adaugă widget-ul AI Chat pe website-ul tău în doar câteva linii de cod:
+                        Adaugă widget-ul Bravin AI pe website-ul tău în doar câteva linii de cod:
                       </p>
                       <div className="bg-gray-100 rounded-lg p-4">
                         <code className="text-sm text-black">
@@ -96,7 +96,7 @@ const chat = new AIChat({
                   <div className="space-y-6">
                     <div className="border-l-4 border-black pl-4">
                       <h3 className="text-xl font-semibold text-black mb-2">POST /api/chat/send</h3>
-                      <p className="text-gray-600 mb-4">Trimite un mesaj către AI Chat</p>
+                      <p className="text-gray-600 mb-4">Trimite un mesaj către Bravin AI</p>
                       
                       <h4 className="font-semibold text-black mb-2">Parametrii:</h4>
                       <div className="bg-gray-100 rounded-lg p-4 mb-4">

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'FAQ - AI Chat Mega Promoting',
-  description: 'Răspunsuri la întrebările frecvente despre AI Chat Mega Promoting.',
+  title: 'FAQ - Bravin AI Mega Promoting',
+  description: 'Răspunsuri la întrebările frecvente despre Bravin AI Mega Promoting.',
 };
 
 export default function FAQPage() {
@@ -44,13 +44,13 @@ export default function FAQPage() {
             <div className="bg-gray-50 rounded-lg border border-gray-200">
               <button className="w-full p-6 text-left flex justify-between items-center hover:bg-gray-100 transition-colors">
                 <h3 className="text-lg font-semibold text-black">
-                  Ce este AI Chat Mega Promoting?
+                  Ce este Bravin AI Mega Promoting?
                 </h3>
                 <span className="text-2xl text-black">+</span>
               </button>
               <div className="px-6 pb-6">
                 <p className="text-gray-600">
-                  AI Chat Mega Promoting este o platformă avansată de chatbot alimentat de inteligența artificială, 
+                  Bravin AI Mega Promoting este o platformă avansată de chatbot alimentat de inteligența artificială, 
                   proiectată să automatizeze comunicarea cu clienții și să optimizeze procesele de vânzări pentru 
                   afacerile din Moldova.
                 </p>

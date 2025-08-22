@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Prețuri - AI Chat Mega Promoting',
-  description: 'Planuri și prețuri transparente pentru soluțiile AI Chat Mega Promoting.',
+  title: 'Prețuri - Bravin AI Mega Promoting',
+  description: 'Planuri și prețuri transparente pentru soluțiile Bravin AI Mega Promoting.',
 };
 
 export default function PricingPage() {
@@ -439,7 +439,7 @@ export default function PricingPage() {
               Gata să începi?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Testează gratuit 14 zile și vezi diferența pe care o poate face AI Chat
+              Testează gratuit 14 zile și vezi diferența pe care o poate face Bravin AI
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors">

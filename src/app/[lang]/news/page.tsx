@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import roLocale from '@/locales/ro.json'
+import enLocale from '@/locales/en.json'
+import ruLocale from '@/locales/ru.json'
 import newsData from '@/data/news.json'
 
 // Types for the news article structure
@@ -26,6 +30,12 @@ interface NewsArticle {
 type SortKey = 'newest' | 'oldest' | 'title'
 
 export default function NewsPage() {
+  const pathname = typeof usePathname === 'function' ? usePathname() : '';
+  const langMatch = pathname ? pathname.match(/^\/([a-z]{2})/) : null;
+  const lang = langMatch ? langMatch[1].toLowerCase() : 'ro';
+  const basePath = `/${lang}`;
+  const locales: Record<string, any> = { ro: roLocale, en: enLocale, ru: ruLocale };
+  const t = locales[lang] || locales['ro'];
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -151,7 +161,7 @@ export default function NewsPage() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mx-auto mb-4" />
-          <p className="text-gray-600">Se încarcă noutățile…</p>
+          <p className="text-gray-600">{t?.NewsPage?.loading || 'Loading news…'}</p>
         </div>
       </div>
     )
@@ -164,19 +174,19 @@ export default function NewsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex items-end justify-between">
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-black">Noutăți</h1>
-              <p className="text-gray-600 mt-2">Articole curate, fără zgomot vizual. Filtrează și găsește rapid ce te interesează.</p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-black">{t?.NewsPage?.title || 'News'}</h1>
+              <p className="text-gray-600 mt-2">{t?.NewsPage?.subtitle || 'Curated articles without the visual noise. Filter and find what matters quickly.'}</p>
             </div>
             <div className="hidden md:flex items-center gap-3">
-              <label className="text-sm text-gray-600">Sortează</label>
+              <label className="text-sm text-gray-600">{t?.NewsPage?.sortLabel || 'Sort'}</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
                 className="h-9 border border-gray-300 rounded-md px-2 text-sm bg-white text-gray-900"
               >
-                <option value="newest">Cele mai noi</option>
-                <option value="oldest">Cele mai vechi</option>
-                <option value="title">Titlu A–Z</option>
+                <option value="newest">{t?.NewsPage?.sortOptions?.newest || 'Newest'}</option>
+                <option value="oldest">{t?.NewsPage?.sortOptions?.oldest || 'Oldest'}</option>
+                <option value="title">{t?.NewsPage?.sortOptions?.title || 'Title A–Z'}</option>
               </select>
             </div>
           </div>
@@ -191,12 +201,12 @@ export default function NewsPage() {
             <div className="space-y-5">
               {/* Search */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Căutare</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{t?.NewsPage?.search?.label || 'Search'}</label>
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Caută după titlu sau conținut…"
+                  placeholder={t?.NewsPage?.search?.placeholder || 'Search by title or content…'}
                   className="w-full h-9 border border-gray-300 rounded-md px-2 text-sm bg-white text-gray-900 placeholder-gray-400"
                 />
               </div>
@@ -205,9 +215,9 @@ export default function NewsPage() {
               {allCategories.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-gray-600">Categorii</label>
+                    <label className="block text-xs font-medium text-gray-600">{t?.NewsPage?.categories || 'Categories'}</label>
                     {selectedCategories.length > 0 && (
-                      <button onClick={() => setSelectedCategories([])} className="text-xs text-gray-500 hover:underline">Resetează</button>
+                      <button onClick={() => setSelectedCategories([])} className="text-xs text-gray-500 hover:underline">{t?.NewsPage?.reset || 'Reset'}</button>
                     )}
                   </div>
                   <div className="max-h-36 overflow-auto pr-1 space-y-1">
@@ -230,9 +240,9 @@ export default function NewsPage() {
               {allTags.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-gray-600">Taguri</label>
+                    <label className="block text-xs font-medium text-gray-600">{t?.NewsPage?.tags || 'Tags'}</label>
                     {selectedTags.length > 0 && (
-                      <button onClick={() => setSelectedTags([])} className="text-xs text-gray-500 hover:underline">Resetează</button>
+                      <button onClick={() => setSelectedTags([])} className="text-xs text-gray-500 hover:underline">{t?.NewsPage?.reset || 'Reset'}</button>
                     )}
                   </div>
                   <div className="max-h-40 overflow-auto pr-1 space-y-1">
@@ -252,15 +262,15 @@ export default function NewsPage() {
               )}
               {/* Sort (mobile) */}
               <div className="md:hidden">
-                <label className="block text-xs font-medium text-gray-600 mb-1">Sortează</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{t?.NewsPage?.sortLabel || 'Sort'}</label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortKey)}
                   className="w-full h-9 border border-gray-300 rounded-md px-2 text-sm bg-white text-gray-900"
                 >
-                  <option value="newest">Cele mai noi</option>
-                  <option value="oldest">Cele mai vechi</option>
-                  <option value="title">Titlu A–Z</option>
+                  <option value="newest">{t?.NewsPage?.sortOptions?.newest || 'Newest'}</option>
+                  <option value="oldest">{t?.NewsPage?.sortOptions?.oldest || 'Oldest'}</option>
+                  <option value="title">{t?.NewsPage?.sortOptions?.title || 'Title A–Z'}</option>
                 </select>
               </div>
 
@@ -278,10 +288,10 @@ export default function NewsPage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-gray-600">
-                {filtered.length} articole
+                {filtered.length} {t?.NewsPage?.itemsLabel || 'news'}
                 {(selectedTags.length + selectedCategories.length + selectedSources.length > 0 || search) && (
                   <span className="ml-2 text-gray-400">
-                    (filtrat)
+                    {t?.NewsPage?.filtered || '(filtered)'}
                   </span>
                 )}
               </div>
@@ -289,8 +299,8 @@ export default function NewsPage() {
 
             {filtered.length === 0 ? (
               <div className="text-center py-16 border border-dashed border-gray-300 rounded-xl">
-                <p className="text-gray-800 font-medium">Nicio potrivire găsită.</p>
-                <p className="text-gray-500 text-sm mt-1">Încearcă să ajustezi filtrele sau să ștergi căutarea.</p>
+                <p className="text-gray-800 font-medium">{t?.NewsPage?.noMatchesTitle || 'No matches found.'}</p>
+                <p className="text-gray-500 text-sm mt-1">{t?.NewsPage?.noMatchesSubtitle || 'Try adjusting filters or clearing the search.'}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -339,7 +349,7 @@ export default function NewsPage() {
                               <span className="text-xs text-gray-600 border border-gray-300 rounded-md px-1.5 py-0.5">{article.category}</span>
                             )}
                             <span className="ml-auto inline-flex items-center text-sm text-black hover:underline">
-                              Citește mai mult
+                              {t?.NewsPage?.readMore || 'Read more'}
                               <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>

@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import articlesData from '@/data/articles.json';
+import roLocale from '@/locales/ro.json';
+import enLocale from '@/locales/en.json';
+import ruLocale from '@/locales/ru.json';
 
 export const metadata: Metadata = {
-  title: 'Blog - AI Chat Mega Promoting',
+  title: 'Blog - Bravin AI',
   description:
     'Descoperă cele mai recente articole și insights despre inteligența artificială în marketing și automatizare.',
 };
@@ -115,7 +118,11 @@ function formatDate(id: string): string {
   return 'Dată necunoscută';
 }
 
-export default function BlogPage() {
+export default function BlogPage({ params }: { params: { lang?: string } }) {
+  const lang = params?.lang || 'ro';
+  const basePath = `/${lang}`;
+  const locales: Record<string, any> = { ro: roLocale, en: enLocale, ru: ruLocale };
+  const t = locales[lang] || locales['ro'];
   // Get articles from JSON data
   const articles: Article[] = (articlesData as any).articles || [];
 
@@ -177,14 +184,25 @@ export default function BlogPage() {
     }
   ];
 
+  // Map featured articles to localized values when available
+  const localizedFeatured = featuredArticles.map((a) => {
+    const localized = t?.BlogPage?.featured?.[a.id] || {};
+    return {
+      ...a,
+      title: localized.title || a.title,
+      description: localized.description || a.description,
+      date: localized.date || a.date,
+    };
+  });
+
   return (
     <div className="min-h-screen bg-white">
       <div className="mx-auto w-full max-w-7xl px-6 py-10 lg:py-16 mt-12">
         {/* Title row (matches screenshot spacing) */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Blog</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">{t?.BlogPage?.title || 'Blog'}</h1>
           <p className="mt-3 text-base text-gray-600 sm:text-lg">
-            Learn more about Chatbase through our blog!
+            {t?.BlogPage?.subtitle || 'Learn more about Bravin through our blog!'}
           </p>
         </div>
 
@@ -195,12 +213,12 @@ export default function BlogPage() {
 
             {/* Categories */}
             <div className="mt-6">
-              <h2 className="mb-2 text-sm font-medium text-gray-500">Categories</h2>
+              <h2 className="mb-2 text-sm font-medium text-gray-500">{t?.BlogPage?.categories?.title || 'Categories'}</h2>
               <nav className="flex flex-col gap-1 text-sm">
-                <a className="rounded-lg bg-gray-900 px-3 py-2 font-medium text-white">Latest</a>
-                <a className="rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">Insights</a>
-                <a className="rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">Company</a>
-                <a className="rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">Use Cases</a>
+                <a className="rounded-lg bg-gray-900 px-3 py-2 font-medium text-white">{t?.BlogPage?.categories?.items?.latest || 'Latest'}</a>
+                <a className="rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">{t?.BlogPage?.categories?.items?.insights || 'Insights'}</a>
+                <a className="rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">{t?.BlogPage?.categories?.items?.company || 'Company'}</a>
+                <a className="rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">{t?.BlogPage?.categories?.items?.useCases || 'Use Cases'}</a>
               </nav>
             </div>
           </aside>
@@ -210,10 +228,10 @@ export default function BlogPage() {
             <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
               
               {/* Featured Articles First */}
-              {featuredArticles.map((article) => {
+      {localizedFeatured.map((article) => {
                 if (article.featured) {
                   return (
-                    <Link key={article.id} href={article.href} className="block">
+        <Link key={article.id} href={`${basePath}${article.href}`} className="block">
                       <div className="group relative bg-white border-4 border-black overflow-hidden hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:-translate-y-1 transform hover:rotate-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-w-[calc(100%+20px)] min-h-[calc(100%)]">
                         <div className="relative p-8">
                           <div className="flex items-center justify-between mb-4">
@@ -249,7 +267,7 @@ export default function BlogPage() {
                       description={article.description}
                       author={article.author}
                       date={article.date}
-                      href={article.href}
+                      href={`${basePath}${article.href}`}
                       imageSrc={article.imageSrc}
                     />
                   );
@@ -264,7 +282,7 @@ export default function BlogPage() {
                   description={truncateContent(article.seoMetadata.metaDescription)}
                   author={article.authorName}
                   date={formatDate(article.id)}
-                  href={`/blog/${article.id}`}
+                  href={`${basePath}/blog/${article.id}`}
                 />
               ))}
             </div>

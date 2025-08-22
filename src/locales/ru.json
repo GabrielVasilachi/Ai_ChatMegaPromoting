@@ -70,7 +70,30 @@
     }
   }
 },
-
+  "NewsPage": {
+    "loading": "Загрузка новостей…",
+    "title": "Новости",
+    "subtitle": "Отобранные статьи без визуального шума. Фильтруйте и быстро находите нужное.",
+    "sortLabel": "Сортировать",
+    "sortOptions": {
+      "newest": "Сначала новые",
+      "oldest": "Сначала старые",
+      "title": "Заголовок A–Z"
+    },
+    "search": {
+      "label": "Поиск",
+      "placeholder": "Искать по заголовку или содержимому…"
+    },
+    "categories": "Категории",
+    "tags": "Теги",
+    "reset": "Сброс",
+    "clearFilters": "Очистить фильтры",
+    "noMatchesTitle": "Совпадений не найдено.",
+    "noMatchesSubtitle": "Попробуйте изменить фильтры или очистить поиск.",
+    "itemsLabel": "новостей",
+    "filtered": "(фильтровано)",
+    "readMore": "Читать далее"
+  },
 
   "HeroSection": {
     "news": "Новости",
@@ -189,6 +212,48 @@
     ],
     "Learn-more": "Узнать больше"
   },
+  "BlogPage": {
+    "title": "Блог",
+    "subtitle": "Узнайте больше о Bravin в нашем блоге!"
+  ,
+    "categories": {
+      "title": "Категории",
+      "items": {
+        "latest": "Последние",
+        "insights": "Аналитика",
+        "company": "Компания",
+        "useCases": "Кейсы"
+      }
+    }
+    ,
+    "featured": {
+      "elevenlabs-hackathon": {
+        "title": "Победители ElevenLabs Hackathon: $20,000 для AI-агентов",
+        "description": "Как мы заняли первое место на ElevenLabs Hackathon с нашей голосовой технологией агентов и что это значит для отрасли.",
+        "date": "Nov 15, 2024"
+      },
+      "ebrd-star-venture": {
+        "title": "Отобраны в программу EBRD Star Venture",
+        "description": "Aichat.md был выбран в престижную программу EBRD Star Venture — признание, которое ускорит развитие нашего AI.",
+        "date": "Jul 25, 2024"
+      },
+      "sevan-startup-summit": {
+        "title": "2-е место на Sevan Startup Summit: $6,000 для Aichat.md",
+        "description": "Наш успех на Sevan Startup Summit принес международное признание и финансирование для дальнейшей разработки.",
+        "date": "Aug 20, 2024"
+      },
+      "google-cloud-partnership": {
+        "title": "Google Cloud поддерживает нас: грант $25K для инфраструктуры AI",
+        "description": "Стратегическое партнёрство с Google Cloud помогает нам масштабировать инфраструктуру AI по всему миру. Подробнее о гранте $25,000.",
+        "date": "Sep 10, 2024"
+      },
+      "upnext-accelerator": {
+        "title": "Партнёрство с UpNext Accelerator: $10K стартового финансирования",
+        "description": "Участие в UpNext Accelerator открывает новую страницу нашего развития с поддержкой $10,000.",
+        "date": "Jun 5, 2024"
+      }
+    }
+  },
   "IndustryModules": {
   "title": "Bravin для всех",
   "subtitle": "Разговорные AI-решения, адаптированные для каждой отрасли — автоматизируйте, персонализируйте и масштабируйте взаимодействие с клиентами независимо от сферы.",
@@ -229,7 +294,7 @@
     ]
   },
     "ROICalculator": {
-    "title": "ROI-калькулятор",
+    "title": "Bravin-калькулятор",
     "subtitle": "Заполните 3 поля и узнайте реальные затраты за 1–3 года.",
     "inputs": {
       "agents": {

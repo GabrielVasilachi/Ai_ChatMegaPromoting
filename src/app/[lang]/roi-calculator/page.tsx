@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Calculator ROI - AI Chat Mega Promoting',
-  description: 'Calculează returul investiției pentru implementarea AI Chat în businessul tău.',
+  title: 'Calculator ROI - Bravin AI Mega Promoting',
+  description: 'Calculează returul investiției pentru implementarea Bravin AI în businessul tău.',
 };
 
 export default function ROICalculatorPage() {
@@ -15,7 +15,7 @@ export default function ROICalculatorPage() {
               Calculator ROI
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Descoperă cât poți economisi cu AI Chat în businessul tău
+              Descoperă cât poți economisi cu Bravin AI în businessul tău
             </p>
           </div>
 
@@ -120,7 +120,7 @@ export default function ROICalculatorPage() {
                 {/* Monthly Savings */}
                 <div className="bg-white/10 rounded-xl p-6">
                   <div className="text-3xl font-bold mb-2">€3,250</div>
-                  <div className="text-blue-100">Economii lunare cu AI Chat</div>
+                  <div className="text-blue-100">Economii lunare cu Bravin AI</div>
                   <div className="text-sm text-blue-200 mt-2">
                     Reducerea costurilor cu personalul de suport
                   </div>
@@ -131,7 +131,7 @@ export default function ROICalculatorPage() {
                   <div className="text-3xl font-bold mb-2">€39,000</div>
                   <div className="text-blue-100">Economii anuale</div>
                   <div className="text-sm text-blue-200 mt-2">
-                    Total economii pe an cu AI Chat
+                    Total economii pe an cu Bravin AI
                   </div>
                 </div>
 
@@ -140,7 +140,7 @@ export default function ROICalculatorPage() {
                   <div className="text-3xl font-bold mb-2">1,250%</div>
                   <div className="text-blue-100">ROI în primul an</div>
                   <div className="text-sm text-blue-200 mt-2">
-                    Returnul investiției în AI Chat
+                    Returnul investiției în Bravin AI
                   </div>
                 </div>
 
@@ -214,7 +214,7 @@ export default function ROICalculatorPage() {
               Gata să începi să economisești?
             </h2>
             <p className="text-xl text-gray-600 mb-8">
-              Testează AI Chat gratuit 14 zile și vezi rezultatele în timp real
+              Testează Bravin AI gratuit 14 zile și vezi rezultatele în timp real
             </p>
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-lg">
               Începe perioada de încercare

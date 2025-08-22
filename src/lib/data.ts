@@ -116,7 +116,7 @@ export const testimonials: Testimonial[] = [
     title: "Sales Director",
     company: "GrowthTech Inc",
     avatar: "/placeholder-avatar-4.png",
-    quote: "We've seen a 300% increase in lead conversion since implementing the AI chat. It's incredible how it nurtures prospects automatically.",
+    quote: "We've seen a 300% increase in lead conversion since implementing the Bravin AI. It's incredible how it nurtures prospects automatically.",
     metrics: {
       label: "Lead Conversion",
       value: "+300%",
@@ -337,7 +337,7 @@ export const pricingPlans = pricingPlansMonthly;
 
 // Code examples for developer section
 export const codeExamples = {
-  curl: `curl -X POST "https://api.ai-chat.com/v1/chat" \\
+  curl: `curl -X POST "https://api.Bravin-AI.com/v1/chat" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -349,7 +349,7 @@ export const codeExamples = {
     }
   }'`,
   
-  javascript: `import { AiChat } from '@ai-chat/sdk';
+  javascript: `import { AiChat } from '@Bravin-AI/sdk';
 
 const client = new AiChat('YOUR_API_KEY');
 

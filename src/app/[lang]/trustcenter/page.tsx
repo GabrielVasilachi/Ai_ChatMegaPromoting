@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Trust Center - AI Chat Mega Promoting',
-  description: 'Securitate, conformitate și transparență în serviciile AI Chat Mega Promoting.',
+  title: 'Trust Center - Bravin AI Mega Promoting',
+  description: 'Securitate, conformitate și transparență în serviciile Bravin AI Mega Promoting.',
 };
 
 export default function TrustCenterPage() {

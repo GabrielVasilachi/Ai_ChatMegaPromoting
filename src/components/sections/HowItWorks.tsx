@@ -27,7 +27,12 @@ export default function HowItWorks() {
 
   // Strongly type steps so `.map` callbacks infer parameter types and avoid implicit `any`.
   type Step = { id: number; title: string; description: string };
-  const steps: Step[] = (copy?.steps as Step[]) || [];
+  // Ensure every step has a stable unique id (locale JSON currently omits id fields)
+  const steps: Step[] = (Array.isArray(copy?.steps) ? copy.steps : []).map((s: any, i: number) => ({
+    id: typeof s.id === 'number' ? s.id : i + 1,
+    title: s.title || `Step ${i + 1}`,
+    description: s.description || ''
+  }));
   const learnMore: string = String(copy?.cta || (copy as any)?.['Learn-more'] || '');
 
   // Track which card is hovered (desktop)
@@ -205,9 +210,9 @@ export default function HowItWorks() {
   {/* increase negative top margin on small screens so mobile cards sit higher */}
   <div className="relative -mt-24 md:-mt-12">
           <div className="hidden xl:flex justify-between w-full">
-            {steps.map((step, index) => (
+      {steps.map((step, index) => (
               <motion.div
-                key={step.title || index}
+        key={step.id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
@@ -266,7 +271,7 @@ export default function HowItWorks() {
                     zIndex: 1,
                   }}
                 >
-                  {index + 1}
+                  {step.id}
                 </div>
 
                 <div style={{ position: 'relative', zIndex: 3 }}>

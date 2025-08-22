@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Parteneri - AI Chat Mega Promoting',
-  description: 'Devine partener AI Chat și ajută businessurile să transforme comunicarea cu clienții prin tehnologii AI.',
+  title: 'Parteneri - Bravin AI Mega Promoting',
+  description: 'Devine partener Bravin AI și ajută businessurile să transforme comunicarea cu clienții prin tehnologii AI.',
 };
 
 export default function PartnersPage() {
@@ -17,7 +17,7 @@ export default function PartnersPage() {
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
               Alătură-te rețelei noastre de parteneri și dezvoltă-ți businessul 
-              oferind soluții AI Chat clienților tăi
+              oferind soluții Bravin AI clienților tăi
             </p>
           </div>
 
@@ -29,7 +29,7 @@ export default function PartnersPage() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Reseller Partner</h2>
               <p className="text-gray-600 mb-6">
-                Vinde direct soluțiile AI Chat clienților tăi și câștigă comisioane atractive
+                Vinde direct soluțiile Bravin AI clienților tăi și câștigă comisioane atractive
               </p>
               <ul className="text-left space-y-2 mb-8">
                 <li className="flex items-center text-gray-600">
@@ -63,7 +63,7 @@ export default function PartnersPage() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">System Integrator</h2>
               <p className="text-gray-600 mb-6">
-                Integrează AI Chat în proiectele tale complexe și oferă soluții complete
+                Integrează Bravin AI în proiectele tale complexe și oferă soluții complete
               </p>
               <ul className="text-left space-y-2 mb-8">
                 <li className="flex items-center text-gray-600">
@@ -94,7 +94,7 @@ export default function PartnersPage() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Referral Partner</h2>
               <p className="text-gray-600 mb-6">
-                Recomandă AI Chat și primește comisioane pentru fiecare client referit
+                Recomandă Bravin AI și primește comisioane pentru fiecare client referit
               </p>
               <ul className="text-left space-y-2 mb-8">
                 <li className="flex items-center text-gray-600">
@@ -123,7 +123,7 @@ export default function PartnersPage() {
           {/* Benefits Section */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white mb-16">
             <h2 className="text-3xl font-bold text-center mb-12">
-              De Ce să Devii Partener AI Chat?
+              De Ce să Devii Partener Bravin AI?
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
@@ -151,7 +151,7 @@ export default function PartnersPage() {
                 <div className="text-4xl mb-4">🏆</div>
                 <h3 className="text-xl font-semibold mb-2">Brand Recunoscut</h3>
                 <p className="text-blue-100 text-sm">
-                  Asociază-te cu liderul în soluții AI Chat din România
+                  Asociază-te cu liderul în soluții Bravin AI din România
                 </p>
               </div>
             </div>
@@ -268,7 +268,7 @@ export default function PartnersPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-500 mr-2 mt-1">✓</span>
-                    Dedicare exclusivă AI Chat
+                    Dedicare exclusivă Bravin AI
                   </li>
                 </ul>
               </div>
@@ -326,7 +326,7 @@ export default function PartnersPage() {
           {/* CTA Section */}
           <div className="text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white">
             <h2 className="text-3xl font-bold mb-6">
-              Gata să Devii Partener AI Chat?
+              Gata să Devii Partener Bravin AI?
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               Alătură-te rețelei noastre de parteneri de succes și profită de 

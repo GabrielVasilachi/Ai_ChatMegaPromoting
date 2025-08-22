@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contact - AI Chat Mega Promoting',
-  description: 'Contactează echipa AI Chat Mega Promoting. Suntem aici să răspundem la întrebările tale.',
+  title: 'Contact - Bravin AI Mega Promoting',
+  description: 'Contactează echipa Bravin AI Mega Promoting. Suntem aici să răspundem la întrebările tale.',
 };
 
 export default function ContactPage() {
@@ -280,7 +280,7 @@ export default function ContactPage() {
                 </h3>
                 <p className="text-gray-600">
                   Absolut! Programăm demonstrații personalizate pentru a îți arăta 
-                  cum AI Chat poate fi adaptat pentru afacerea ta.
+                  cum Bravin AI poate fi adaptat pentru afacerea ta.
                 </p>
               </div>
               
