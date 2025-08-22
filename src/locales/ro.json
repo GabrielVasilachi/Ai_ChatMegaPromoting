@@ -85,15 +85,21 @@
       "label": "Căutare",
       "placeholder": "Caută după titlu sau conținut…"
     },
-    "categories": "Categorii",
-    "tags": "Taguri",
-    "reset": "Resetează",
+  "categories": "Categorii",
+  "tags": "Taguri",
     "clearFilters": "Șterge filtrele",
     "noMatchesTitle": "Nicio potrivire găsită.",
     "noMatchesSubtitle": "Încearcă să ajustezi filtrele sau să ștergi căutarea.",
     "itemsLabel": "noutăți",
     "filtered": "(filtrat)",
-    "readMore": "Citește mai mult"
+    "readMore": "Citește mai mult",
+    "tagLabels": {
+      "press_online": "Presă Online",
+      "video": "Video",
+      "video_live": "Video Live",
+      "social_media": "Social Media",
+      "eu_org": "Organizație EU"
+    }
   },
 
   "HeroSection": {

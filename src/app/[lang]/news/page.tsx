@@ -156,6 +156,23 @@ export default function NewsPage() {
     return htmlContent.replace(/<[^>]*>/g, '').replace(/\n/g, ' ')
   }
 
+  // map common tag strings to locale keys and return localized label when available
+  const getLocalizedTag = (tag: string) => {
+  if (!tag) return tag
+
+  // strip diacritics (e.g., 'Presă' -> 'Presa') and lowercase for robust matching
+  const stripDiacritics = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const k = stripDiacritics(tag).toLowerCase()
+  let key = ''
+  if (k.includes('video') && k.includes('live')) key = 'video_live'
+  else if (k.includes('video')) key = 'video'
+  else if (k.includes('presa') || k.includes('press')) key = 'press_online'
+  else if (k.includes('social') || k.includes('facebook')) key = 'social_media'
+  else if (k.includes('eu') || k.includes('organiza')) key = 'eu_org'
+
+  return (t?.NewsPage?.tagLabels?.[key]) ?? tag
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -216,9 +233,6 @@ export default function NewsPage() {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-medium text-gray-600">{t?.NewsPage?.categories || 'Categories'}</label>
-                    {selectedCategories.length > 0 && (
-                      <button onClick={() => setSelectedCategories([])} className="text-xs text-gray-500 hover:underline">{t?.NewsPage?.reset || 'Reset'}</button>
-                    )}
                   </div>
                   <div className="max-h-36 overflow-auto pr-1 space-y-1">
                     {allCategories.map((c) => (
@@ -241,9 +255,6 @@ export default function NewsPage() {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-medium text-gray-600">{t?.NewsPage?.tags || 'Tags'}</label>
-                    {selectedTags.length > 0 && (
-                      <button onClick={() => setSelectedTags([])} className="text-xs text-gray-500 hover:underline">{t?.NewsPage?.reset || 'Reset'}</button>
-                    )}
                   </div>
                   <div className="max-h-40 overflow-auto pr-1 space-y-1">
                     {allTags.map((t) => (
@@ -279,13 +290,75 @@ export default function NewsPage() {
                 onClick={clearFilters}
                 className="w-full h-9 border border-gray-300 rounded-md text-sm text-gray-800 hover:bg-gray-50"
               >
-                Șterge filtrele
+                {t?.NewsPage?.clearFilters || 'Șterge filtrele'}
               </button>
             </div>
           </aside>
 
           {/* Results */}
           <div>
+            {/* Top 7 highlighted external items (provided URLs) */}
+            {(() => {
+              const external = [
+                {
+                  href: 'https://newsmaker.md/ru/video-rabotaet-bez-sna-i-vyhodnyh-ii-pomoshnik-sozdannyi-v-moldove-zanyal-prizovoe-mesto-na-mejdunarodnom-startap-sammite',
+                  title: 'NewsMaker.md',
+                  subtitle: 'AI помощник, созданный в Молдове, занял призовое место на международном стартап саммите',
+                  tag: 'Presa Online',
+                  locationText: 'Featured Article',
+                  image: '/News/NewsMakerLogo.png',
+                },
+                { href: 'http://youtube.com/watch?v=Xken4Qz0eHQ', title: 'YouTube Feature', subtitle: 'Kallina AI în reportaj video despre succesul la competițiile internaționale', tag: 'Video', locationText: 'YouTube', image: '/News/YoutubeLogo.png' },
+                { href: 'https://www.youtube.com/watch?v=QZz-G8WB2v0', title: 'YouTube Interview', subtitle: 'Interviu live despre tehnologia AI și viitorul automatizării în Moldova', tag: 'Video Live', locationText: 'YouTube', image: '/News/YoutubeLogo.png' },
+                { href: 'https://www.facebook.com/watch/?mibextid=wwXIfr&v=524671923439667&rdid=Kum9Z7oLZP7Morp8', title: 'Facebook Feature', subtitle: 'Reportaj special despre echipa Kallina AI și succesele obținute', tag: 'Social Media', locationText: 'Facebook', image: '/News/Facebook.png' },
+                { href: 'https://eu4innovationeast.eu/moldovan-startups-expand-horizons-through-cross-border-engagement-at-sevan-startup-summit-2025/', title: 'EU4Innovation East', subtitle: 'Startup-urile moldovenești își extind orizonturile prin Sevan Summit 2025', tag: 'Organizație EU', locationText: 'Official Report', image: '/News/EU4InovationEastLogo.png' },
+                { href: 'https://diez.md/2025/07/30/un-start-up-din-moldova-premiat-cu-locul-ii-si-12-000-de-dolari-la-un-summit-din-armenia-unde-a-concurat-cu-peste-250-de-echipe/', title: 'Diez.md', subtitle: 'Start-up din Moldova premiat cu locul II și $12,000 la summit din Armenia', tag: 'Presă Online', locationText: 'Premium Article', image: '/News/DiezLogo.png' },
+              ]
+
+              // use first 6 items
+              const items = external.slice(0, 6)
+
+              return (
+                <div className="mb-6 space-y-4">
+                  {items.map((it, idx) => (
+                    <a
+                      key={`ext-${idx}`}
+                      href={it.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full"
+                    >
+                      <div className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="w-20 h-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center">
+                          <img
+                            src={it.image || '/UpNext/image copy.png'}
+                            alt={it.title}
+                            className={
+                              it.image && it.image.includes('EU4InovationEastLogo')
+                                ? 'w-16 h-16 object-contain'
+                                : it.image && it.image.includes('YoutubeLogo')
+                                ? 'w-12 h-12 object-contain'
+                                : 'w-full h-full object-cover'
+                            }
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-medium text-black truncate">{it.title}</h3>
+                          <p className="text-sm text-gray-600 truncate">{it.subtitle}</p>
+
+                          <div className="mt-2 flex items-center gap-2">
+                            <div className="inline-flex items-center rounded-md bg-gray-100 text-xs text-gray-700 px-2 py-1">{getLocalizedTag(it.tag)}</div>
+                            <span className="text-xs text-gray-500 ml-2">{it.locationText || 'location'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )
+            })()}
+
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-gray-600">
                 {filtered.length} {t?.NewsPage?.itemsLabel || 'news'}
@@ -303,7 +376,7 @@ export default function NewsPage() {
                 <p className="text-gray-500 text-sm mt-1">{t?.NewsPage?.noMatchesSubtitle || 'Try adjusting filters or clearing the search.'}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 {filtered.map((article) => {
                   const previewText = article.htmlContent
                     ? extractPlainText(article.htmlContent)
@@ -315,13 +388,13 @@ export default function NewsPage() {
                   return (
                     <Link
                       key={article.id}
-                      href={`/news/${article.id}`}
-                      className="group block focus:outline-none h-full"
+                      href={`${basePath}/news/${article.id}`}
+                      className="group block focus:outline-none w-full"
                       tabIndex={0}
                       aria-label={`Deschide articolul: ${article.title}`}
                     >
-                      <article className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-sm transition-shadow cursor-pointer group-hover:shadow-lg group-focus:shadow-lg flex flex-col h-full">
-                        <div className="p-5 flex flex-col flex-1">
+                      <article className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow cursor-pointer group-hover:shadow-lg group-focus:shadow-lg w-full">
+                        <div className="p-6 flex flex-col">
                           <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
                             {dateStr && <span>{dateStr}</span>}
                             {(article.authorName || article.sourceDomain) && <span>•</span>}
@@ -333,22 +406,23 @@ export default function NewsPage() {
                               </>
                             )}
                           </div>
-                          <h2 className="text-lg font-semibold text-black leading-snug mb-2 line-clamp-2 group-hover:underline group-focus:underline">{article.title}</h2>
-                          <p className="text-sm text-gray-700 leading-relaxed line-clamp-4 mb-3 flex-1">
-                            {truncateContent(previewText)}
+                          <h2 className="text-xl font-semibold text-black leading-snug mb-2 group-hover:underline group-focus:underline">{article.title}</h2>
+                          <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                            {truncateContent(previewText, 240)}
                           </p>
-                          {article.tags && article.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {article.tags.slice(0, 4).map((t) => (
-                                <span key={t} className="text-xs text-gray-700 border border-gray-300 rounded-full px-2 py-0.5">{t}</span>
-                              ))}
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {article.tags && article.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {article.tags.slice(0, 3).map((tg) => (
+                                    <span key={tg} className="text-xs text-gray-700 border border-gray-300 rounded-full px-2 py-0.5">{getLocalizedTag(tg)}</span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                          )}
-                          <div className="flex items-center justify-between mt-auto">
-                            {article.category && (
-                              <span className="text-xs text-gray-600 border border-gray-300 rounded-md px-1.5 py-0.5">{article.category}</span>
-                            )}
-                            <span className="ml-auto inline-flex items-center text-sm text-black hover:underline">
+
+                            <span className="inline-flex items-center text-sm text-black hover:underline">
                               {t?.NewsPage?.readMore || 'Read more'}
                               <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

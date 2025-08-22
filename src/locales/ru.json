@@ -84,15 +84,22 @@
       "label": "Поиск",
       "placeholder": "Искать по заголовку или содержимому…"
     },
-    "categories": "Категории",
-    "tags": "Теги",
-    "reset": "Сброс",
+  "categories": "Категории",
+  "tags": "Теги",
     "clearFilters": "Очистить фильтры",
     "noMatchesTitle": "Совпадений не найдено.",
     "noMatchesSubtitle": "Попробуйте изменить фильтры или очистить поиск.",
     "itemsLabel": "новостей",
     "filtered": "(фильтровано)",
     "readMore": "Читать далее"
+    ,
+    "tagLabels": {
+      "press_online": "Онлайн СМИ",
+      "video": "Видео",
+      "video_live": "Прямой эфир",
+      "social_media": "Соцсети",
+      "eu_org": "EU Организация"
+    }
   },
 
   "HeroSection": {

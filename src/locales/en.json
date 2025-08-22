@@ -245,15 +245,22 @@
       "label": "Search",
       "placeholder": "Search by title or content…"
     },
-    "categories": "Categories",
-    "tags": "Tags",
-    "reset": "Reset",
+  "categories": "Categories",
+  "tags": "Tags",
     "clearFilters": "Clear filters",
     "noMatchesTitle": "No matches found.",
     "noMatchesSubtitle": "Try adjusting filters or clearing the search.",
     "itemsLabel": "news",
     "filtered": "(filtered)",
     "readMore": "Read more"
+    ,
+    "tagLabels": {
+      "press_online": "Online Press",
+      "video": "Video",
+      "video_live": "Live Video",
+      "social_media": "Social Media",
+      "eu_org": "EU Organization"
+    }
   },
   "IndustryModules": {
     "title": "Bravin for everyone",
