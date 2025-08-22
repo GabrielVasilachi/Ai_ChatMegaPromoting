@@ -4,6 +4,9 @@ import { testimonials } from '@/lib/data';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import enJson from '@/locales/en.json';
+import roJson from '@/locales/ro.json';
+import ruJson from '@/locales/ru.json';
 
 export default function Testimonials() {
   // No state needed for heart/branch visibility
@@ -42,6 +45,69 @@ export default function Testimonials() {
   // Add state for mobile carousel
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+
+  // --- Localization (simple detection + t helper) ---
+  const LOCALES: Record<string, any> = { en: enJson, ro: roJson, ru: ruJson };
+  const [lang, setLang] = useState<string>('en');
+  const [translations, setTranslations] = useState<Record<string, any>>(LOCALES.en);
+
+  useEffect(() => {
+    try {
+      const pathSeg = window.location.pathname.split('/')[1];
+      if (pathSeg && LOCALES[pathSeg]) {
+        setLang(pathSeg);
+        setTranslations(LOCALES[pathSeg]);
+        return;
+      }
+    } catch (e) {
+      // ignore (server render / no window)
+    }
+
+    const nav = typeof navigator !== 'undefined' ? (navigator.language || navigator.languages?.[0] || '') : '';
+    if (nav.startsWith('ro')) {
+      setLang('ro');
+      setTranslations(LOCALES.ro);
+    } else if (nav.startsWith('ru')) {
+      setLang('ru');
+      setTranslations(LOCALES.ru);
+    } else {
+      setLang('en');
+      setTranslations(LOCALES.en);
+    }
+  }, []);
+
+  const t = (path: string, fallback = '') => {
+    if (!path) return fallback;
+    const parts = path.split('.');
+    let cur: any = translations;
+    for (const p of parts) {
+      if (!cur) return fallback || path;
+      cur = cur[p];
+    }
+    return typeof cur === 'string' ? cur : fallback || path;
+  };
+
+  // Build a localized items array from translations if available, otherwise fallback to `testimonials` data
+  const localizedItems = useMemo(() => {
+    try {
+      const items = translations?.Testimonials?.items;
+      if (Array.isArray(items) && items.length) {
+        return items.map((it: any, idx: number) => ({
+          name: it[`name${idx + 1}`] ?? it.name ?? testimonials[idx]?.name,
+          title: it[`role${idx + 1}`] ?? it.role ?? testimonials[idx]?.title,
+          company: it[`company${idx + 1}`] ?? it.company ?? testimonials[idx]?.company,
+          quote: it[`quote${idx + 1}`] ?? it.quote ?? testimonials[idx]?.quote,
+          metrics: {
+            label: it[`metric${idx + 1}`]?.split(':')?.[0] ?? testimonials[idx]?.metrics?.label,
+            value: it[`metric${idx + 1}`]?.split(':')?.[1]?.trim() ?? testimonials[idx]?.metrics?.value,
+          },
+        }));
+      }
+    } catch (e) {
+      // ignore and fallback
+    }
+    return testimonials;
+  }, [translations]);
 
   // Functie separata pentru a controla vizibilitatea SVG-urilor pe ecrane mai mici de 990px
   useEffect(() => {
@@ -176,17 +242,17 @@ export default function Testimonials() {
   // =========================
   // Mobile carousel (Apple-style) — infinite with neighbors peeking
   // =========================
-  const n = testimonials.length;
+  const n = localizedItems.length;
   const looped = useMemo(() => {
-    if (!n) return [] as Array<typeof testimonials[number] & { __realIndex: number; __key: string }>;
-    const leftClone = { ...testimonials[n - 1], __realIndex: n - 1, __key: 'clone-left' };
-    const rightClone = { ...testimonials[0], __realIndex: 0, __key: 'clone-right' };
+    if (!n) return [] as Array<typeof localizedItems[number] & { __realIndex: number; __key: string }>;
+    const leftClone = { ...(localizedItems[n - 1] as any), __realIndex: n - 1, __key: 'clone-left' };
+    const rightClone = { ...(localizedItems[0] as any), __realIndex: 0, __key: 'clone-right' };
     return [
       leftClone,
-      ...testimonials.map((t, i) => ({ ...(t as any), __realIndex: i, __key: `real-${i}` })),
+      ...localizedItems.map((t: any, i: number) => ({ ...(t as any), __realIndex: i, __key: `real-${i}` })),
       rightClone,
     ];
-  }, [n]);
+  }, [n, localizedItems]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -397,9 +463,9 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-8 mt-10 md:mt-16">What Our Clients Say</h2>
+            <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-8 mt-10 md:mt-16">{t('Testimonials.title')}</h2>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
-            Real stories from businesses that transformed their customer service with our AI solutions
+            {t('Testimonials.subtitle')}
           </p>
         </div>
 
@@ -504,7 +570,7 @@ export default function Testimonials() {
 
             {/* Dots */}
             <div className="mt-3 flex items-center justify-center gap-2">
-              {testimonials.map((_, i) => {
+              {localizedItems.map((_, i) => {
                 // Calculate real index from currentLoopIndex (1..n), wrap around
                 const real = ((currentLoopIndex - 1 + n) % n + n) % n;
                 return (
@@ -524,116 +590,116 @@ export default function Testimonials() {
             {/* Row 1 */}
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                "The AI chatbot has revolutionized our customer support. Response times dropped by 85% and customer satisfaction increased dramatically."
+                {localizedItems[0]?.quote}
               </blockquote>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-lg">S</span>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900 text-base">Sarah Johnson</div>
-                  <div className="text-gray-600 text-sm">Customer Success Director</div>
-                  <div className="text-gray-500 text-sm">TechFlow Solutions</div>
+                  <div className="font-bold text-gray-900 text-base">{localizedItems[0]?.name}</div>
+                  <div className="text-gray-600 text-sm">{localizedItems[0]?.title}</div>
+                  <div className="text-gray-500 text-sm">{localizedItems[0]?.company}</div>
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Response Time: -85%</div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">{localizedItems[0]?.metrics?.label}: {localizedItems[0]?.metrics?.value}</div>
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                "Our team now focuses on complex issues while AI handles routine queries. It's like having 24/7 support without the overhead costs."
+                {localizedItems[1]?.quote}
               </blockquote>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-lg">M</span>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900 text-base">Michael Chen</div>
-                  <div className="text-gray-600 text-sm">Operations Manager</div>
-                  <div className="text-gray-500 text-sm">Digital Dynamics</div>
+                  <div className="font-bold text-gray-900 text-base">{localizedItems[1]?.name}</div>
+                  <div className="text-gray-600 text-sm">{localizedItems[1]?.title}</div>
+                  <div className="text-gray-500 text-sm">{localizedItems[1]?.company}</div>
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Cost Savings: 60%</div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">{localizedItems[1]?.metrics?.label}: {localizedItems[1]?.metrics?.value}</div>
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                "The implementation was seamless and the results were immediate. Our customers love the instant, accurate responses they receive."
+                {localizedItems[2]?.quote}
               </blockquote>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-lg">E</span>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900 text-base">Emma Rodriguez</div>
-                  <div className="text-gray-600 text-sm">Head of Customer Experience</div>
-                  <div className="text-gray-500 text-sm">InnovateCorp</div>
+                  <div className="font-bold text-gray-900 text-base">{localizedItems[2]?.name}</div>
+                  <div className="text-gray-600 text-sm">{localizedItems[2]?.title}</div>
+                  <div className="text-gray-500 text-sm">{localizedItems[2]?.company}</div>
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">CSAT Score: +40%</div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">{localizedItems[2]?.metrics?.label}: {localizedItems[2]?.metrics?.value}</div>
               </div>
             </div>
 
             {/* Row 2 */}
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                "We've seen a 300% increase in lead conversion since implementing the AI chat. It's incredible how it nurtures prospects automatically."
+                {localizedItems[3]?.quote}
               </blockquote>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-lg">D</span>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900 text-base">David Thompson</div>
-                  <div className="text-gray-600 text-sm">Sales Director</div>
-                  <div className="text-gray-500 text-sm">GrowthTech Inc</div>
+                  <div className="font-bold text-gray-900 text-base">{localizedItems[3]?.name}</div>
+                  <div className="text-gray-600 text-sm">{localizedItems[3]?.title}</div>
+                  <div className="text-gray-500 text-sm">{localizedItems[3]?.company}</div>
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Lead Conversion: +300%</div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">{localizedItems[3]?.metrics?.label}: {localizedItems[3]?.metrics?.value}</div>
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                "The AI understands context perfectly and provides personalized responses. Our customers often don't realize they're chatting with AI."
+                {localizedItems[4]?.quote}
               </blockquote>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-lg">L</span>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900 text-base">Lisa Park</div>
-                  <div className="text-gray-600 text-sm">Product Manager</div>
-                  <div className="text-gray-500 text-sm">NextGen Systems</div>
+                  <div className="font-bold text-gray-900 text-base">{localizedItems[4]?.name}</div>
+                  <div className="text-gray-600 text-sm">{localizedItems[4]?.title}</div>
+                  <div className="text-gray-500 text-sm">{localizedItems[4]?.company}</div>
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">Resolution Rate: 92%</div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">{localizedItems[4]?.metrics?.label}: {localizedItems[4]?.metrics?.value}</div>
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <blockquote className="text-lg text-gray-800 leading-relaxed mb-6">
-                "ROI was positive within the first month. The AI handles 80% of our inquiries, freeing up our team for strategic initiatives."
+                {localizedItems[5]?.quote}
               </blockquote>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-lg">R</span>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900 text-base">Robert Kim</div>
-                  <div className="text-gray-600 text-sm">Chief Technology Officer</div>
-                  <div className="text-gray-500 text-sm">ScaleUp Ventures</div>
+                  <div className="font-bold text-gray-900 text-base">{localizedItems[5]?.name}</div>
+                  <div className="text-gray-600 text-sm">{localizedItems[5]?.title}</div>
+                  <div className="text-gray-500 text-sm">{localizedItems[5]?.company}</div>
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-200">
-                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">ROI: +250%</div>
+                <div className="inline-block bg-black px-4 py-2 rounded-full text-white text-sm font-semibold">{localizedItems[5]?.metrics?.label}: {localizedItems[5]?.metrics?.value}</div>
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 
+
 'use client'
 
 import Link from 'next/link'
@@ -23,119 +24,69 @@ type NavigationHeaderPillStaticProps = {
   rightImageSrc?: string
 }
 
-// Constanta pentru titlurile si subtitlurile de hover
+
+import roLocale from '../../locales/ro.json';
+import enLocale from '../../locales/en.json';
+import ruLocale from '../../locales/ru.json';
+
+const locales: Record<string, any> = { ro: roLocale, en: enLocale, ru: ruLocale };
+
 type HoverContentType = { title: string; subtitle: string; image?: string };
-const hoverContent: { [key: string]: HoverContentType } = {
-  // Resurse
-  'Blog': {
-    title: 'Povesti de Succes',
-    subtitle: 'Descoperă cum companiile și-au transformat procesele folosind soluțiile noastre AI pentru rezultate extraordinare.',
-    image: 'public/HeaderSection/BlogImage.png'
-  },
-  'Noutăți': {
-    title: 'Ultimele Noutăți',
-    subtitle: 'Rămâi la curent cu ultimele dezvoltări din lumea AI și automatizării din Moldova.',
-    image: 'public/HeaderSection/BlogImage.png'
-  },
-  'Ghiduri': {
-    title: 'Invata pas cu pas',
-    subtitle: 'Accesează ghiduri detaliate și tutoriale pentru a implementa cu succes automatizările în afacerea ta.',
-    image: 'public/HeaderSection/GidsImage.png'
-  },
-  'Documentație': {
-    title: 'Tot ce trebuie sa stii',
-    subtitle: 'Găsește răspunsuri complete la toate întrebările tehnice și implementează soluțiile cu ușurință.',
-    image: 'public/HeaderSection/DocumentationImage.png'
-  },
-  'FAQ': {
-    title: 'Raspunsuri rapide',
-    subtitle: 'Găsește rapid răspunsuri la întrebările frecvente despre produsele și serviciile noastre.',
-    image: 'public/HeaderSection/Faq-Image.png'
-  },
-  'Calculator ROI': {
-    title: 'Calculeaza beneficiile',
-    subtitle: 'Descoperă exact cât timp și bani poți economisi implementând soluțiile noastre de automatizare.',
-    image: 'public/HeaderSection/RoiCalculatorImage.png'
-  },
-  // Companie
-  'Despre Noi': {
-    title: 'Povestea noastra',
-    subtitle: 'Află mai multe despre misiunea, valorile și echipa din spatele soluțiilor AI inovatoare.',
-    image: 'public/HeaderSection/AboutUsImage.png'
-  },
-  'Cariera': {
-    title: 'Alatura-te echipei',
-    subtitle: 'Descoperă oportunitățile de carieră și construiește viitorul AI împreună cu noi.',
-    image: 'public/HeaderSection/CarierImage.png'
-  },
-  'Parteneri': {
-    title: 'Colaborari de succes',
-    subtitle: 'Conectează-te cu rețeaua noastră de parteneri și dezvoltă oportunități de business.',
-    image: 'public/HeaderSection/PartnersImage.png'
-  },
-  'TrustCenter': {
-    title: 'Securitate si incredere',
-    subtitle: 'Află cum protejăm datele tale și respectăm standardele de securitate cele mai înalte.',
-    image: 'public/HeaderSection/TrustCenterImage.png'
-  },
-  'Contact': {
-    title: 'Hai sa vorbim',
-    subtitle: 'Contactează echipa noastră pentru consultanță personalizată și suport dedicat.',
-    image: 'public/HeaderSection/ContactImage.png'
-  }
+const hoverImages: Record<string, string> = {
+  blog: 'public/HeaderSection/BlogImage.png',
+  news: 'public/HeaderSection/Case-StudiesImage.png',
+  guides: 'public/HeaderSection/GidsImage.png',
+  documentation: 'public/HeaderSection/DocumentationImage.png',
+  faq: 'public/HeaderSection/Faq-Image.png',
+  roiCalculator: 'public/HeaderSection/RoiCalculatorImage.png',
+  about: 'public/HeaderSection/AboutUsImage.png',
+  career: 'public/HeaderSection/CarierImage.png',
+  partners: 'public/HeaderSection/PartnersImage.png',
+  trustCenter: 'public/HeaderSection/TrustCenterImage.png',
+  contacts: 'public/HeaderSection/ContactImage.png',
+};
+
+function getHoverContent(lang: string): Record<string, HoverContentType> {
+  const translations = locales[lang.toLowerCase()] || roLocale;
+  const hover = translations.Header?.hover || {};
+  const result: Record<string, HoverContentType> = {};
+  Object.keys(hoverImages).forEach((key) => {
+    if (hover[key]) {
+      result[key] = {
+        title: hover[key].title,
+        subtitle: hover[key].subtitle,
+        image: hoverImages[key],
+      };
+    }
+  });
+  return result;
 }
 
-const navItems = [
-  { label: 'Resurse', dropdown: [
-    {
-      title: 'Blog',
-      href: '/blog',
-    },
-    {
-      title: 'Noutăți',
-      href: '/news',
-    },
-    {
-      title: 'Ghiduri',
-      href: '/guides',
-    },
-    {
-      title: 'Documentație',
-      href: '/documentation',
-    },
-    {
-      title: 'FAQ',
-      href: '/faq',
-    },
-    {
-      title: 'Calculator ROI',
-      href: '/roi-calculator',
-    },
-  ] },
-  { label: 'Companie', dropdown: [
-    {
-      title: 'Despre Noi',
-      href: '/about'
-    },
-    {
-      title: 'Cariera',
-      href: '/carier'
-    },
-    {
-      title: 'Parteneri',
-      href: '/parteneri'
-    },
-    {
-      title: 'TrustCenter',
-      href: '/trustcenter'
-    },
-    {
-      title: 'Contact',
-      href: '/contact'
-    }]},
-    { label: 'Integrări', href: '/integrations' },
-    { label: 'Prețuri', href: '/pricing' },
-  ]
+function getNavItemsWithLang(lang: string) {
+  const prefix = `/${lang.toLowerCase()}`;
+  const translations = locales[lang.toLowerCase()] || roLocale;
+  const nav = translations.Header?.nav || {};
+  const items = nav.items || {};
+  return [
+    { label: nav.resources, dropdown: [
+      { title: items.blog, href: `${prefix}/blog`, key: 'blog' },
+      { title: items.news, href: `${prefix}/news`, key: 'news' },
+      { title: items.guides, href: `${prefix}/guides`, key: 'guides' },
+      { title: items.documentation, href: `${prefix}/documentation`, key: 'documentation' },
+      { title: items.faq, href: `${prefix}/faq`, key: 'faq' },
+      { title: items.roiCalculator, href: `${prefix}/roi-calculator`, key: 'roiCalculator' },
+    ] },
+    { label: nav.company, dropdown: [
+      { title: items.about, href: `${prefix}/about`, key: 'about' },
+      { title: items.career, href: `${prefix}/carier`, key: 'career' },
+      { title: items.partners, href: `${prefix}/parteneri`, key: 'partners' },
+      { title: items.trustCenter, href: `${prefix}/trustcenter`, key: 'trustCenter' },
+      { title: items.contacts, href: `${prefix}/contact`, key: 'contacts' },
+    ] },
+    { label: nav.integrations, href: `${prefix}/integrations` },
+    { label: nav.pricing, href: `${prefix}/pricing` },
+  ];
+}
 
 const sponsorsData = [
   {
@@ -173,6 +124,7 @@ export default function NavigationHeaderPillStatic({
   leftImageSrc,
   rightImageSrc,
 }: NavigationHeaderPillStaticProps) {
+
   const [isScrolled, setIsScrolled] = React.useState(false)
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
@@ -183,6 +135,11 @@ export default function NavigationHeaderPillStatic({
   const [isTickerPaused, setIsTickerPaused] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('RO');
+
+  // Get translated button texts from common section (must be after currentLanguage is defined)
+  const translations = locales[currentLanguage.toLowerCase()] || roLocale;
+  const signInText = translations.common?.signIn || 'Sign In';
+  const getStartedText = translations.common?.getStarted || 'Get Started';
   
   // Hook-uri pentru routing
   const router = useRouter();
@@ -321,6 +278,8 @@ export default function NavigationHeaderPillStatic({
     closeTimeout.current = setTimeout(() => setOpenDropdown(null), 350) // Increased delay for better UX
   }
 
+  const navItemsWithLang = getNavItemsWithLang(currentLanguage);
+  const hoverContent = getHoverContent(currentLanguage);
   return (
   <header role="banner" className="fixed z-[9999] top-0 left-1/2 -translate-x-1/2 w-full">
       {/* Sponsors ticker line */}
@@ -395,11 +354,11 @@ export default function NavigationHeaderPillStatic({
               )}
               {/* Logo */}
               {logoSrc ? (
-                <Link href="/" aria-label="Home" className="inline-flex items-center gap-2">
+                <Link href={`/${currentLanguage.toLowerCase()}`} aria-label="Home" className="inline-flex items-center gap-2">
                   <Image src={logoSrc} alt={logoAlt} width={96} height={24} className="h-5 w-auto" />
                 </Link>
               ) : (
-                <Link href="/" className="inline-flex items-baseline font-bold tracking-tight text-white text-lg relative" aria-label="Home">
+                <Link href={`/${currentLanguage.toLowerCase()}`} className="inline-flex items-baseline font-bold tracking-tight text-white text-lg relative" aria-label="Home">
                   <span>Bravin</span>
                   <span
                     style={{
@@ -417,7 +376,7 @@ export default function NavigationHeaderPillStatic({
               )}
               {/* Center nav (desktop only) */}
               <ul className="hidden lg:flex items-center gap-1.5 mx-auto relative z-10">
-                {navItems.map((item) => {
+                {navItemsWithLang.map((item) => {
                   if (item.dropdown) {
                     return (
                       <li
@@ -500,26 +459,28 @@ export default function NavigationHeaderPillStatic({
                                   ))}
                                 </div>
                                 {/* Container dreapta la hover sau default Blog */}
-                                {(hoveredDropdownIndex !== null || activeDropdownIndex !== null) && (
-                                  <div 
-                                    className="w-[60%] border border-gray-300 flex flex-col justify-center items-start px-10 py-8 overflow-hidden cursor-pointer" 
-                                    style={{ borderRadius: 0, position: 'absolute', right: 0, top: 0, bottom: 0, height: '100%' }}
-                                    onMouseEnter={() => {
-                                      // Păstrăm containerul vizibil când intrăm pe el
-                                    }}
-                                    onMouseLeave={() => {
-                                      // Resetăm la starea default când ieșim din container
-                                      setHoveredDropdownIndex(null);
-                                      setActiveDropdownIndex(0);
-                                    }}
-                                    onClick={() => {
-                                      // Navigăm la pagina elementului activ
-                                      const currentIndex = hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex;
-                                      window.location.href = item.dropdown[currentIndex].href;
-                                    }}
-                                  >
-                                    {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title]?.image &&
-                                      typeof hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].image === 'string' && (
+                                {(hoveredDropdownIndex !== null || activeDropdownIndex !== null) && (() => {
+                                  const currentIndex = hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex;
+                                  const drop = item.dropdown[currentIndex];
+                                  const hoverKey = drop.key;
+                                  const hoverData = hoverContent[hoverKey];
+                                  return (
+                                    <div 
+                                      className="w-[60%] border border-gray-300 flex flex-col justify-center items-start px-10 py-8 overflow-hidden cursor-pointer" 
+                                      style={{ borderRadius: 0, position: 'absolute', right: 0, top: 0, bottom: 0, height: '100%' }}
+                                      onMouseEnter={() => {
+                                        // Păstrăm containerul vizibil când intrăm pe el
+                                      }}
+                                      onMouseLeave={() => {
+                                        // Resetăm la starea default când ieșim din container
+                                        setHoveredDropdownIndex(null);
+                                        setActiveDropdownIndex(0);
+                                      }}
+                                      onClick={() => {
+                                        window.location.href = drop.href;
+                                      }}
+                                    >
+                                      {hoverData?.image && typeof hoverData.image === 'string' && (
                                         <div style={{
                                           position: 'absolute',
                                           top: '80px',
@@ -527,7 +488,7 @@ export default function NavigationHeaderPillStatic({
                                           width: '330px',
                                           height: '330px',
                                           zIndex: 0,
-                                          backgroundImage: `url(${hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].image!.replace('public/', '/')})`,
+                                          backgroundImage: `url(${hoverData.image.replace('public/', '/')})`,
                                           backgroundSize: 'contain',
                                           backgroundRepeat: 'no-repeat',
                                           backgroundPosition: 'top right',
@@ -535,37 +496,38 @@ export default function NavigationHeaderPillStatic({
                                           pointerEvents: 'none',
                                         }} />
                                       )}
-                                    <div className="relative z-10 flex flex-col h-full justify-between">
-                                      {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title] ? (
-                                        <>
-                                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
-                                            <div className="text-5xl font-extrabold text-black mb-2 text-left w-full" style={{ marginTop: '24px' }}>
-                                              <span style={{ display: 'inline-block', maxWidth: '340px', wordBreak: 'break-word', textAlign: 'left' }}>
-                                                {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].title}
-                                              </span>
+                                      <div className="relative z-10 flex flex-col h-full justify-between">
+                                        {hoverData ? (
+                                          <>
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
+                                              <div className="text-5xl font-extrabold text-black mb-2 text-left w-full" style={{ marginTop: '24px' }}>
+                                                <span style={{ display: 'inline-block', maxWidth: '340px', wordBreak: 'break-word', textAlign: 'left' }}>
+                                                  {hoverData.title}
+                                                </span>
+                                              </div>
                                             </div>
-                                          </div>
-                                          <div>
-                                            <div className="text-gray-700 text-base">
-                                              {hoverContent[item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title].subtitle}
+                                            <div>
+                                              <div className="text-gray-700 text-base">
+                                                {hoverData.subtitle}
+                                              </div>
                                             </div>
-                                          </div>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <div className="text-2xl font-bold text-black mb-2">
-                                            {item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex].title}
-                                          </div>
-                                          {'desc' in item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex] && (
-                                            <div className="text-gray-700 text-base">
-                                              {(item.dropdown[hoveredDropdownIndex !== null ? hoveredDropdownIndex : activeDropdownIndex] as any).desc}
+                                          </>
+                                        ) : (
+                                          <>
+                                            <div className="text-2xl font-bold text-black mb-2">
+                                              {drop.title}
                                             </div>
-                                          )}
-                                        </>
-                                      )}
+                                            {'desc' in drop && (
+                                              <div className="text-gray-700 text-base">
+                                                {(drop as any).desc}
+                                              </div>
+                                            )}
+                                          </>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
+                                  );
+                                })()}
                               </motion.div>
                             </motion.div>
                           )}
@@ -683,13 +645,13 @@ export default function NavigationHeaderPillStatic({
                   href="https://aichat.md/en/register"
                   className="min-w-[90px] h-9 inline-flex items-center justify-center rounded-[16px] px-4 font-semibold bg-white text-black border border-black"
                 >
-                  Sign In
+                  {signInText}
                 </Link>
                 <Link
                   href="https://aichat.md/en/login"
                   className="min-w-[90px] h-9 inline-flex items-center justify-center rounded-[16px] px-4 font-semibold bg-black text-white border border-black"
                 >
-                  Get Started
+                  {getStartedText}
                 </Link>
                 {rightImageSrc && (
                   <div className="hidden sm:block shrink-0 pr-1">
@@ -773,7 +735,7 @@ export default function NavigationHeaderPillStatic({
                 transition={{ delay: 0.1, duration: 0.3 }}
               >
                 <nav className="px-6 py-4 space-y-1 max-h-[60vh] overflow-y-auto">
-                  {navItems.map((item) => (
+                  {navItemsWithLang.map((item) => (
                     <div key={item.label}>
                       {item.dropdown ? (
                         <div className="space-y-1">
@@ -902,14 +864,14 @@ export default function NavigationHeaderPillStatic({
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex-1 py-2.5 px-4 text-center text-sm font-semibold border border-white/30 rounded-xl text-white hover:bg-white/10 transition-colors"
                       >
-                        Sign In
+                        {signInText}
                       </Link>
                       <Link
                         href="https://aichat.md/en/login"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex-1 py-2.5 px-4 text-center text-sm font-semibold bg-white text-black rounded-xl hover:bg-white/90 transition-colors"
                       >
-                        Get Started
+                        {getStartedText}
                       </Link>
                     </div>
                   </div>

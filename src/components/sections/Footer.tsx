@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import ro from '@/locales/ro.json';
+import en from '@/locales/en.json';
+import ru from '@/locales/ru.json';
+// footerLinks retained for any legacy sections; dynamic nav below supersedes for header pages
 import { footerLinks } from '@/lib/data';
 
 export default function Footer() {
@@ -23,6 +27,44 @@ export default function Footer() {
   const titleRef = useRef(null);
   const isInView = useInView(titleRef, { once: true, margin: '-100px' });
 
+  // Language + navigation logic (mirrors header, simplified)
+  const pathname = usePathname() || '';
+  const locales: Record<string, any> = { ro, en, ru };
+  const langMatch = pathname.match(/^\/(ro|en|ru)(?:\/|$)/i);
+  const currentLanguage = (langMatch ? langMatch[1] : 'ro').toLowerCase();
+  const translations = locales[currentLanguage] || ro;
+
+  // Build nav pages (titles only, no descriptions/images)
+  const navGroups = useMemo(() => {
+    const nav = translations?.Header?.nav || {};
+    const items = nav.items || {};
+    const prefix = `/${currentLanguage}`;
+    const resources = [
+      { label: items.blog, href: `${prefix}/blog` },
+      { label: items.news, href: `${prefix}/news` },
+      { label: items.guides, href: `${prefix}/guides` },
+      { label: items.documentation, href: `${prefix}/documentation` },
+      { label: items.faq, href: `${prefix}/faq` },
+      { label: items.roiCalculator, href: `${prefix}/roi-calculator` },
+    ].filter(x => x.label);
+    const company = [
+      { label: items.about, href: `${prefix}/about` },
+      { label: items.career, href: `${prefix}/carier` },
+      { label: items.partners, href: `${prefix}/parteneri` },
+      { label: items.trustCenter, href: `${prefix}/trustcenter` },
+      { label: items.contacts, href: `${prefix}/contact` },
+    ].filter(x => x.label);
+    const more = [
+      { label: nav.integrations, href: `${prefix}/integrations` },
+      { label: nav.pricing, href: `${prefix}/pricing` },
+    ].filter(x => x.label);
+    return [
+      { heading: nav.resources || 'Resources', items: resources },
+      { heading: nav.company || 'Company', items: company },
+      { heading: 'More', items: more },
+    ];
+  }, [translations, currentLanguage]);
+
   return (
     <footer className="bg-black text-white py-12 md:py-16 overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
@@ -37,100 +79,55 @@ export default function Footer() {
             Bravin AI
           </motion.h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12">
-          {/* Brand */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-14">
+          {/* Brand + newsletter (kept minimal black/white) */}
           <div className="sm:col-span-2 lg:col-span-2">
-            <div className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 glow-text">
-              Bravin AI
-            </div>
-            <p className="text-gray-400 mb-4 md:mb-6 max-w-md text-sm md:text-base leading-relaxed -mt-12">
-              Your 24/7 AI receptionist that never sleeps, never takes a break, 
-              and always provides perfect customer service.
-            </p>
-            
-            {/* Newsletter */}
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 mb-2">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="flex-1 px-3 md:px-4 py-2 md:py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white/40 text-sm md:text-base"
+                placeholder={translations?.common?.enterEmail || 'Email'}
+                className="flex-1 px-3 md:px-4 py-2 md:py-2.5 bg-black border border-white/25 rounded-md text-white placeholder-white/40 focus:outline-none focus:border-white/50 text-sm md:text-sm"
               />
               <button
                 type="submit"
-                className="px-4 md:px-6 py-2 md:py-3 bg-white text-black rounded-lg font-semibold hover:scale-105 transition-transform duration-200 text-sm md:text-base"
+                className="px-4 md:px-6 py-2 md:py-2.5 bg-white text-black rounded-md font-semibold tracking-tight text-sm md:text-sm transition-colors duration-200 hover:bg-white/90"
               >
-                {subscribed ? 'Thanks!' : 'Subscribe'}
+                {subscribed ? (translations?.common?.thankYou || 'Thanks!') : (translations?.common?.subscribe || 'Subscribe')}
               </button>
             </form>
           </div>
 
-          {/* Links */}
-          <div>
-            <h3 className="font-semibold mb-3 md:mb-4 text-lg md:text-xl">Product</h3>
-            <ul className="space-y-2">
-              {footerLinks.product.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-3 md:mb-4 text-lg md:text-xl">Company</h3>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-3 md:mb-4 text-lg md:text-xl">Support</h3>
-            <ul className="space-y-2">
-              {footerLinks.support.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Dynamic navigation groups from Header */}
+          {navGroups.map(group => (
+            <div key={group.heading} className="min-w-[140px]">
+              <h3 className="font-semibold mb-3 text-base md:text-lg tracking-tight text-white/90">{group.heading}</h3>
+              <ul className="space-y-2">
+                {group.items.map(item => (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      className="block text-sm md:text-base text-white/55 hover:text-white transition-colors duration-150 tracking-tight"
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/10 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-gray-400 text-sm md:text-base text-center md:text-left">
-            © 2024 Bravin AI. All rights reserved.
+        <div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-white/50 text-xs md:text-sm tracking-tight">
+            © {new Date().getFullYear()} Bravin AI. All rights reserved.
           </p>
-          <div className="flex space-x-4 md:space-x-6">
-            <a href="/terms" className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base">
-              Terms
-            </a>
-            <a href="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base">
-              Privacy
-            </a>
-            <a href="/cookies" className="text-gray-400 hover:text-white transition-colors duration-200 text-sm md:text-base">
-              Cookies
-            </a>
+          <div className="flex gap-6">
+            <a href="/terms" className="text-white/55 hover:text-white text-xs md:text-sm">Terms</a>
+            <a href="/privacy" className="text-white/55 hover:text-white text-xs md:text-sm">Privacy</a>
+            <a href="/cookies" className="text-white/55 hover:text-white text-xs md:text-sm">Cookies</a>
           </div>
         </div>
       </div>

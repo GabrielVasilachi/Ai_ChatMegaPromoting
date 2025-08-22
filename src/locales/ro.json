@@ -1,4 +1,77 @@
 {
+  "common": {
+    "signIn": "Autentificare",
+    "getStarted": "Începe"
+  },
+  
+  "Header": {
+  "nav": {
+    "resources": "Resurse",
+    "company": "Companie",
+    "integrations": "Integrări",
+    "pricing": "Prețuri",
+    "items": {
+      "blog": "Blog",
+      "news": "Noutăți",
+      "guides": "Ghiduri",
+      "documentation": "Documentație",
+      "faq": "Întrebări frecvente",
+      "roiCalculator": "Calculator ROI",
+      "about": "Despre noi",
+      "career": "Carieră",
+      "partners": "Parteneri",
+      "trustCenter": "Centru de încredere",
+      "contacts": "Contacte"
+      }
+    },
+  "hover": {
+    "blog": {
+      "title": "Povești de succes",
+      "subtitle": "Descoperă cum companiile și-au transformat procesele folosind soluțiile noastre AI pentru rezultate extraordinare."
+      },
+      "news": {
+        "title": "Ultimele noutăți",
+        "subtitle": "Rămâi la curent cu ultimele dezvoltări din lumea AI și automatizării din Moldova."
+      },
+      "guides": {
+        "title": "Învață pas cu pas",
+        "subtitle": "Accesează ghiduri detaliate și tutoriale pentru a implementa cu succes automatizările în afacerea ta."
+      },
+      "documentation": {
+        "title": "Tot ce trebuie să știi",
+        "subtitle": "Găsește răspunsuri complete la toate întrebările tehnice și implementează soluțiile cu ușurință."
+      },
+      "faq": {
+        "title": "Răspunsuri rapide",
+        "subtitle": "Găsește rapid răspunsuri la întrebările frecvente despre produsele și serviciile noastre."
+      },
+      "roiCalculator": {
+        "title": "Calculează beneficiile",
+        "subtitle": "Descoperă exact cât timp și bani poți economisi implementând soluțiile noastre de automatizare."
+      },
+      "about": {
+        "title": "Povestea noastră",
+        "subtitle": "Află mai multe despre misiunea, valorile și echipa din spatele soluțiilor AI inovatoare."
+      },
+      "career": {
+        "title": "Alătură-te echipei",
+        "subtitle": "Descoperă oportunitățile de carieră și construiește viitorul AI împreună cu noi."
+      },
+      "partners": {
+        "title": "Colaborări de succes",
+        "subtitle": "Conectează-te cu rețeaua noastră de parteneri și dezvoltă oportunități de business."
+      },
+      "trustCenter": {
+        "title": "Securitate și încredere",
+        "subtitle": "Află cum protejăm datele tale și respectăm standardele de securitate cele mai înalte."
+      },
+      "contacts": {
+        "title": "Hai să vorbim",
+        "subtitle": "Contactează echipa noastră pentru consultanță personalizată și suport dedicat."
+      }
+    }
+  },
+
   "HeroSection": {
     "news": "Noutăți",
     "virtual_agent": "Agent virtual 24/7 pentru companii",
@@ -71,6 +144,189 @@
           ]
         }
       ]
+    },
+    "mouseResponses": {
+      "left": [
+        "Raspund la Mesaje\nPentru mesajele Necitite...",
+        "Citesc Conversatii\nPentru mesajele Necitite...",
+        "Analizez Raspunsurile\nPentru mesajele Necitite...",
+        "Verific Starea Clientului\nPentru mesajele Necitite..."
+      ],
+      "input": "Scriu Mesaj Clientului",
+      "send": "Trimit mesajul",
+      "hoursAgo": "h în urmă",
+      "minutesAgo": "Acum {min} min",
+      "typing": "În curs de scriere...",
+      "inputPlaceholder": "Scrie un mesaj...",
+      "statusRead": "Citit",
+      "statusDelivered": "Livrat",
+      "statusSent": "Trimis",
+      "sendButton": "Trimite"
     }
+  },
+  "LogoTicker":{
+    "usedBy": "Utilizat zilnic de peste 500 de utilizatori globali, din echipe de toate dimensiunile",
+    "rating": "rating",
+    "supportedBy": "Susținut de Kallina AI"
+  },
+
+  "HowitWorks":{
+    "title": "Cum funcționează",
+    "subtitle": "Descoperă cum soluțiile noastre AI pot transforma afacerea ta",
+    "steps": [
+      {
+        "title": "Conectează-te",
+        "description": "Ne contactezi și stabilim împreună obiectivele și tipul de conversații pe care agentul tău AI le va gestiona."
+      },
+      {
+        "title": "Alegi platforma",
+        "description": "Selectezi platforma (WhatsApp, Facebook Messenger, site web, Instagram, etc.) de pe care vrei să fie preluate mesajele."
+      },
+      {
+        "title": "AI răspunde",
+        "description": "Agentul nostru virtual AI răspunde instant și profesionist clienților tăi, fără a fi nevoie de o persoană reală, 24/7."
+      }
+    ],
+    "Learn-more": "Află mai multe"
+  },
+
+  "IndustryModules": {
+    "title": "Bravin pentru orice",
+    "subtitle": "Soluții AI conversaționale adaptate fiecărei industrii — automatizează, personalizează și scalează interacțiunea cu clienții tăi, indiferent de domeniu.    ",
+    "secondarytitle": "Încearcă acum",
+    "industries": [
+      "companie",
+      "restaurant",
+      "magazin",
+      "hotel",
+      "salon",
+      "clinică",
+      "agenție",
+      "școală",
+      "universitate",
+      "service"
+    ],
+    "menuItems": [
+      {
+        "title": "Răspuns instant la mesaje",
+        "subtitle": "Gestionează automat solicitările clienților, 24/7, pe orice platformă."
+      },
+      {
+        "title": "Automatizare conversațională completă",
+        "subtitle": "De la întrebări frecvente până la procesarea comenzilor, fără intervenție umană."
+      },
+      {
+        "title": "Integrare cu platformele tale preferate",
+        "subtitle": "Funcționează perfect cu WhatsApp, Facebook Messenger, Instagram, e-mail și multe altele."
+      },
+      {
+        "title": "Asistență personalizată pentru fiecare client",
+        "subtitle": "Răspunsuri adaptate în funcție de context, limbă și nevoi."
+      },
+      {
+        "title": "Reducerea costurilor operaționale",
+        "subtitle": "Optimizează timpul echipei și elimină nevoia unui operator permanent."
+      }
+    ]
+  },
+  "ROICalculator": {
+    "title": "Calculator ROI",
+    "subtitle": "Completează 3 câmpuri și vezi costurile reale pe 1–3 ani.",
+    "inputs": {
+      "agents": {
+        "label": "Câți oameni răspund acum la mesaje",
+        "helper": "Câte persoane ai acum în echipa de suport?"
+      },
+      "salary": {
+        "label": "Salariu lunar / agent",
+        "helper": "Se aplică pentru fiecare dintre agenți."
+      },
+      "messages": {
+        "label": "Mesaje pe lună",
+        "helper": "Plan estimat: {plan} — {price}/lună"
+      }
+    },
+    "cards": {
+      "employeesOnlyTitle": "Doar angajați",
+      "withBravinTitle": "Cu Bravin AI",
+      "savingsTitle": "Economii",
+      "oneYear": "/ 1 an",
+      "twoYears": "/ 2 ani",
+      "threeYears": "/ 3 ani",
+      "roi3yNote": "• ROI pe 3 ani: "
+    },
+    "table": {
+      "headers": {
+        "scenario": "Scenariu",
+        "y1": "1 an",
+        "y2": "2 ani",
+        "y3": "3 ani"
+      },
+      "rows": {
+        "employees": "Doar angajați ({agents} × {salary}/lună)",
+        "withBravin": "Cu Bravin (plan {plan})",
+        "netSavings": "Economii nete"
+      }
+    },
+    "plans": {
+      "starter": "Starter",
+      "professional": "Profesional",
+      "business": "Business",
+      "enterprise": "Enterprise"
+    }
+  },
+    "Testimonials": {
+    "title": "Ce spun clienții noștri",
+    "subtitle": "Povești reale de la companii care și-au transformat serviciul clienți cu soluțiile noastre AI",
+    "items": [
+      {
+        "name1": "Sarah Johnson",
+        "role1": "Director Succes Clienți",
+        "company1": "TechFlow Solutions",
+        "quote1": "Chatbotul AI ne-a revoluționat suportul clienți. Timpul de răspuns a scăzut cu 85% și satisfacția clienților a crescut semnificativ.",
+        "metric1": "Timp de răspuns: -85%"
+      },
+      {
+        "name2": "Michael Chen",
+        "role2": "Manager Operațiuni",
+        "company2": "Digital Dynamics",
+        "quote2": "Echipa noastră se concentrează pe probleme complexe, în timp ce AI gestionează solicitările de rutină. E ca și cum am avea suport 24/7 fără costuri suplimentare.",
+        "metric2": "Economii de costuri: 60%"
+      },
+      {
+        "name3": "Emma Rodriguez",
+        "role3": "Director Experiența Clienților",
+        "company3": "InnovateCorp",
+        "quote3": "Implementarea a fost fără fricțiuni, iar rezultatele — imediate. Clienților noștri le plac răspunsurile instant și precise.",
+        "metric3": "Scor CSAT: +40%"
+      },
+      {
+        "name4": "David Thompson",
+        "role4": "Director Vânzări",
+        "company4": "GrowthTech Inc",
+        "quote4": "Am înregistrat o creștere de 300% a conversiei lead-urilor de când am implementat chatul AI. Este incredibil cum califică automat prospectele.",
+        "metric4": "Conversie lead-uri: +300%"
+      },
+      {
+        "name5": "Lisa Park",
+        "role5": "Manager de Produs",
+        "company5": "NextGen Systems",
+        "quote5": "AI înțelege perfect contextul și oferă răspunsuri personalizate. Clienții noștri adesea nici nu își dau seama că discută cu un AI.",
+        "metric5": "Rată de rezolvare: 92%"
+      },
+      {
+        "name6": "Robert Kim",
+        "role6": "Director Tehnic (CTO)",
+        "company6": "ScaleUp Ventures",
+        "quote6": "ROI-ul a devenit pozitiv din prima lună. AI gestionează 80% din solicitări, eliberând echipa pentru inițiative strategice.",
+        "metric6": "ROI: +250%"
+      }
+    ]
+  },
+  "Demo":{
+    "card":"Prezentare Demo",
+    "title":"Experimentează Puterea AI",
+    "subtitle":"Descoperă cum agentul nostru AI poate transforma complet experiența clienților tăi în doar câteva minute.",
+    "button":"Programează o Demonstrație"
   }
 }

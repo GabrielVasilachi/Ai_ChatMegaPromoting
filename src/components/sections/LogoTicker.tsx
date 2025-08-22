@@ -1,4 +1,22 @@
-'use client';
+"use client";
+import React from 'react';
+import roLocale from '../../locales/ro.json';
+import enLocale from '../../locales/en.json';
+import ruLocale from '../../locales/ru.json';
+
+// Dynamic language detection based on URL path
+function getCurrentLang() {
+  if (typeof window !== 'undefined') {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (segments.length > 0 && ['ro', 'en', 'ru'].includes(segments[0])) {
+      return segments[0];
+    }
+  }
+  return 'ro';
+}
+
+const locales: Record<string, any> = { ro: roLocale, en: enLocale, ru: ruLocale };
+const translations = locales[getCurrentLang()].LogoTicker;
 
 // Static logo wall (no motion) styled to match Clay-style compact section
 // Replace the placeholder image paths with your 20 sponsor logos.
@@ -34,21 +52,27 @@ const sponsors: Sponsor[] = [
 ];
 
 export default function LogoWall() {
+  // SSR fallback: always ro, CSR: detect lang
+  const [lang, setLang] = React.useState('ro');
+  React.useEffect(() => {
+    setLang(getCurrentLang());
+  }, []);
+  const translations = locales[lang]?.LogoTicker || roLocale.LogoTicker;
   return (
     <section className="bg-white py-10 md:py-10">
       <div className="w-full px-0 flex flex-col items-center">
         {/* Eyebrow + rating row (optional, easy to remove) */}
         <div className="text-center mb-8">
           <p className="uppercase tracking-[0.18em] text-[11px] font-semibold text-gray-700">
-            Trusted by more than 300,000 leading GTM teams of all sizes
+            {translations.usedBy}
           </p>
           <div className="mt-3 flex items-center justify-center gap-4 text-sm text-gray-500">
             <span className="inline-flex items-center gap-1">
               <span className="text-yellow-400">★ ★ ★ ★ ★</span>
-              <span>4.9 rating</span>
+              <span>4.9 {translations.rating}</span>
             </span>
             <span>•</span>
-            <span>20K+ GTM engineering community</span>
+            <span>{translations.supportedBy}</span>
           </div>
         </div>
 

@@ -4,51 +4,72 @@ import { useMemo, useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import enLocales from '../../locales/en.json';
+import roLocales from '../../locales/ro.json';
+import ruLocales from '../../locales/ru.json';
 
-// ==========================================
-//  Bravin-style ROI calculator (visual replica)
-//  Drop-in replacement: keeps the same export
-//  name (ROICalculator) and no external deps.
-// ==========================================
+// ======================================================
+//  Bravin — ROI Calculator (simplu, doar 3 input-uri)
+//  CONDIȚIE RESPECTATĂ: linia SVG și animațiile ei sunt
+//  păstrate identic (nu modifica path-ul și logicile GSAP).
+//  Toate sumele sunt în USD pentru simplitate.
+// ======================================================
 
-// Helpers
+// ---- Helpers
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
-const fmtMoney = (n: number, currency: 'USD'|'EUR'|'MDL'='USD') => new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Math.round(n || 0));
+const fmtMoney = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Math.round(n || 0));
 const fmtInt = (n: number) => n.toLocaleString('en-US');
+
+// ---- 
+// Prețuri hardcodate (poți modifica ușor aici)
+// - presupunere simplă: 1 mesaj ≈ 2 tokeni (50% input, 50% output)
+// - tarife LLM (USD / 1000 tokeni)
+const PRICING = {
+  INPUT_PER_K: 0.40,
+  OUTPUT_PER_K: 1.20,
+  TOKENS_PER_MESSAGE: 2,
+  // planul Bravin ales după volum mesaje/lună
+  PLANS: [
+    { name: 'Starter',    limit: 2000,  monthly: 49 },
+    { name: 'Profesional',limit: 10000, monthly: 105 },
+    { name: 'Business',   limit: 30000, monthly: 299 },
+    { name: 'Enterprise', limit: Infinity, monthly: 499 },
+  ]
+} as const;
+
+function pickPlan(msgPerMonth: number) {
+  return PRICING.PLANS.find(p => msgPerMonth <= p.limit) || PRICING.PLANS[PRICING.PLANS.length-1];
+}
+
+function perMessageLLMCostUSD() {
+  const avgPerK = (PRICING.INPUT_PER_K + PRICING.OUTPUT_PER_K) / 2; // împărțim 50/50 input/output
+  return (avgPerK * PRICING.TOKENS_PER_MESSAGE) / 1000; // $ / mesaj
+}
 
 export default function ROICalculator() {
   const ref = useRef<HTMLElement | null>(null);
   const svgLineRef = useRef<SVGPathElement | null>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
-  // Ref pentru SVG path
+  // --- linia SVG: vizibilitate după lățime (NU MODIFICA)
   const [svgLineDisplay, setSvgLineDisplay] = useState<'block' | 'none'>('block');
-
   useEffect(() => {
     const checkScreenWidth = () => {
       const shouldHide = window.innerWidth <= 1690;
       setSvgLineDisplay(shouldHide ? 'none' : 'block');
     };
-    
-    // Check on mount
     checkScreenWidth();
-    
-    // Check on resize
     window.addEventListener('resize', checkScreenWidth);
-    return () => {
-      window.removeEventListener('resize', checkScreenWidth);
-    };
+    return () => window.removeEventListener('resize', checkScreenWidth);
   }, []);
 
+  // --- linia SVG: animație GSAP la scroll (NU MODIFICA)
   useEffect(() => {
     if (!svgLineRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
     const path = svgLineRef.current;
     const pathLength = path.getTotalLength();
-    gsap.set(path, {
-      strokeDasharray: pathLength,
-      strokeDashoffset: pathLength,
-    });
+    gsap.set(path, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
     const triggerTarget = ref.current;
     if (!triggerTarget) return;
     const st = ScrollTrigger.create({
@@ -58,294 +79,294 @@ export default function ROICalculator() {
       scrub: true,
       onUpdate: self => {
         const progress = self.progress; // 0..1
-        gsap.set(path, {
-          strokeDashoffset: pathLength * (1 - progress)
-        });
+        gsap.set(path, { strokeDashoffset: pathLength * (1 - progress) });
       },
       invalidateOnRefresh: true,
     });
-    return () => {
-      st.kill();
-    };
+    return () => { st.kill(); };
   }, []);
 
-  // === Inputs (left pane) ===
-  const [conversations, setConversations] = useState(20000); // per month
-  const [employees, setEmployees] = useState(75);
-  const [annualCostPerEmp, setAnnualCostPerEmp] = useState(48000);
-  const [resolutionRate, setResolutionRate] = useState(0.75); // 0..1
-  const [currency, setCurrency] = useState<'USD'|'EUR'|'MDL'>('USD');
+  // ---- INPUTURI (doar 3)
+  // 1) Câți oameni răspund acum la mesaje (1..200)
+  const [agents, setAgents] = useState(3);
+  // string-backed input so user can clear field while editing; numeric `agents` is used for calculations
+  const [agentsInput, setAgentsInput] = useState(String(agents));
+  // 2) Cât plătești UN agent pe lună (USD)
+  const [salaryPerAgentMonth, setSalaryPerAgentMonth] = useState(600);
+  // string-backed input so user can clear field while editing; numeric `salaryPerAgentMonth` is used for calculations
+  const [salaryInput, setSalaryInput] = useState(String(salaryPerAgentMonth));
+  // 3) Câte mesaje primești pe lună (100..100.000)
+  const [messagesPerMonth, setMessagesPerMonth] = useState(5000);
+  // string-backed input so user can clear field while editing; numeric `messagesPerMonth` is used for calculations
+  const [messagesInput, setMessagesInput] = useState(String(messagesPerMonth));
 
-  // Invisible assumptions to reproduce table:
-  // average handle time (minutes), work hours per FTE per year
-  const AHT_MIN = 6; // minutes per conversation
-  const HOURS_PER_FTE = 1600; // working hours / year
-  const PRICE_PER_RESOLVED = 0.30; // platform cost per resolved conversation (heuristic)
+  // --- simple locale detection + helper
+  const LOCALES: Record<string, any> = { en: enLocales, ro: roLocales, ru: ruLocales };
+  const [lang, setLang] = useState<'en'|'ro'|'ru'>('en');
+  const [translations, setTranslations] = useState<any>(LOCALES.en);
+
+  useEffect(() => {
+    try {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      let l = (parts[0] || '').toLowerCase();
+      if (!['en','ro','ru'].includes(l)) {
+        const nav = (navigator.language || 'en').split('-')[0];
+        l = ['en','ro','ru'].includes(nav) ? nav : 'en';
+      }
+      setLang(l as any);
+      setTranslations(LOCALES[l] || LOCALES.en);
+    } catch (e) {
+      setLang('en');
+      setTranslations(LOCALES.en);
+    }
+  }, []);
+
+  const t = (path: string, fallback = '') => {
+    const parts = path.split('.');
+    let cur: any = translations;
+    for (const p of parts) {
+      if (cur == null) return fallback;
+      cur = cur[p];
+    }
+    return (cur == null) ? fallback : cur;
+  };
+
+  // translate plan name using locale keys (falls back to original plan name)
+  const translatePlanName = (planName: string) => {
+    const map: Record<string,string> = {
+      starter: 'starter',
+      profesional: 'professional',
+      professional: 'professional',
+      business: 'business',
+      enterprise: 'enterprise',
+    };
+    const key = map[planName.toLowerCase()] || planName.toLowerCase();
+    return t(`ROICalculator.plans.${key}`, planName);
+  };
 
   const calc = useMemo(() => {
-    const beforeEmpCost = employees * annualCostPerEmp; // /year
+    // --- baseline doar oameni
+    const humanMonthly = agents * salaryPerAgentMonth;
+    const humanYear1 = humanMonthly * 12;
+    const human2Years = humanMonthly * 24;
 
-    // scale of resolved convos per year
-    const resolvedPerYear = conversations * 12 * resolutionRate;
+    // --- costuri AI
+    const plan = pickPlan(messagesPerMonth);
+    const llmCostPerMsg = perMessageLLMCostUSD();
+    const llmMonthly = messagesPerMonth * llmCostPerMsg; // $ / lună
+    const aiMonthly = plan.monthly + llmMonthly;
+    const aiYear1 = aiMonthly * 12;
+    const ai2Years = aiMonthly * 24;
 
-    // agents freed (hours saved / hours per FTE)
-    const hoursSaved = (resolvedPerYear * AHT_MIN) / 60; // /year
-    const agentsFreed = hoursSaved / HOURS_PER_FTE; // FTEs
+    // --- economii
+    const saveYear1 = Math.max(0, humanYear1 - aiYear1);
+    const save2Years = Math.max(0, human2Years - ai2Years);
 
-    // Ramp adoption over years (like screenshot table shows growing use)
-    const ramp = [0.6, 0.8, 1.0];
+  // --- 3 ani
+  const humanYear3 = humanMonthly * 36;
+  const ai3Years = aiMonthly * 36;
+  const save3Years = Math.max(0, humanYear3 - ai3Years);
 
-    // Employee cost after Bravin (we model as proportional reduction by adoption)
-    const afterCosts = ramp.map(r => beforeEmpCost * (1 - resolutionRate * r * 0.35));
-
-    // Bravin platform cost grows with adoption + volume
-    const BravinCosts = ramp.map(r => resolvedPerYear * PRICE_PER_RESOLVED * r);
-
-    // Agents freed per year (rounded, scaled by ramp)
-    const freed = ramp.map(r => Math.round(agentsFreed * r));
-
-    const savings = afterCosts.map(c => beforeEmpCost - c - 0); // gross savings vs before (excl. Bravin cost)
-    const netSavings = savings.map((s, i) => s - BravinCosts[i]);
-
-    const totals = {
-      beforeEmpCost,
-      afterEmpCost: afterCosts.reduce((a, b) => a + b, 0),
-      BravinCost: BravinCosts.reduce((a, b) => a + b, 0),
-      freed: freed.reduce((a, b) => a + b, 0),
-      netSavings: netSavings.reduce((a, b) => a + b, 0),
-    };
-
-    // ROI over 3 years = total net savings / total Bravin cost
-    const roiPct = totals.BravinCost > 0 ? Math.round((totals.netSavings / totals.BravinCost) * 100) : 0;
+  // ROI simplu pe 2 ani și 3 ani
+  const invest2y = ai2Years;
+  const roiPct = invest2y > 0 ? Math.round((save2Years / invest2y) * 100) : 0;
+  const invest3y = ai3Years;
+  const roiPct3 = invest3y > 0 ? Math.round((save3Years / invest3y) * 100) : 0;
 
     return {
-      beforeEmpCost,
-      year: [
-        { year: 1, afterEmpCost: afterCosts[0], BravinCost: BravinCosts[0], freed: freed[0], net: netSavings[0] },
-        { year: 2, afterEmpCost: afterCosts[1], BravinCost: BravinCosts[1], freed: freed[1], net: netSavings[1] },
-        { year: 3, afterEmpCost: afterCosts[2], BravinCost: BravinCosts[2], freed: freed[2], net: netSavings[2] },
-      ],
-      totals,
-      roiPct,
+      humanMonthly, humanYear1, human2Years, humanYear3,
+      plan, llmCostPerMsg, llmMonthly, aiMonthly, aiYear1, ai2Years, ai3Years,
+      saveYear1, save2Years, save3Years, roiPct, roiPct3,
     };
-  }, [conversations, employees, annualCostPerEmp, resolutionRate]);
+  }, [agents, salaryPerAgentMonth, messagesPerMonth]);
 
-  // ===== UI
   return (
-  <section ref={ref as any} className="relative bg-black text-white py-14 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* SVG linie animată verticală pe dreapta */}
+    <section ref={ref as any} className="relative bg-black text-white py-14 sm:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* —— LINIA SVG (păstrată identic) —— */}
       <svg
         className="hidden md:block absolute z-20 pointer-events-none"
-        style={{
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          display: svgLineDisplay,
-        }}
-        width="100%"
-        height="100%"
-        viewBox="0 0 1000 1200"
-        fill="none"
-        preserveAspectRatio="none"
+        style={{ top: 0, left: 0, width: '100%', height: '100%', display: svgLineDisplay }}
+        width="100%" height="100%" viewBox="0 0 1000 1200" fill="none" preserveAspectRatio="none"
       >
-        <path
-          ref={svgLineRef}
-          d="M120 0 V1200"
-          transform="translate(820,0)"
-          stroke="#b3b3b3"
-          strokeWidth="3"
-          opacity="0.6"
-        />
+        <path ref={svgLineRef} d="M120 0 V1200" transform="translate(820,0)" stroke="#b3b3b3" strokeWidth="3" opacity="0.6" />
       </svg>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mt-10 md:mt-16">Bravin  calculator</h1>
-          <p className="mt-3 max-w-3xl text-[17px] leading-7 text-gray-300">
-            Bravin AI Agent funcționează non-stop pentru a rezolva imediat problemele clienților tăi, astfel încât agenții tăi să își poată concentra umanitatea pe activități specializate, strategice, creative și Bravinante.
-          </p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">{t('ROICalculator.title')}</h1>
+          <p className="mt-2 text-gray-300 text-[15px]">{t('ROICalculator.subtitle')}</p>
         </motion.div>
 
-        {/* Card grid */}
-        <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.05, duration: 0.5 }}
-          className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
-          {/* LEFT PANEL */}
-          <div className="rounded-2xl bg-white/95 text-black backdrop-blur-sm shadow-lg border border-white/20 p-4 sm:p-5 lg:p-6">
-            <Field label="Conversații pe lună">
-              <InputWithSuffix value={conversations} onChange={(v)=>setConversations(clamp(v, 100, 200000))} suffix="/mo" thousand />
-            </Field>
-
-            <Field label="Nr. angajați suport clienți">
-              <Input value={employees} onChange={(v)=>setEmployees(clamp(v, 1, 5000))} />
-            </Field>
-
-            <Field label="Cost anual/angajat">
-              <InputWithPrefix value={annualCostPerEmp} onChange={(v)=>setAnnualCostPerEmp(clamp(v, 10000, 300000))} prefix={currency==='USD'?'$':currency==='EUR'?'€':'L'} suffix="/yr" thousand />
-            </Field>
-
-            <div className="mt-5">
-              <div className="flex items-center justify-between">
-                <label className="text-[13px] font-medium text-gray-700">Rată de rezolvare automată (AI)</label>
-                <span className="text-xs text-gray-500">Avg.</span>
-              </div>
-              <div className="mt-2">
-                <input type="range" min={0.01} max={1} step={0.01} value={resolutionRate}
-                       onChange={(e)=>setResolutionRate(parseFloat(e.target.value))}
-                       className="w-full h-2 rounded-full bg-gray-200 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/20 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-black"/>
-                <div className="mt-2 text-sm text-gray-700">{Math.round(resolutionRate*100)}%</div>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <label className="text-[13px] font-medium text-gray-700">Monedă</label>
-              <select value={currency} onChange={(e)=>setCurrency(e.target.value as any)}
-                      className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black">
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="MDL">MDL</option>
-              </select>
-            </div>
+        {/* 3 input cards */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-2xl bg-white/95 text-black p-4 border border-white/20">
+            <label className="text-xs font-medium text-gray-600">{t('ROICalculator.inputs.agents.label')}</label>
+            <input
+              type="number" min={1} max={200} step={1}
+              value={agentsInput}
+              onChange={(e)=>{
+                const v = e.target.value;
+                setAgentsInput(v);
+                // if user typed a valid number, update numeric state immediately so calculations refresh
+                const parsed = parseInt(v, 10);
+                if (v.trim() !== '' && !isNaN(parsed)) {
+                  setAgents(clamp(parsed, 1, 200));
+                }
+              }}
+              onBlur={() => {
+                // when leaving the field, if empty set to 1; otherwise parse & clamp
+                const v = agentsInput.trim();
+                if (v === '') {
+                  setAgents(1);
+                  setAgentsInput('1');
+                } else {
+                  const n = clamp(parseInt(v || '0', 10) || 0, 1, 200);
+                  setAgents(n);
+                  setAgentsInput(String(n));
+                }
+              }}
+              className="mt-2 w-full align rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10"
+            />
+            <p className="mt-2 text-[13px] text-gray-600">{t('ROICalculator.inputs.agents.helper')}</p>
           </div>
 
-          {/* TOP-CENTER: Savings over 3 years */}
-          <div className="lg:col-span-2 rounded-2xl bg-white/95 backdrop-blur-sm shadow-lg border border-white/20 p-4 sm:p-5 lg:p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="rounded-xl border border-black/10 p-5">
-                <div className="text-sm font-medium text-[#3f3f46]">Bravin AI Agent will save</div>
-                <div className="mt-1 text-4xl sm:text-5xl font-extrabold tracking-tight text-black">{fmtMoney(calc.totals.netSavings, currency)}</div>
-                <div className="text-sm text-[#6b7280] mt-1">over 3 years</div>
-              </div>
-              <div className="rounded-xl border border-black/10 p-5">
-                <div className="text-sm font-medium text-[#3f3f46]">Return on investment</div>
-                <div className="mt-1 text-4xl sm:text-5xl font-extrabold tracking-tight text-black">{fmtInt(calc.roiPct)}%</div>
-              </div>
-            </div>
-
-            {/* Table */}
-            <div className="mt-5 overflow-x-auto">
-              <table className="w-full text-[15px] text-gray-800">
-                <thead>
-                  <tr className="text-left">
-                    <th className="py-3 px-3 font-medium text-gray-600"></th>
-                    <th className="py-3 px-3 font-medium text-gray-600">Before Bravin</th>
-                    <th className="py-3 px-3 font-medium text-gray-600">Anul 1</th>
-                    <th className="py-3 px-3 font-medium text-gray-600">Anul 2</th>
-                    <th className="py-3 px-3 font-medium text-gray-600">Anul 3</th>
-                    <th className="py-3 px-3 font-semibold text-gray-900">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {/* Employee cost */}
-                  <tr>
-                    <td className="py-3 px-3 text-gray-700">Employee cost</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.beforeEmpCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[0].afterEmpCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[1].afterEmpCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[2].afterEmpCost, currency)}</td>
-                    <td className="py-3 px-3 font-semibold">{fmtMoney(calc.beforeEmpCost + calc.year[0].afterEmpCost + calc.year[1].afterEmpCost + calc.year[2].afterEmpCost, currency)}</td>
-                  </tr>
-
-                  {/* Bravin cost */}
-                  <tr>
-                    <td className="py-3 px-3 text-gray-700">Bravin cost</td>
-                    <td className="py-3 px-3">-</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[0].BravinCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[1].BravinCost, currency)}</td>
-                    <td className="py-3 px-3">{fmtMoney(calc.year[2].BravinCost, currency)}</td>
-                    <td className="py-3 px-3 font-semibold">{fmtMoney(calc.totals.BravinCost, currency)}</td>
-                  </tr>
-
-                  {/* Agents freed */}
-                  <tr>
-                    <td className="py-3 px-3 text-gray-700">Agents freed</td>
-                    <td className="py-3 px-3">-</td>
-                    <td className="py-3 px-3">{fmtInt(calc.year[0].freed)}</td>
-                    <td className="py-3 px-3">{fmtInt(calc.year[1].freed)}</td>
-                    <td className="py-3 px-3">{fmtInt(calc.year[2].freed)}</td>
-                    <td className="py-3 px-3 font-semibold">{fmtInt(calc.totals.freed)}</td>
-                  </tr>
-
-                  {/* Your savings */}
-                  <tr>
-                    <td className="py-3 px-3 text-[#374151]">Your savings</td>
-                    <td className="py-3 px-3">-</td>
-                    <td className="py-3 px-3 text-green-700 font-semibold">{fmtMoney(calc.year[0].net, currency)}</td>
-                    <td className="py-3 px-3 text-green-700 font-semibold">{fmtMoney(calc.year[1].net, currency)}</td>
-                    <td className="py-3 px-3 text-green-700 font-semibold">{fmtMoney(calc.year[2].net, currency)}</td>
-                    <td className="py-3 px-3 font-bold text-green-800">{fmtMoney(calc.totals.netSavings, currency)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <div className="rounded-2xl bg-white/95 text-black p-4 border border-white/20">
+            <label className="text-xs font-medium text-gray-600">{t('ROICalculator.inputs.salary.label')}</label>
+            <input
+              type="number" min={0} value={salaryInput}
+              onChange={(e)=>{
+                const v = e.target.value;
+                setSalaryInput(v);
+                const parsed = parseInt(v, 10);
+                if (v.trim() !== '' && !isNaN(parsed)) {
+                  setSalaryPerAgentMonth(clamp(parsed, 0, 100000));
+                }
+              }}
+              onBlur={() => {
+                const v = salaryInput.trim();
+                if (v === '') {
+                  setSalaryPerAgentMonth(600);
+                  setSalaryInput('600');
+                } else {
+                  const n = clamp(parseInt(v || '0', 10) || 0, 0, 100000);
+                  setSalaryPerAgentMonth(n);
+                  setSalaryInput(String(n));
+                }
+              }}
+              className="mt-2 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10"
+            />
+            <p className="mt-2 text-[13px] text-gray-600">{(() => {
+              const raw = t('ROICalculator.inputs.salary.helper');
+              return raw.includes('{agents}') ? raw.replace('{agents}', String(agents)) : `${raw} (${agents})`;
+            })()}</p>
           </div>
-        </motion.div>
 
-        {/* CTA container inspirat de exemplul dat */}
-        <div className="w-full flex justify-center items-center bg-[#181312] py-8 px-2 md:px-0 mt-8 rounded-xl">
-          <div className="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 px-4">
-            <div className="flex flex-col items-start text-left">
-              <span className="text-white text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2">Get started with Bravin AI Agent today</span>
-              <a href="#" className="text-white text-base underline underline-offset-2 hover:text-gray-300 transition">Learn more</a>
-            </div>
-            <div className="flex flex-row gap-3 mt-4 md:mt-0">
-              <button className="border border-white text-white font-semibold rounded-lg px-6 py-2 text-base md:text-lg hover:bg-white hover:text-black transition">View demo</button>
-              <button className="bg-white text-black font-bold rounded-lg px-6 py-2 text-base md:text-lg hover:bg-black hover:text-white border border-white transition">Start free trial</button>
-            </div>
+          <div className="rounded-2xl bg-white/95 text-black p-4 border border-white/20">
+            <label className="text-xs font-medium text-gray-600">{t('ROICalculator.inputs.messages.label')}</label>
+            <input
+              type="number" min={100} max={100000}
+              value={messagesInput}
+              onChange={(e)=>{
+                const v = e.target.value;
+                setMessagesInput(v);
+                const parsed = parseInt(v, 10);
+                if (v.trim() !== '' && !isNaN(parsed)) {
+                  setMessagesPerMonth(clamp(parsed, 100, 100000));
+                }
+              }}
+              onBlur={() => {
+                const v = messagesInput.trim();
+                if (v === '') {
+                  setMessagesPerMonth(20000);
+                  setMessagesInput('20000');
+                } else {
+                  const n = clamp(parseInt(v || '0', 10) || 0, 100, 100000);
+                  setMessagesPerMonth(n);
+                  setMessagesInput(String(n));
+                }
+              }}
+              className="mt-2 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] focus:outline-none focus:ring-2 focus:ring-black/10"
+            />
+            <p className="mt-2 text-[13px] text-gray-600">{(() => {
+              const raw = t('ROICalculator.inputs.messages.helper', 'Plan estimat: {plan} — {price}/lună');
+              const price = fmtMoney(calc.plan.monthly).replace('$','').trim();
+              const planLabel = translatePlanName(calc.plan.name);
+              if (raw.includes('{plan}') || raw.includes('{price}')) {
+                return raw.replace('{plan}', planLabel).replace('{price}', price);
+              }
+              return `${raw} ${planLabel} — ${price}/lună`;
+            })()}</p>
           </div>
+        </div>
+
+        {/* KPI cards */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-white/20 bg-white/5 p-5">
+            <div className="text-xs text-gray-300">{t('ROICalculator.cards.employeesOnlyTitle')}</div>
+            <div className="mt-1 text-2xl font-bold">{fmtMoney(calc.humanYear1)} <span className="text-sm text-gray-400">{t('ROICalculator.cards.oneYear')}</span></div>
+            <div className="text-sm text-gray-400">{fmtMoney(calc.human2Years)}{t('ROICalculator.cards.twoYears')}</div>
+            <div className="text-sm text-gray-400">{fmtMoney(calc.humanYear3)}{t('ROICalculator.cards.threeYears')}</div>
+          </div>
+          <div className="rounded-2xl border border-white/20 bg-white/5 p-5">
+            <div className="text-xs text-gray-300">{t('ROICalculator.cards.withBravinTitle')}</div>
+            <div className="mt-1 text-2xl font-bold">{fmtMoney(calc.aiYear1)} <span className="text-sm text-gray-400">{t('ROICalculator.cards.oneYear')}</span></div>
+            <div className="text-sm text-gray-400">{fmtMoney(calc.ai2Years)}{t('ROICalculator.cards.twoYears')}</div>
+            <div className="text-sm text-gray-400">{fmtMoney(calc.ai3Years)}{t('ROICalculator.cards.threeYears')}</div>
+          </div>
+          <div className="rounded-2xl border border-white/20 bg-white/5 p-5">
+            <div className="text-xs text-gray-300">{t('ROICalculator.cards.savingsTitle')}</div>
+            <div className="mt-1 text-2xl font-bold text-emerald-400">{fmtMoney(calc.saveYear1)} <span className="text-sm text-gray-400">{t('ROICalculator.cards.oneYear')}</span></div>
+            <div className="text-sm text-emerald-400">{fmtMoney(calc.save2Years)}{t('ROICalculator.cards.twoYears')} • {fmtMoney(calc.save3Years)}{t('ROICalculator.cards.threeYears')}</div>
+            <div className="mt-2 text-[13px] text-gray-400">{t('ROICalculator.cards.roi3yNote')} <b>{fmtInt(calc.roiPct3)}%</b></div>
+          </div>
+        </div>
+
+        {/* Tabel scurt cu diferențe */}
+        <div className="mt-6 overflow-x-auto rounded-2xl border border-white/10 bg-white/5">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-gray-300">
+                <th className="py-3 px-4">{t('ROICalculator.table.headers.scenario')}</th>
+                <th className="py-3 px-4">{t('ROICalculator.table.headers.y1')}</th>
+                <th className="py-3 px-4">{t('ROICalculator.table.headers.y2')}</th>
+                <th className="py-3 px-4">{t('ROICalculator.table.headers.y3')}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              <tr>
+                <td className="py-3 px-4 text-gray-200">{(() => {
+                  const raw = t('ROICalculator.table.rows.employees');
+                  const salary = fmtMoney(salaryPerAgentMonth);
+                  if (raw.includes('{agents}') || raw.includes('{salary}')) {
+                    return raw.replace('{agents}', String(agents)).replace('{salary}', salary);
+                  }
+                  return `${raw} (${agents} × ${salary}/lună)`;
+                })()}</td>
+                <td className="py-3 px-4">{fmtMoney(calc.humanYear1)}</td>
+                <td className="py-3 px-4">{fmtMoney(calc.human2Years)}</td>
+                <td className="py-3 px-4">{fmtMoney(calc.humanYear3)}</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-gray-200">{(() => {
+                  const raw = t('ROICalculator.table.rows.withBravin', 'Cu Bravin (plan {plan} + LLM)');
+                  if (raw.includes('{plan}')) return raw.replace('{plan}', translatePlanName(calc.plan.name));
+                  return `${raw} (${translatePlanName(calc.plan.name)} + LLM)`;
+                })()}</td>
+                <td className="py-3 px-4">{fmtMoney(calc.aiYear1)}</td>
+                <td className="py-3 px-4">{fmtMoney(calc.ai2Years)}</td>
+                <td className="py-3 px-4">{fmtMoney(calc.ai3Years)}</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 font-semibold text-emerald-400">{t('ROICalculator.table.rows.netSavings')}</td>
+                <td className="py-3 px-4 font-semibold text-emerald-400">{fmtMoney(calc.saveYear1)}</td>
+                <td className="py-3 px-4 font-semibold text-emerald-400">{fmtMoney(calc.save2Years)}</td>
+                <td className="py-3 px-4 font-semibold text-emerald-400">{fmtMoney(calc.save3Years)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
-  );
-}
-
-// ====== Small form controls (clean, Bravin-like) ======
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-4">
-      <label className="block text-[13px] font-medium text-gray-700 mb-2">{label}</label>
-      {children}
-    </div>
-  );
-}
-
-function Input({ value, onChange }: { value: number; onChange: (n:number)=>void }) {
-  return (
-    <input value={value} onChange={(e)=>onChange(clamp(parseInt(e.target.value||'0',10) || 0, 0, 1_000_000))}
-      type="number" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-[15px] text-black focus:outline-none focus:ring-2 focus:ring-black/10"/>
-  );
-}
-
-function InputWithPrefix({ value, onChange, prefix, suffix, thousand }: { value: number; onChange: (n:number)=>void; prefix?: string; suffix?: string; thousand?: boolean; }) {
-  const [raw, setRaw] = useState(thousand ? value.toLocaleString('en-US') : String(value));
-  useEffect(()=>{ setRaw(thousand ? value.toLocaleString('en-US') : String(value)); }, [value, thousand]);
-  return (
-    <div className="flex items-stretch">
-      {prefix && <span className="inline-flex items-center px-3 rounded-l-xl border border-black/10 bg-[#f5f5f4] text-[15px]">{prefix}</span>}
-      <input value={raw} onChange={(e)=>setRaw(e.target.value)} onBlur={()=>{
-        let n = Number(String(raw).replace(/[^0-9.]/g,''));
-        if (Number.isNaN(n)) n = 0;
-        onChange(n);
-      }}
-        className={`flex-1 px-3 py-2 border border-black/10 bg-white text-[15px] text-black focus:outline-none focus:ring-2 focus:ring-black/10 ${prefix? 'rounded-r-xl' : 'rounded-xl'}`}/>
-      {suffix && <span className="inline-flex items-center px-3 rounded-r-xl border border-black/10 bg-[#f5f5f4] text-[15px]">{suffix}</span>}
-    </div>
-  );
-}
-
-function InputWithSuffix({ value, onChange, suffix, thousand }: { value: number; onChange: (n:number)=>void; suffix?: string; thousand?: boolean; }) {
-  const [raw, setRaw] = useState(thousand ? value.toLocaleString('en-US') : String(value));
-  useEffect(()=>{ setRaw(thousand ? value.toLocaleString('en-US') : String(value)); }, [value, thousand]);
-  return (
-    <div className="flex items-stretch">
-      <input value={raw} onChange={(e)=>setRaw(e.target.value)} onBlur={()=>{
-        let n = Number(String(raw).replace(/[^0-9.]/g,''));
-        if (Number.isNaN(n)) n = 0;
-        onChange(n);
-      }}
-        className="flex-1 px-3 py-2 rounded-l-xl border border-black/10 bg-white text-[15px] text-black focus:outline-none focus:ring-2 focus:ring-black/10"/>
-      {suffix && <span className="inline-flex items-center px-3 rounded-r-xl border border-black/10 bg-[#f5f5f4] text-[15px]">{suffix}</span>}
-    </div>
   );
 }

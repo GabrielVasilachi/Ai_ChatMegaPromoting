@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import SimpleBeamsBackground from '@/components/ui/SimpleBeamsBackground';
+import en from '@/locales/en.json';
+import ro from '@/locales/ro.json';
+import ru from '@/locales/ru.json';
 
 export default function DemoSectionDesktop() {
   const keypadRef = useRef<HTMLDivElement>(null);
@@ -10,6 +13,37 @@ export default function DemoSectionDesktop() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
   const [holdActive, setHoldActive] = useState(false);
+
+  // --- i18n (per-component lightweight) ---
+  const LOCALES: Record<string, any> = { en, ro, ru };
+  const [lang, setLang] = useState<'en' | 'ro' | 'ru'>(() => 'en');
+
+  useEffect(() => {
+    try {
+      const path = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+      if (path === 'ro' || path === 'ru' || path === 'en') {
+        setLang(path as 'en' | 'ro' | 'ru');
+        return;
+      }
+  const nav = typeof navigator !== 'undefined' ? (navigator.language || '') : '';
+      if (nav.startsWith('ro')) setLang('ro');
+      else if (nav.startsWith('ru')) setLang('ru');
+      else setLang('en');
+    } catch (e) {
+      setLang('en');
+    }
+  }, []);
+
+  const t = (path: string, fallback?: string) => {
+    const translations = LOCALES[lang] ?? LOCALES.en;
+    const parts = path.split('.');
+    let cur: any = translations;
+    for (const p of parts) {
+      cur = cur?.[p];
+      if (cur === undefined) return fallback ?? '';
+    }
+    return typeof cur === 'string' ? cur : fallback ?? '';
+  };
 
   // Pentru long-press backspace interval
   const backspaceIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -179,18 +213,18 @@ export default function DemoSectionDesktop() {
         {/* Left Content */}
   <div className="flex flex-col space-y-8 ml-5 w-full md:w-auto max-w-lg flex-shrink-0 -mt-36">
           {/* Card above title */}
-          <div className="bg-white/80 border border-gray-300 rounded-lg px-4 py-2 inline-block shadow-md w-[150px]">
-            <span className="text-black text-sm font-medium">Prezentare Demo</span>
+          <div className="bg-white/80 border border-gray-300 rounded-lg px-4 py-2 shadow-md w-[150px] flex items-center justify-center">
+            <span className="text-black text-sm font-medium text-center">{t('Demo.card', 'Prezentare Demo')}</span>
           </div>
 
           {/* Main Title */}
           <h1 className="text-5xl md:text-6xl font-bold text-white">
-            Experimentează Puterea AI
+            {t('Demo.title', 'Experimentează Puterea AI')}
           </h1>
 
           {/* Subtitle */}
           <p className="text-xl text-white/80 leading-relaxed max-w-lg">
-            Descoperă cum agentul nostru AI poate transforma complet experiența clienților tăi în doar câteva minute.
+            {t('Demo.subtitle', 'Descoperă cum agentul nostru AI poate transforma complet experiența clienților tăi în doar câteva minute.')}
           </p>
 
           {/* Button */}
@@ -211,7 +245,7 @@ export default function DemoSectionDesktop() {
               setTimeout(() => setShake(false), 500);
             }}
           >
-            Testează Demo-ul
+            {t('Demo.button', 'Testează Demo-ul')}
           </button>
         </div>
 

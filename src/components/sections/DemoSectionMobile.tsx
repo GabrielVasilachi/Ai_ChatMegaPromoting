@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import SimpleBeamsBackground from '@/components/ui/SimpleBeamsBackground';
+import en from '@/locales/en.json';
+import ro from '@/locales/ro.json';
+import ru from '@/locales/ru.json';
 
 export default function DemoSectionDesktop() {
   const keypadRef = useRef<HTMLDivElement>(null);
@@ -13,6 +16,37 @@ export default function DemoSectionDesktop() {
 
   // Pentru long-press backspace interval
   const backspaceIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // --- i18n (per-component lightweight) ---
+  const LOCALES: Record<string, any> = { en, ro, ru };
+  const [lang, setLang] = useState<'en' | 'ro' | 'ru'>(() => 'en');
+
+  useEffect(() => {
+    try {
+      const path = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+      if (path === 'ro' || path === 'ru' || path === 'en') {
+        setLang(path as 'en' | 'ro' | 'ru');
+        return;
+      }
+      const nav = typeof navigator !== 'undefined' ? (navigator.language || '') : '';
+      if (nav.startsWith('ro')) setLang('ro');
+      else if (nav.startsWith('ru')) setLang('ru');
+      else setLang('en');
+    } catch (e) {
+      setLang('en');
+    }
+  }, []);
+
+  const t = (path: string, fallback?: string) => {
+    const translations = LOCALES[lang] ?? LOCALES.en;
+    const parts = path.split('.');
+    let cur: any = translations;
+    for (const p of parts) {
+      cur = cur?.[p];
+      if (cur === undefined) return fallback ?? '';
+    }
+    return typeof cur === 'string' ? cur : fallback ?? '';
+  };
 
   // Scroll lock when user reaches the keypad buttons
   const sectionRef = useRef<HTMLElement>(null);
@@ -166,17 +200,17 @@ export default function DemoSectionDesktop() {
         <div className="flex flex-col items-center space-y-8 w-full max-w-lg mx-auto pt-8 pb-8">
           {/* Card above title */}
           <div className="bg-white/80 border border-gray-300 rounded-lg px-4 py-2 inline-block shadow-md w-[150px]">
-            <span className="text-black text-sm font-medium">Prezentare Demo</span>
+            <span className="text-black text-sm font-medium">{t('Demo.card', 'Prezentare Demo')}</span>
           </div>
 
           {/* Main Title */}
           <h1 className="text-4xl sm:text-5xl font-bold text-white text-center">
-            Experimentează Puterea AI
+            {t('Demo.title', 'Experimentează Puterea AI')}
           </h1>
 
           {/* Subtitle */}
           <p className="text-xl text-white/80 leading-relaxed max-w-lg text-center">
-            Descoperă cum agentul nostru AI poate transforma complet experiența clienților tăi în doar câteva minute.
+            {t('Demo.subtitle', 'Descoperă cum agentul nostru AI poate transforma complet experiența clienților tăi în doar câteva minute.')}
           </p>
 
           {/* Button */}
@@ -197,7 +231,7 @@ export default function DemoSectionDesktop() {
               setTimeout(() => setShake(false), 500);
             }}
           >
-            Testează Demo-ul
+            {t('Demo.button', 'Testează Demo-ul')}
           </button>
         </div>
 

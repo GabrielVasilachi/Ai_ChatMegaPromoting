@@ -195,15 +195,10 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
   const [pendingUserMessages, setPendingUserMessages] = useState<boolean[]>([false, false, false, false]);
 
   // --- MouseResponses logic (now after all state/refs are declared) ---
-  // Bubble texts for different areas
-  const mouseResponsesLeft = [
-    'Raspund la Mesaje\nPentru mesajele Necitite...',
-    'Citesc Conversatii\nPentru mesajele Necitite...',
-    'Analizez Raspunsurile\nPentru mesajele Necitite...',
-    'Verific Starea Clientului\nPentru mesajele Necitite...'
-  ];
-  const mouseResponseInput = 'Scriu Mesaj Clientului';
-  const mouseResponseSend = 'Trimit mesajul';
+  // Bubble texts for different areas, din locale
+  const mouseResponsesLeft = translations?.HeroSection?.mouseResponses?.left || [];
+  const mouseResponseInput = translations?.HeroSection?.mouseResponses?.input || '';
+  const mouseResponseSend = translations?.HeroSection?.mouseResponses?.send || '';
   const [mouseResponseIdx, setMouseResponseIdx] = useState(0);
   const [isOverLeftContainer, setIsOverLeftContainer] = useState(false);
   const [isOverInput, setIsOverInput] = useState(false);
@@ -529,16 +524,18 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                 let statusColor = 'text-gray-500';
                 
                 if (isTypingSimulation[idx]) {
-                  statusText = 'În curs de scriere...';
+                  statusText = translations?.HeroSection?.mouseResponses?.typing;
                   statusColor = 'text-green-600 animate-pulse';
                 } else if (onlineStatus[idx]) {
                   if (minutesAgo < 1) {
-                    statusText = 'Online acum';
+                    statusText = 'Online';
                     statusColor = 'text-green-600';
                   } else if (minutesAgo < 5) {
-                    statusText = `Acum ${minutesAgo} min`;
+                    const minutesAgoText = translations?.HeroSection?.mouseResponses?.minutesAgo;
+                    statusText = minutesAgoText.replace('{min}', String(minutesAgo));
                   } else {
-                    statusText = `${Math.floor(minutesAgo / 60)}h în urmă`;
+                    const hoursAgo = translations?.HeroSection?.mouseResponses?.hoursAgo;
+                    statusText = `${Math.floor(minutesAgo / 60)}${hoursAgo}`;
                   }
                 } else {
                   statusText = 'Offline';
@@ -601,8 +598,8 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
             onMouseMove={handleBigContainerMove}
           >
             {/* Name at top left - FIXED */}
-            <div className="absolute top-3 left-3 text-[15px] md:text-lg font-bold text-gray-700 select-none z-10 bg-white px-2">
-              {rightBoxData[selectedBox].name}
+            <div className="absolute top-0 left-0 right-0 text-[15px] md:text-lg font-bold text-gray-700 select-none z-10 bg-white px-4 py-1">
+              <div className="max-w-full truncate">{rightBoxData[selectedBox].name}</div>
             </div>
             
             {/* Scrollable content area */}
@@ -641,7 +638,7 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                           <svg className="w-3 h-3 text-blue-500 -ml-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          <span>Citit</span>
+                          <span>{translations?.HeroSection?.mouseResponses?.statusRead}</span>
                         </>
                       )}
                       {messageStatus[selectedBox] && messageStatus[selectedBox][idx] === 'delivered' && (
@@ -652,7 +649,7 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                           <svg className="w-3 h-3 text-gray-400 -ml-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          <span>Livrat</span>
+                          <span>{translations?.HeroSection?.mouseResponses?.statusDelivered}</span>
                         </>
                       )}
                       {messageStatus[selectedBox] && messageStatus[selectedBox][idx] === 'sent' && (
@@ -660,7 +657,7 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                           <svg className="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          <span>Trimis</span>
+                          <span>{translations?.HeroSection?.mouseResponses?.statusSent}</span>
                         </>
                       )}
                     </div>
@@ -701,7 +698,7 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Scrie un mesaj..."
+                  placeholder={translations?.HeroSection?.mouseResponses?.inputPlaceholder}
                   value={inputValues[selectedBox]}
                   onChange={e => {
                     const val = e.target.value;
@@ -886,7 +883,7 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                   onMouseEnter={() => setIsOverSend(true)}
                   onMouseLeave={() => setIsOverSend(false)}
                 >
-                  Trimite
+                  {translations?.HeroSection?.mouseResponses?.sendButton}
                 </button>
               </div>
             </div>
@@ -1018,14 +1015,14 @@ export default function HeroSectionLeftClean({ lang }: HeroProps) {
                 className="px-5 py-2 rounded-full border border-black text-black font-semibold bg-white hover:bg-gray-100 hover:text-black"
                 type="button"
               >
-                Sign In
+                {translations?.common?.signIn}
               </button>
               <div className="relative inline-block">
                 <button
                   className="px-5 py-2 rounded-full border border-black bg-black text-white font-semibold hover:bg-gray-800 hover:text-white relative z-10"
                   type="button"
                 >
-                  Get Started
+                    {translations?.common?.getStarted}
                 </button>
                 {/* Rainbow shadow using a blurred gradient pseudo-element */}
                 <span
